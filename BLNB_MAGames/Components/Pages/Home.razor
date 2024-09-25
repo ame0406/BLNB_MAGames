@@ -1,0 +1,25 @@
+﻿
+@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+<button class="btn btn-dark" @onclick="ShowText">
+    Click me test
+</button>
+
+<p class="@(test ? "d-flex" : "d-none")">
+    Test!!!! Yeah
+</p>
+
+@code
+{
+    private bool test = false;
+
+    private void ShowText()
+    {
+        test = !test;
+        StateHasChanged(); // Force la mise à jour de l'interface
+    }
+}
