@@ -21,8 +21,10 @@ namespace api.Controller
         [HttpGet]
         public async Task<ActionResult<List<SaleType>>> GetAllSaleTypes()
         {
-            List<SaleType> saleType = await _context.SaleType.ToListAsync();
-            return Ok(saleType);
+            List<SaleType> s = await _context.SaleType
+                .Where(c => c.IsActive)
+                .ToListAsync();
+            return Ok(s);
         }
 
         [HttpGet]
@@ -32,7 +34,7 @@ namespace api.Controller
             SaleType sT = await _context.SaleType.FindAsync(id);
 
             if (sT is null)
-                return BadRequest("Sale type non trouver.");
+                return BadRequest("Type de vente non trouver.");
 
             return Ok(sT);
         }
@@ -43,7 +45,7 @@ namespace api.Controller
             _context.SaleType.Add(st);
             await _context.SaveChangesAsync();
 
-            return Ok(await GetAllSaleTypes());
+            return CreatedAtAction(nameof(GetSaleType), new { id = st.Id }, st);
         }
 
         [HttpPut]
