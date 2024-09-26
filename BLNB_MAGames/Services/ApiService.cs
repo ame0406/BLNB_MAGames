@@ -39,16 +39,17 @@ public class ApiService
         return await response.Content.ReadFromJsonAsync<SaleType>(); // Retourne l'objet ajouté
     }
     #endregion
+    #region Status
+    public async Task<List<Status>> GetAllStatusAsync()
+    {
+        return await _httpClient.GetFromJsonAsync<List<Status>>("status");
+    }
+    public async Task<Status> AddStatusAsync(Status st)
+    {
+        var response = await _httpClient.PostAsJsonAsync("status", st);
+        response.EnsureSuccessStatusCode(); // Vérifie si la réponse est un succès
+        return await response.Content.ReadFromJsonAsync<Status>(); // Retourne l'objet ajouté
+    }
+    #endregion
 }
-#region Status
-public async Task<List<Status>> GetAllStatusAsync()
-{
-    return await _httpClient.GetFromJsonAsync<List<Status>>("status");
-}
-public async Task<Status> AddStatusAsync(Status st)
-{
-    var response = await _httpClient.PostAsJsonAsync("status", st);
-    response.EnsureSuccessStatusCode(); // Vérifie si la réponse est un succès
-    return await response.Content.ReadFromJsonAsync<Status>(); // Retourne l'objet ajouté
-}
-#endregion
+
