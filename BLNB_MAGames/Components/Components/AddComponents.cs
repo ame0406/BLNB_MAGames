@@ -8,10 +8,8 @@ namespace BLNB_MAGames.Components.Components
     {
         private List<SharedParams.Tables.Condition> allConditionsLst = new List<SharedParams.Tables.Condition>();
         private SharedParams.Tables.Condition newcondition{ get; set; } = new SharedParams.Tables.Condition();
-        private List<SharedParams.Tables.ConsoleSystem> allTypeVenteLst = new List<SharedParams.Tables.ConsoleSystem>();
-        private SharedParams.Tables.ConsoleSystem newTypeVente { get; set; } = new SharedParams.Tables.ConsoleSystem();
-        private List<SharedParams.Tables.Status> allStatusLst = new List<SharedParams.Tables.Status>();
-        private SharedParams.Tables.Status newStatus { get; set; } = new SharedParams.Tables.Status();
+        private List<SharedParams.Tables.SaleType> allTypeVenteLst = new List<SharedParams.Tables.SaleType>();
+        private SharedParams.Tables.SaleType newTypeVente { get; set; } = new SharedParams.Tables.SaleType();
 
         protected override async Task OnInitializedAsync()
         {
@@ -46,7 +44,7 @@ namespace BLNB_MAGames.Components.Components
         {
             if (!string.IsNullOrEmpty(newTypeVente.Name))
             {
-                var addedTV = await ApiService.AddTypesVenteAsync(newTypeVente); // Récupère l'objet ajouté
+                SaleType addedTV = await ApiService.AddTypesVenteAsync(newTypeVente); // Récupère l'objet ajouté
                 allTypeVenteLst.Add(addedTV); // Ajoute à la liste
 
                 // Optionnel : Rafraîchir la liste complète depuis l'API
