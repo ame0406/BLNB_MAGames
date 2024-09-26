@@ -5,6 +5,7 @@
 <hr />
 
 <!-- Gestion de condition -->
+
 <div>
     <h2 class="text-center">Gestion des conditions</h2>
 
@@ -15,12 +16,13 @@
     else
     {
         <ul>
-            @foreach (var condition in allConditionsLst)
+            @foreach (SharedParams.Tables.Condition condition in allConditionsLst)
             {
                 <li>@condition.Name</li>
             }
         </ul>
     }
+
     <div class="py-5 d-flex flex-column justify-content-center">
         <div class="">
             <label for="conditionName" class="me-2">Nom de la condition<span class="text-warning">*</span></label>
@@ -34,7 +36,7 @@
 
 <!-- Gestion des type-->
 <div>
-    <h2 class="text-center">Gestion des types de vente</h2>
+    <h1 class="text-center">Gestion des types de vente</h1>
 
     @if (allTypeVenteLst == null && allTypeVenteLst.Count() <= 0)
     {
@@ -60,4 +62,4 @@
 </div>
 <hr />
 
-
+<!-- Gestion des Status-->
