@@ -10,6 +10,8 @@ namespace BLNB_MAGames.Components.Components
         private SharedParams.Tables.Condition newcondition{ get; set; } = new SharedParams.Tables.Condition();
         private List<SharedParams.Tables.ConsoleSystem> allTypeVenteLst = new List<SharedParams.Tables.ConsoleSystem>();
         private SharedParams.Tables.ConsoleSystem newTypeVente { get; set; } = new SharedParams.Tables.ConsoleSystem();
+        private List<SharedParams.Tables.Status> allStatusLst = new List<SharedParams.Tables.Status>();
+        private SharedParams.Tables.Status newStatus { get; set; } = new SharedParams.Tables.Status();
 
         protected override async Task OnInitializedAsync()
         {
