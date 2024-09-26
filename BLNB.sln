@@ -5,9 +5,9 @@ VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "api", "api\api.csproj", "{36186C20-372E-4BBB-98AA-88D36E5DBBBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BLNB_MAGames", "BLNB_MAGames\BLNB_MAGames.csproj", "{8E8B8B3F-AC86-447D-8BF5-86B8351454C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BLNB_MAGames", "BLNB_MAGames\BLNB_MAGames.csproj", "{8E8B8B3F-AC86-447D-8BF5-86B8351454C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedParams", "SharedParams\SharedParams.csproj", "{3D27B24A-3803-430D-89C2-551B39E3C5E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedParams", "SharedParams\SharedParams.csproj", "{3D27B24A-3803-430D-89C2-551B39E3C5E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
