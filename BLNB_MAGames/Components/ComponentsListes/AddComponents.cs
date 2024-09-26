@@ -10,11 +10,15 @@ namespace BLNB_MAGames.Components.Components
         private SharedParams.Tables.Condition newcondition{ get; set; } = new SharedParams.Tables.Condition();
         private List<SharedParams.Tables.SaleType> allTypeVenteLst = new List<SharedParams.Tables.SaleType>();
         private SharedParams.Tables.SaleType newTypeVente { get; set; } = new SharedParams.Tables.SaleType();
+        private List<SharedParams.Tables.Status> allStatusLst = new List<SharedParams.Tables.Status>();
+        private SharedParams.Tables.Status newStatus { get; set; } = new SharedParams.Tables.Status();
 
         protected override async Task OnInitializedAsync()
         {
             await GetAllConditionsType();
             await GetAllTypesVente();
+            await GetAllStatus();
+            
         }
         #region Condition
         private async Task GetAllConditionsType()
@@ -35,7 +39,8 @@ namespace BLNB_MAGames.Components.Components
             }
         }
         #endregion
-        #region ConsoleSystem
+        
+        #region Type de vente
         private async Task GetAllTypesVente()
         {
             allTypeVenteLst = await ApiService.GetAllTypesVenteAsync();
@@ -51,6 +56,25 @@ namespace BLNB_MAGames.Components.Components
                 // allComplicityLst = await ApiService.GetAllComplicityAsync();
 
                 newTypeVente.Name = string.Empty; // Réinitialise le champ
+            }
+        }
+        #endregion
+        #region Status
+        private async Task GetAllStatus()
+        {
+            allStatusLst = await ApiService.GetAllStatusAsync();
+        }
+        private async Task AddStatus()
+        {
+            if (!string.IsNullOrEmpty(newStatus.Name))
+            {
+                Status addedS = await ApiService.AddStatusAsync(newStatus); // Récupère l'objet ajouté
+                allStatusLst.Add(addedS); // Ajoute à la liste
+
+                // Optionnel : Rafraîchir la liste complète depuis l'API
+                // allComplicityLst = await ApiService.GetAllComplicityAsync();
+
+                newStatus.Name = string.Empty; // Réinitialise le champ
             }
         }
         #endregion
