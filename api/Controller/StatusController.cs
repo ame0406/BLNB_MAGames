@@ -21,8 +21,10 @@ namespace api.Controller
         [HttpGet]
         public async Task<ActionResult<List<Status>>> GetAllStatus()
         {
-            List<Status> status = await _context.Status.ToListAsync();
-            return Ok(status);
+            List<Status> s = await _context.Status
+                .Where(c => c.IsActive)
+                .ToListAsync();
+            return Ok(s);
         }
 
         [HttpGet]
@@ -43,7 +45,7 @@ namespace api.Controller
             _context.Status.Add(status);
             await _context.SaveChangesAsync();
 
-            return Ok(await GetAllStatus());
+            return CreatedAtAction(nameof(GetStatus), new { id = status.Id }, status);
         }
 
         [HttpPut]
