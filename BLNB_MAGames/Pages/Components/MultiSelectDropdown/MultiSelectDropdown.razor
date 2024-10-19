@@ -1,0 +1,68 @@
+﻿@rendermode InteractiveServer
+
+<div class="d-flex flex-row flex-wrap">
+    @foreach (Object objects in _lstObjectsSelected)
+    {
+        if (objects != null)
+        {
+            <span class="p-2 bg-dark m-1 d-flex flex-row flex-nowrap rounded-2" style="color: white;">
+                @if (_hasAnotherProperty)
+                {
+                    <p class="me-2" style="margin-bottom:0 !important;"> @objects.GetType().GetProperty(_property).GetValue(objects, null) @objects.GetType().GetProperty(_otherProperty).GetValue(objects, null) </p>
+                    <i class="bi bi-x pointer-event" @onclick="() => UnSelected(objects)"></i>
+                }
+                else
+                {
+                    <p class="me-2" style="margin-bottom:0 !important;">@objects.GetType().GetProperty(_property).GetValue(objects, null)</p>
+                    <i class="bi bi-x pointer-event" @onclick="() => UnSelected(objects)"></i>
+                }
+            </span>
+        }
+    }
+</div>
+
+
+<div class="dropdown">
+    <input class="dropdown-toggle form-control form-control-lg" @oninput="Filter" disabled="@_isDisable" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" placeholder="@_title" @bind="@value" />
+
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="list">
+        <!--Objets de la liste obligatoire-->
+        @if (_lstObjectsDisplayed.Count() != 0)
+        {
+            @foreach (Object objects in _lstObjectsDisplayed)
+            {
+                if (objects != null)
+                {
+                    <li @onclick="() => Select(objects)" class="dropdown-item">
+                        @if (_hasAnotherProperty)
+                        {
+                            <p> @objects.GetType().GetProperty(_property).GetValue(objects, null) @objects.GetType().GetProperty(_otherProperty).GetValue(objects, null) </p>
+                        }
+                        else
+                        {
+                            <p>@objects.GetType().GetProperty(_property).GetValue(objects, null)</p>
+                        }
+                    </li>
+                }
+            }
+        }
+
+    </ul>
+</div>
+
+<style>
+    #list {
+        cursor: pointer;
+        max-height: 200px;
+        overflow-y: auto;
+        margin-left: 0em !important;
+    }
+
+    .toLong {
+        max-width: 90%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+</style>

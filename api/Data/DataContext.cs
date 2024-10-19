@@ -11,9 +11,9 @@ namespace api.Data
         }
 
         public DbSet<Condition> Condition { get; set; }
-        public DbSet<ConsoleSystem> ConsoleSystem { get; set; }
-        public DbSet<Games> Games { get; set; }
+        public DbSet<Base_Obj> Base_Obj { get; set; }
         public DbSet<Lots> Lots { get; set; }
+        public DbSet<Marques> Marques { get; set; }
         public DbSet<SaleType> SaleType { get; set; }
         public DbSet<Status> Status { get; set; }
         public DbSet<Stocks> Stocks { get; set; }

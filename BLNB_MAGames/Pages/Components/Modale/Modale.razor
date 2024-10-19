@@ -1,0 +1,224 @@
+﻿@using static SharedParams.Parameters.SharedParameters
+<!--Modale-->
+@*
+    But: Ce component sert à afficher une modale sur demande
+
+    Paramètres:
+    - _header = L'en-tête de la modale
+    - _body = Le corps de la modale
+    - _footer = Le texte dans le bouton de la modale
+    - _twoButtons = Si on doit afficher le bouton 'Annuler' de la modale
+    - _style = Permet de changer le style de la modale
+    - _isShown = Si on montre la modale
+
+    Événements
+    - _onClose = Lorsque l'utilisateur ferme la modale (clique sur un des boutons)
+                    Elle retourne un booléen qui va être positif s'il a accepté ou négatif s'il a refusé
+
+    Fonctionnement:
+    Lorsqu'on montre la modale, elle apparaît et donne le choix de continuer avec les modifications ou de les annuler (ou simplement
+    de montrer de l'information). Lorsque l'utilisateur clique sur un des boutons, la modale se ferme.
+
+
+*@
+
+@* @onclick="() => CancelOutside(false)" *@
+
+
+<!-- Modale -->
+<div class="modal show @(this._isShown ? "FadeInModale": (this._wasShown ? "FadeOutModale":"Hide"))" id="myModal" style="display:block; background-color: rgba(10,10,10,.8); z-index:101;" aria-modal="true" role="dialog">
+
+    <div class="modal-dialog modal-dialog-centered @this._class @(this._isShown ? "FadeInContainer": (this._wasShown ? "FadeOutContainer":""))" @onclick="() => CancelOutside(true)" style="@this._style;">
+        <div class="modal-content pb-5" style="background-color: #F6F5F4;">
+            <div class="d-flex justify-content-between m-4 mb-0">
+                <h2 class="modal-title">@this._header</h2>
+                <i class="bi bi-x-lg" style="cursor:pointer;" @onclick='() => CloseModal((Int16)ClosingModalChoice.CloseX)'></i>
+            </div>
+            <div class="modal-body">
+                @this._body
+            </div>
+            @if (this._noButton)
+            {
+
+            }
+            else if (this._twoButtons)
+            {
+                if (_isDeleteColor)
+                {
+                    <div class="d-flex flex-row justify-content-center">
+                        <button type="button" class="btn btn-outline-dark me-3" id="Close" @onclick='() =>  CloseModal((Int16)ClosingModalChoice.LeftButton)'>@(!String.IsNullOrEmpty(_footerFirst) ? _footerFirst : "Annuler")</button>
+
+                        @if (_addCaptcha)
+                        {
+                            <button type="button" class="btn buttonValided btn-danger g-recaptcha @(_secondBtnDisabled ? "disabled" : "")" data-callback="SubmitSendEForm" data-badge="bottomright" @onclick='() => CloseModal((Int16)ClosingModalChoice.RightButton)'>@this._footer</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn buttonValided btn-danger @(_secondBtnDisabled ? "disabled" : "")" @onclick='() => CloseModal((Int16)ClosingModalChoice.RightButton)'>@this._footer</button>
+                        }
+
+                    </div>
+                }
+                else if (_isSuccessColor)
+                {
+                    <div class="d-flex flex-row justify-content-center">
+                        @if (!String.IsNullOrEmpty(_footerFirst))
+                        {
+                            if (_addCaptcha)
+                            {
+                                <button type="button" class="btn btn-success me-3 g-recaptcha" data-callback="SubmitSendEForm" data-badge="bottomright" id="Close" @onclick='() => CloseModal((Int16)ClosingModalChoice.LeftButton)'>@(_footerFirst)</button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-success me-3" id="Close" @onclick='() => CloseModal((Int16)ClosingModalChoice.LeftButton)'>@(_footerFirst)</button>
+                            }
+
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-success me-3" id="Close" @onclick='() => CloseModal((Int16)ClosingModalChoice.LeftButton)'>Annuler</button>
+                        }
+
+                        <button type="button" class="btn btn-outline-dark @(_secondBtnDisabled ? "disabled" : "")" @onclick='() => CloseModal((Int16)ClosingModalChoice.RightButton)'>@this._footer</button>
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex flex-row justify-content-center">
+                        <button type="button" class="btn btn-outline-dark me-3" id="Close" @onclick='() => CloseModal((Int16)ClosingModalChoice.LeftButton)'>@(!String.IsNullOrEmpty(_footerFirst) ? _footerFirst : "Annuler")</button>
+                        <button type="button" class="btn btn-dark @(_secondBtnDisabled ? "disabled" : "")" @onclick='() => CloseModal((Int16)ClosingModalChoice.RightButton)'>@this._footer</button>
+                    </div>
+                }
+            }
+            else if (_oneBtn)
+            {
+                <div class="d-flex flex-row justify-content-center">
+                    <button type="button" class="btn btn-dark" @onclick='() => CloseModal((Int16)ClosingModalChoice.LeftButton)'><span style="">@(string.IsNullOrEmpty(_footer) ? "Annuler" : _footer)</span></button>
+                </div>
+            }
+            else
+            {
+                <div class="d-flex flex-row justify-content-center">
+                    <button type="button" class="btn btn-dark" @onclick='() => CloseModal((Int16)ClosingModalChoice.LeftButton)'><span style="">@this._footer</span></button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .grecaptcha-badge {
+        z-index: 30;
+    }
+
+    span .oi-x {
+        position: relative;
+        right: 2em;
+        top: 2em;
+    }
+
+    /* #Close:hover {
+                background-color: lightgrey;
+                border-color: lightgrey;
+            }*/
+
+    .Hide {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .FadeInModale {
+        animation: fadeInModale 0.5s;
+    }
+
+    .FadeInContainer {
+        animation: fadeInContainer 0.5s;
+    }
+
+    .FadeOutModale {
+        animation: fadeOutModale 0.4s forwards;
+    }
+
+    .FadeOutContainer {
+        animation: fadeOutContainer 0.4s forwards;
+    }
+
+    @@keyframes fadeInModale {
+        0% {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        100% {
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+
+    @@keyframes fadeInContainer {
+        0% {
+            top: -150px;
+        }
+
+        100% {
+            top: 0px;
+        }
+    }
+
+    @@keyframes fadeOutModale {
+
+        100% {
+            opacity: 0;
+            visibility: hidden;
+        }
+    }
+
+    @@keyframes fadeOutContainer {
+        0% {
+            top: 0px;
+        }
+
+        100% {
+            top: -150px;
+        }
+    }
+
+    .col-12 {
+        max-width: 100% !important;
+    }
+
+    .col-10 {
+        max-width: 95% !important;
+    }
+
+    @@media (min-width: 992px) {
+        .col-lg-6 {
+            flex: 0 0 auto;
+            max-width: 50% !important;
+        }
+    }
+
+    @@media (min-width: 768px) {
+        .col-md-8 {
+            flex: 0 0 auto;
+            width: 66.66666667%;
+        }
+    }
+</style>
+@* @if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Development")
+{
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+}
+<script>
+    function SubmitSendEForm(token) {
+        DotNet.invokeMethodAsync('Portail.B2B.WebUI', 'VerifySendECaptcha', token)
+            .then(response => {
+                console.log(response);
+                grecaptcha.reset();
+            })
+            .catch(error => {
+                console.error(error);
+                grecaptcha.reset();
+            });
+    }
+</script> *@

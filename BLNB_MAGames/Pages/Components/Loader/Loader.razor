@@ -1,0 +1,86 @@
+﻿<!--Loader-->
+@*
+    But: Le but de ce component est de nous permettre d'afficher un écran de chargement sur demande
+
+    Paramètres:
+    - _isShown = Permet de montrer ou cache le loader
+    - _widthAndHeightAsREM = Permet de changer la grosseur du loader
+    - _color = Permet de changer la couleur du loader
+    - _backgroundColor = Permet de changer la couleur de l'arrière-plan du loader
+
+    Fonctionnement:
+    On affiche un loader lors des temps de chargements
+
+*@
+
+@{
+    IsShowing();
+}
+
+<!-- Fadein, FadeOut -->
+<div class="@(_isShown ? "FadeIn": this._wasShown ? "FadeOut":"Hide" ) showSpinner">
+    <div class="spinner-border" role="status">
+    </div>
+</div>
+
+
+
+<style>
+    .Hide {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    /*--------------------------------- Css design du loader*/
+    .showSpinner {
+        display: flex;
+        position: fixed;
+        z-index: 9999;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+        background-color: @_backgroundColor;
+    }
+
+    .spinner-border {
+        width: @(_widthAndHeightAsREM)rem;
+        height: @(_widthAndHeightAsREM)rem;
+        color: @_color;
+    }
+    /*---------------------------------- Fade In et Fade Out du loader --------------------------------*/
+    .FadeIn {
+        animation: fadeIn 1s;
+    }
+
+    .FadeOut {
+        animation: fadeOut 500ms forwards;
+    }
+
+    @@keyframes fadeIn {
+        0% {
+            opacity: 0;
+            visibility: visible;
+        }
+
+        100% {
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+
+    @@keyframes fadeOut {
+        0% {
+            opacity: 1;
+        }
+
+        100% {
+            opacity: 0;
+            visibility: hidden;
+        }
+    }
+
+</style>

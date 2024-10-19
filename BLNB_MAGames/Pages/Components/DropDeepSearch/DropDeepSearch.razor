@@ -1,0 +1,75 @@
+﻿@using SharedParams.DTOs
+
+@rendermode InteractiveServer
+
+<div class="dropdown w-100 position-relative">
+    <input type="text"
+           class="form-control form-control-lg dropdown-toggle"
+           id="dropdownMenuButton1"
+           data-bs-toggle="dropdown"
+           aria-expanded="false"
+           placeholder="@_title"
+           @bind="@value"
+           @oninput="Filter"
+           @onfocusout="CallBackNoCoresponding" />
+
+    <i class="bi bi-search icon-loupe position-absolute top-50 start-0 ms-3 translate-middle-y text-muted"></i>
+
+    <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton1" id="list">
+        @if (_lstObjectsDisplayed != null && _lstObjectsDisplayed.Count() != 0)
+        {
+            @foreach (GenericObjDTO objects in _lstObjectsDisplayed)
+            {
+                if (objects != null)
+                {
+                    <li @onclick="() => SelectThis(objects)" class="dropdown-item cursor-pointer">
+                        @if (objects.EnumGenericObjType == EnumGenericObjType.Games)
+                        {
+                            <div class="d-flex gap-2 align-items-center">
+                                @if (!string.IsNullOrEmpty(objects.ImageToDisplay) && System.IO.File.Exists($"wwwroot/ProductImg/{objects.ImageToDisplay}"))
+                                {
+                                    string imgPath = "/ProductImg/" + objects.ImageToDisplay;
+                                    <div class="image-container">
+                                        <img src="@imgPath" alt="Product Image" class="img-fluid" />
+                                    </div>
+                                }
+                                <p class="mb-0">
+                                    @(" " + objects.DisplayName)
+                                    @foreach (string s in objects.DisplayProps)
+                                    {
+                                        @(" - " + s)
+                                    }
+                                </p>
+                            </div>
+                        }
+                    </li>
+                }
+            }
+        }
+        else
+        {
+            <li class="dropdown-item cursor-pointer">
+                <p class="mb-0">Aucun Élement</p>
+            </li>
+        }
+    </ul>
+</div>
+
+<style>
+    .dropdown .form-control {
+        padding-left: 2.5rem; /* Adjusts padding to create space for the icon */
+    }
+
+    .image-container {
+        max-height: 4em;
+        max-width: 4em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .dropdown .icon-loupe {
+        font-size: 1.25rem; /* Bootstrap-compatible icon size */
+    }
+</style>

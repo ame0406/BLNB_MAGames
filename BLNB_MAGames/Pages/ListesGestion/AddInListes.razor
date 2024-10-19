@@ -1,0 +1,120 @@
+﻿
+@page "/GestionListes"
+
+<h1 class="text-center">Gestion des listes</h1>
+<hr />
+
+<!-- Gestion de condition -->
+
+<div>
+    <h2 class="text-center">Gestion des conditions</h2>
+
+    @if (allConditionsLst == null && allConditionsLst.Count() <= 0)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (SharedParams.Tables.Condition condition in allConditionsLst)
+            {
+                <li>@condition.Name</li>
+            }
+        </ul>
+    }
+
+    <div class="py-5 d-flex flex-column justify-content-center">
+        <div class="">
+            <label for="conditionName" class="me-2">Nom de la condition<span class="text-warning">*</span></label>
+            <input type="text" id="conditionName" class="form-control" placeholder="Entrez le nom" @bind="newcondition.Name" />
+        </div>
+
+        <button class="btn btn-primary mt-4" @onclick="AddCondition">Ajouter</button>
+    </div>
+</div>
+<hr />
+
+<!-- Gestion des types -->
+<div>
+    <h1 class="text-center">Gestion des types de vente</h1>
+
+    @if (allTypeVenteLst == null && allTypeVenteLst.Count() <= 0)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var tv in allTypeVenteLst)
+            {
+                <li>@(tv.Name) </li>
+            }
+        </ul>
+    }
+    <div class="py-5 d-flex flex-column justify-content-center">
+        <div class="">
+            <label for="tvName" class="me-2">Type de vente<span class="text-warning">*</span></label>
+            <input type="text" id="tvName" class="form-control" placeholder="Entrez le type de vente" @bind="newTypeVente.Name" />
+        </div>
+
+        <button class="btn btn-primary mt-4" @onclick="AddTypeVente">Ajouter</button>
+    </div>
+</div>
+<hr />
+
+<!-- Gestion des Status -->
+<div>
+    <h2 class="text-center">Gestion des status</h2>
+
+    @if (allStatusLst == null && allStatusLst.Count() <= 0)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var s in allStatusLst)
+            {
+                <li>@(s.Name) </li>
+            }
+        </ul>
+    }
+    <div class="py-5 d-flex flex-column justify-content-center">
+        <div class="">
+            <label for="sName" class="me-2">Status<span class="text-warning">*</span></label>
+            <input type="text" id="sName" class="form-control" placeholder="Entrez le status" @bind="newStatus.Name" />
+        </div>
+
+        <button class="btn btn-primary mt-4" @onclick="AddStatus">Ajouter</button>
+    </div>
+</div>
+<hr />
+
+<!-- Gestion des Marques -->
+<div>
+    <h1 class="text-center">Gestion des Marques</h1>
+
+    @if (allMarquesLst == null && allMarquesLst.Count() <= 0)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var m in allMarquesLst)
+            {
+                <li>@(m.Name) </li>
+            }
+        </ul>
+    }
+    <div class="py-5 d-flex flex-column justify-content-center">
+        <div class="">
+            <label for="mName" class="me-2">Marques<span class="text-warning">*</span></label>
+            <input type="text" id="mName" class="form-control" placeholder="Entrez la marque" @bind="newMarque.Name" />
+        </div>
+
+        <button class="btn btn-primary mt-4" @onclick="AddMarques">Ajouter</button>
+    </div>
+</div>
+<hr />
+

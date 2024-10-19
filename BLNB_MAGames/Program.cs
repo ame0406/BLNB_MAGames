@@ -1,4 +1,5 @@
-using BLNB_MAGames.Components;
+using BLNB_MAGames;
+using BLNB_MAGames.Pages;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,10 +7,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
 	.AddInteractiveServerComponents();
 
+builder.Services.AddControllers();
+
 builder.Services.AddHttpClient<ApiService>(); // Configurer HttpClient
-builder.Services.AddScoped<ApiService>(); // Enregistrer le service ApiService
+builder.Services.AddScoped<ApiService>();
 
 var app = builder.Build();
+
+app.MapControllers();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -25,6 +30,9 @@ app.UseStaticFiles();
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
+	.AllowAnonymous()
 	.AddInteractiveServerRenderMode();
+
+//app.UseStatusCodePagesWithRedirects("/404");
 
 app.Run();

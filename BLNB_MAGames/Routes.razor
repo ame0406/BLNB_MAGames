@@ -1,0 +1,23 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+
+@inject NavigationManager NavigationManager
+
+<Router AppAssembly="typeof(Program).Assembly">
+    <Found Context="routeData">
+        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(Shared.Layout.MainLayout)">
+            <NotAuthorized>
+                @* @if (!context.User.Identity.IsAuthenticated)
+                {
+                    <OMS.MES_U2.Pages.Account.Login></OMS.MES_U2.Pages.Account.Login>
+                }
+                else
+                {
+                    <OMS.SharedComponents.Components.Page401_OMS_MES.Pages401_OMS_MES></OMS.SharedComponents.Components.Page401_OMS_MES.Pages401_OMS_MES>
+                } *@
+            </NotAuthorized>
+        </AuthorizeRouteView>
+    </Found>
+    <NotFound>
+        @* <OMS.SharedComponents.Components.Page404_OMS_MES.Pages404_OMS_MES></OMS.SharedComponents.Components.Page404_OMS_MES.Pages404_OMS_MES> *@
+    </NotFound>
+</Router>

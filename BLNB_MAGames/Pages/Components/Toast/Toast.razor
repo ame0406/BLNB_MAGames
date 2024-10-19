@@ -1,0 +1,84 @@
+﻿<!--Toast/Pop-up-->
+@*
+    But: Ce component sert à notifier l'utilisateur d'une erreur, d'une réussite ou d'un succès lié à une action
+
+    Paramètres:
+    - _description: Le message que l'on veut faire savoir à l'utilisateur
+    - _duration : la durée d'affichage du toast
+    - _toastType : Le type de toast (Succès, échec, avertissement), celui sert à donner le titre du toast
+    - _toastPosition : La position du toast
+
+    Fonctionnement:
+    Le toast apparait pendant 7 secondes (durée par défaut), l'utilisateur à tout de même la possibilité de la fermer avant cette durée
+*@
+
+@if (_showToast)
+{
+    _state = "show";
+    TranslateToastTitle();
+}
+else
+{
+    _state = "";
+}
+
+<div class="alert alert-@ChangeToastType() alert-dismissible @_state @(_isShown ? "FadeIn":"") @(_wasShown? "FadeOut":"")" role="alert" id="@(_isHidden? "removeDivSpace":"")">
+    <span class="text-wrap">@((MarkupString)_description)</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+
+
+<style>
+
+    .FadeIn {
+        animation: fadeIn 0.3s;
+    }
+
+    .FadeOut {
+        animation: fadeOut 0.3s forwards;
+    }
+
+    @@keyframes fadeIn {
+        0% {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        100% {
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+
+    @@keyframes fadeOut {
+        0% {
+            opacity: 1;
+        }
+
+        100% {
+            opacity: 0;
+            visibility: hidden;
+        }
+    }
+
+    @@media(min-width: 1441px) {
+        .col-3xl-2 {
+            width: 16.66666667%;
+        }
+    }
+
+
+
+
+    #removeDivSpace {
+        display: none;
+    }
+
+    $position-values: (
+          0: 0,
+          50: 50%,
+          100: 100%
+        );
+</style>
+

@@ -1,0 +1,148 @@
+﻿@using static BLNB_MAGames.Pages.Components.Toast.Toast
+@using BLNB_MAGames.Pages.Components.Toast
+
+@inherits LayoutComponentBase
+
+@inject NavigationManager NavigationManager
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+        </div>
+
+        <article class="content px-4">
+            <CascadingValue Value="showToast">
+                <CascadingValue Value="showPageLoader">
+                    @Body
+                </CascadingValue>
+            </CascadingValue>
+        </article>
+    </main>
+</div>
+
+<!--Loader-->
+@* <Portail.B2B.WebUI.Pages.Components.Loader.Loader _isShown=_showLoader _widthAndHeightAsREM="20" />
+ *@
+<div class="toasts bottom-0 start-50 translate-middle-x col-12 col-md-6 col-lg-4">
+    @foreach (Toast toast in this._lstToasts)
+    {
+        <Toast @ref=this._toast _toastType=@toast._toastType _description=@toast._description></Toast>
+    }
+</div>
+
+<style>
+    .toasts {
+        z-index: 99999;
+        position: fixed;
+    }
+
+    .dropdown button, .dropdown-menu {
+        min-width: 13rem;
+    }
+
+/*     .topBarDropdown {
+        justify-content: space-evenly !important;
+    } */
+
+        .topBarDropdown:focus {
+            box-shadow: none !important;
+        }
+
+    .top-row {
+        flex-direction: row !important;
+    }
+
+    .search-bar{
+        width: 65%;
+        margin-top: 0;
+    }
+
+    .search-bar div{
+        margin-left: 0.5em;
+    }
+
+    .dropSettings div:first-of-type{
+        margin-left: 0.5em;
+    }
+    .dropSettings div:last-of-type{
+        margin-left: 0.5em;
+    }
+
+    @@media screen and (max-width: 1400px) {
+        .top-row {
+            flex-direction: column !important;
+        }
+
+        .search-bar {
+            width: 100%;
+            margin-bottom: 0.5em;
+            margin-right: 0;
+        }
+    }
+
+    @@media screen and (max-width: 1100px) {
+
+        .search-bar {
+            flex-direction: column !important;
+            margin-bottom: 0;
+        }
+
+            .search-bar div {
+                margin-left: 0;
+            }
+
+        .dropSettings
+        {
+            flex-direction: column !important;
+            width: 100%;
+            margin-top: 0;
+        }
+
+            .dropSettings div:first-of-type{
+                margin-left: 0;
+                margin-top: 0.25em;
+            }
+
+            .dropSettings div:last-of-type {
+                margin-left: 0;
+                margin-top: 0.25em;
+            }
+    }
+
+</style>
+
+@code {
+
+    [Inject]
+    private NavigationManager _navigationManager { get; set; }
+    [CascadingParameter]
+    private EventCallback<(ToastType, string)> _showToast { get; set; }
+
+    private EventCallback<bool> showPageLoader => EventCallback.Factory.Create<bool>(this, ShowLoader);
+    private bool _showLoader { get; set; }
+
+    private EventCallback<(ToastType, string)> showToast => EventCallback.Factory.Create<(ToastType, string)>(this, ShowToasts);
+    private Toast _toast { get; set; } = new();
+    private List<Toast> _lstToasts { get; set; } = new();
+    private bool IsPage404 => NavigationManager.Uri.Contains("404");
+
+
+    private void ShowLoader(bool showloader)
+    {
+        _showLoader = showloader;
+    }
+
+    private void ShowToasts((ToastType, string) toast)
+    {
+        this._lstToasts.Add(new Toast
+            {
+                _description = toast.Item2,
+                _toastType = toast.Item1,
+            });
+    }
+}

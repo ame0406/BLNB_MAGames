@@ -1,0 +1,99 @@
+﻿@rendermode InteractiveServer
+
+<div class="dropdown">
+    <button class="dropdown-toggle btn btn-light" disabled="@_isDisable" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+        <span class="toLong">
+            @_displayedTitle
+            @if (_isRequired)
+            {
+                <span class="mandatoryAsterisk">*</span>
+            }
+        </span>
+    </button>
+
+    <ul class="dropdown-menu dropdown-menu-compo-override" aria-labelledby="dropdownMenuButton1" id="list">
+        @if (_hasSearchBar)
+        {
+            <input class="form-control inputToSearch mx-auto my-2" @oninput="Filter" id="dropdownMenuButton1" aria-expanded="false" @bind="@value" />
+        }
+
+        <!--Objets de la liste obligatoire-->
+        @if (_lstObjectsDisplayed != null && _lstObjectsDisplayed.Count() != 0)
+        {
+            foreach (Object objects in _lstObjectsDisplayed)
+            {
+                if (objects != null)
+                {
+                    if (objects.GetType().GetProperty("isDisabled") != null && (bool)objects.GetType().GetProperty("isDisabled").GetValue(objects, null))
+                    {
+                        <li class="dropdown-item disabled-item">
+                            <p>@objects.GetType().GetProperty("Info").GetValue(objects, null)</p>
+                        </li>
+                    }
+                    else
+                    {
+                        <li @onclick="() => ChangeTitle(objects)" class="dropdown-item">
+                            <p>@objects.GetType().GetProperty("Info").GetValue(objects, null)</p>
+                        </li>
+                    }
+                }
+            }
+        }
+        else
+        {
+            <li class="dropdown-item"><p>Aucun élément</p></li>
+        }
+
+    </ul>
+</div>
+
+<style>
+    #list {
+        cursor: pointer;
+        max-height: 200px;
+        overflow-y: auto;
+        margin-left: 0em !important;
+    }
+
+    .toLong {
+        max-width: 90%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .dropdown-toggle {
+        width: 100% !important;
+    }
+
+    .dropdown-menu-compo-override {
+        position: absolute !important;
+        top: 100%;
+        left: 0;
+        transform: none !important;
+        z-index: 1000;
+    }
+
+    .inputToSearch {
+        width: 95%;
+    }
+
+    .borderDropButton {
+        border: 1px solid black !important;
+    }
+
+    .borderDrop {
+        border: 1px solid black !important;
+        border-top: none !important;
+    }
+
+    .disabled-item {
+        background-color: #e9e9e9;
+        color: #bfbebe;
+    }
+
+        .disabled-item:hover {
+            background-color: #e9e9e9;
+            color: #bfbebe;
+        }
+</style>

@@ -40,7 +40,7 @@ namespace api.Controller
         }
 
         [HttpPost]
-        public async Task<ActionResult<List<VenteEbay>>> AddVenteEbay ([FromBody] VenteEbay vEb)
+        public async Task<ActionResult<List<VenteEbay>>> AddVenteEbay([FromBody] VenteEbay vEb)
         {
             _context.VenteEbay.Add(vEb);
             await _context.SaveChangesAsync();

@@ -46,43 +46,43 @@ namespace api.Controller
             return Ok(await GetAllLots());
         }
 
-        [HttpPut]
-        public async Task<ActionResult<List<Lots>>> UpdateLots([FromBody] List<Lots> updateLots)
-        {
-            foreach (Lots l in updateLots)
-            {
-                var lot = await _context.Lots.FindAsync(l.Id);
+        //[HttpPut]
+        //public async Task<ActionResult<List<Lots>>> UpdateLots([FromBody] List<Lots> updateLots)
+        //{
+        //    foreach (Lots l in updateLots)
+        //    {
+        //        var lot = await _context.Lots.FindAsync(l.Id);
 
-                if (lot == null)
-                    return NotFound($"Le lot n'a pas été trouvé.");
+        //        if (lot == null)
+        //            return NotFound($"Le lot n'a pas été trouvé.");
 
-                lot.CreationDate = l.CreationDate;
-                //game.isActive = game.isActive;
+        //        lot.CreationDate = l.CreationDate;
+        //        //game.isActive = game.isActive;
 
-                // Ajouter des ventes Ebay qui ne sont pas déjà présentes
-                foreach (var s in l.Stocks)
-                {
-                    if (!lot.Stocks.Any(v => v.Id == s.Id)) // Remplacez `Id` par la clé primaire appropriée
-                    {
-                        lot.Stocks.Add(s); // Ajouter la vente
-                    }
-                }
+        //        // Ajouter des ventes Ebay qui ne sont pas déjà présentes
+        //        foreach (var s in l.Stocks)
+        //        {
+        //            if (!lot.Stocks.Any(v => v.Id == s.Id)) // Remplacez `Id` par la clé primaire appropriée
+        //            {
+        //                lot.Stocks.Add(s); // Ajouter la vente
+        //            }
+        //        }
 
-                // Retirer les ventes Ebay qui ne sont plus dans la nouvelle liste
-                var stockToRemove = lot.Stocks
-                    .Where(s => !lot.Stocks.Any(newV => newV.Id == s.Id)) // Remplacez `Id` par la clé primaire appropriée
-                    .ToList();
+        //        // Retirer les ventes Ebay qui ne sont plus dans la nouvelle liste
+        //        var stockToRemove = lot.Stocks
+        //            .Where(s => !lot.Stocks.Any(newV => newV.Id == s.Id)) // Remplacez `Id` par la clé primaire appropriée
+        //            .ToList();
 
-                foreach (var stock in stockToRemove)
-                {
-                    stock.Lots.Remove(l); // Supprimer la vente
-                }
-            }
+        //        foreach (var stock in stockToRemove)
+        //        {
+        //            stock.Lot.Remove(l); // Supprimer la vente
+        //        }
+        //    }
 
-            await _context.SaveChangesAsync();
+        //    await _context.SaveChangesAsync();
 
-            return Ok(await GetAllLots());
-        }
+        //    return Ok(await GetAllLots());
+        //}
         [HttpDelete]
         public async Task<ActionResult<List<Lots>>> DeleteLot(int id)
         {

@@ -20,15 +20,7 @@ namespace SharedParams.Tables
 
         public int GameId { get; set; }
         [ForeignKey("GameId")]
-        public Games? Game { get; set; }
-
-        public int SaleTypeId { get; set; }
-        [ForeignKey("SaleTypeId")]
-        public SaleType? SaleType { get; set; }
-
-        public int ConsoleId { get; set; }
-        [ForeignKey("ConsoleId")]
-        public ConsoleSystem? ConsoleSystem { get; set; }
+        public Base_Obj? Game { get; set; }
 
         public int ComponentId { get; set; }
         [ForeignKey("ComponentId")]
@@ -37,11 +29,12 @@ namespace SharedParams.Tables
         public int StatusId { get; set; }
         [ForeignKey("StatusId")]
         public Status? Status { get; set; }
+		public Lots? Lot { get; set; }
 
-        //Many to many
-        public List<VenteMKP>? VentesMKP { get; set; }
+
+		//Many to many
+		public List<VenteMKP>? VentesMKP { get; set; }
         public List<VenteEbay>? VentesEbay { get; set; }
-        public List<Lots>? Lots { get; set; }
 
     }
 }

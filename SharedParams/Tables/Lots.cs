@@ -7,6 +7,7 @@ namespace SharedParams.Tables
         [Key]
         public int Id { get; set; }
         public DateTime CreationDate { get; set; } = DateTime.Now;
+        public decimal PrixDachat { get; set; } 
         public bool IsActive { get; set; } = true;
 
         public List<Stocks>? Stocks { get; set; }

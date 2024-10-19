@@ -70,8 +70,6 @@ namespace api.Controller
                 stock.AddedDate = s.AddedDate;
                 stock.ToMaya = s.ToMaya;
                 stock.GameId = s.GameId;
-                stock.SaleTypeId = s.SaleTypeId;
-                stock.ConsoleId = s.ConsoleId;
                 stock.ComponentId = s.ComponentId;
                 stock.StatusId = s.StatusId;
 
