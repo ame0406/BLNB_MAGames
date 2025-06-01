@@ -10,7 +10,6 @@ namespace SharedParams.Tables
         public decimal PrixDachat { get; set; } 
         public bool IsActive { get; set; } = true;
 
-        public List<Stocks>? Stocks { get; set; }
 
     }
 }

@@ -19,9 +19,11 @@ namespace api.Controller
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> GetObjectsFiltered([FromBody] DropDeepSearchDTO ObjectToSearchInto)
+		public List<GenericObjDTO> GetObjectsFiltered([FromBody] DropDeepSearchDTO ObjectToSearchInto)
 		{
-			return Ok(await _bl.GetObjectsFiltered(ObjectToSearchInto));
-		}
+			List<GenericObjDTO> temp =  _bl.GetObjectsFiltered(ObjectToSearchInto);
+			return temp;
+
+        }
 	}
 }

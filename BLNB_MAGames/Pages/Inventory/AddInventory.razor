@@ -1,0 +1,494 @@
+﻿@page "/AddToStocks"
+@using SharedParams.Parameters
+@using SharedParams.Tables
+@using static SharedParams.Parameters.SharedParameters
+
+<div class="vh-100">
+	<h2 class="text-center mb-5 text-decoration-underline">Ajout dans l'inventaire @(isAddToALot ? " (Lots)" : "")</h2>
+	@* Étape 1 Choix Lot et du type d'ajout*@
+	@if (CurrentStep == 1)
+	{
+		<div class="">
+			<div class="d-flex flex-column justify-content-center gap-4 mb-4">
+				<div class="form-check form-switch mb-4 d-flex justify-content-center">
+					<input class="form-check-input" type="checkbox" role="switch" id="AddLot" @bind="isAddToALot">
+					<label class="toggle" for="AddLot">
+						<div class="glow-comp"></div>
+						<div class="toggle-button"></div>
+					</label>
+					<label class="form-check-label" for="AddLot">Ajout d'un lot?</label>
+				</div>
+
+				@if(isAddToALot)
+				{
+					<div class="d-flex justify-content-center">
+						<div class="form-floating mb-3">
+							<input type="number" class="form-control @(AllLot.Count > 0 ? "disabled" : "")" id="prixAchat" @bind="AddedLot.PrixDachat">
+							<label for="prixAchat">Prix d'achat</label>
+							@if(ErrorNoPrixAchat)
+							{
+								<p class="text-danger fs-5">Vous devez entrer un prix d'achat</p>
+							}
+						</div>
+					</div>
+
+				}
+
+				<div class="d-flex flex-row justify-content-center">
+					<div class="form-check">
+						<input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+						<label class="form-check-label" for="flexCheckDefault">
+							A Maya
+						</label>
+					</div>
+					<div class="form-check">
+						<input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
+						<label class="form-check-label" for="flexCheckChecked">
+							Au deux
+						</label>
+					</div>
+				</div>
+
+			</div>
+
+				<h4 class="text-center mb-4">Que veux tu ajouter?</h4>
+				<div class="d-flex flex-row w-100 justify-content-center gap-4">
+					<button class="btn btn-lg btn-outline-primary" @onclick='() => Step2((short)TypeObj.Games)'>Jeux / Software</button>
+					<button class="btn btn-lg btn-outline-primary" @onclick='() => Step2((short)TypeObj.Hardware)'>Console / Hardware</button>
+					<button class="btn btn-lg btn-outline-primary" @onclick='() => Step2((short)TypeObj.Other)'>Autre</button>
+				</div>
+		</div>
+	}
+
+	@* Étape 2 Quelle jeux marque et edition*@
+	@if(CurrentStep == 2)
+	{
+		@if (SelectedObjToAdd.TypeObj == (short)TypeObj.Games)
+		{
+			@*Si le jeux est sélectionner on préremplis les inputs suivant sinon on attend le remplissage et on l'ajoute a la bd*@
+			@*Fait toujours un ajout de ligne supplémentaire dans la table inventaire a cause des note sur 10 qui peuvent etre differentes.
+			*@
+
+			@* Nom du jeu *@
+			<div class="mb-5">
+				<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Quelle jeu cherche tu?" _hasGames=true OnChosenObject="SelectObj" OnFocusOutNoCoresponding="GetNewObjName">
+				</BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
+			</div>
+
+			<div class="d-flex flex-row justify-content-center gap-4">
+
+				@* Marque *@
+				<BLNB_MAGames.Pages.Components.Dropdown.Dropdown
+					_lstObjects="allMarquesLst.Select(tv => new DropdownString { Id = tv.Id, Info = tv.Name }).ToList()"
+					_isRequired="true"
+					_chosenObject="@(SelectedObjToAdd.Id != 0 ? allMarquesLst.Where(x => x.Id == SelectedObjToAdd.Marque.Id).Select(m => new DropdownString { Id = m.Id, Info = m.Name }).FirstOrDefault() : null)"
+					_title="Marque"
+					_hasSearchBar="true"
+					OnObjectSelected="GetNewObjMarque">
+				</BLNB_MAGames.Pages.Components.Dropdown.Dropdown>
+
+
+				@* Type de vente *@
+				<BLNB_MAGames.Pages.Components.Dropdown.Dropdown 
+					_lstObjects="allTypeVenteLst.Select(tv => new DropdownString { Id = tv.Id, Info = tv.Name }).ToList()"
+					_isRequired=true
+					_chosenObject="@(SelectedObjToAdd.Id != 0 ? allTypeVenteLst.Where(x => x.Id == SelectedObjToAdd.SaleType.Id).Select(m => new DropdownString { Id = m.Id, Info = m.Name }).FirstOrDefault() : null)"
+					_title="Console"
+					_hasSearchBar=true
+					OnObjectSelected="GetNewObjSaleType">
+				</BLNB_MAGames.Pages.Components.Dropdown.Dropdown>
+
+				@* Edition Special *@
+				<div class="d-flex justify-content-center">
+					<div class="form-floating mb-3">
+						<input type="text" class="form-control" id="edition" @bind="SelectedObjToAdd.Edition">
+						<label for="prixAchat">Edition</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="d-flex flex-row justify-content-between">
+				<button class="btn btn-outline-dark" @onclick="Step1">Retour</button>
+				<button class="btn btn-primary" @onclick="Step3">Suivant</button>
+			</div>
+		}
+		else if (SelectedObjToAdd.TypeObj == (short)TypeObj.Hardware)
+		{
+			<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Que cherchez-vous?" _hasHardware=true OnChosenObject="SelectObj"></BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
+		}
+		else
+		{
+			<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Que cherchez-vous?" _hasOther=true OnChosenObject="SelectObj"></BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
+		}
+	}
+
+	@* Étape 3 All info garder ou vendre*@
+	@if(CurrentStep == 3)
+	{
+		<div class="d-flex flex-row">
+			@* Si c'est un ajout de lot *@
+			@if(isAddToALot)
+			{
+				<div class="w-25">
+					<h4 class="p-1">Élements du lot</h4>
+					@foreach(var s in AllLot)
+					{
+						<ul>
+							<li>
+								<p class="fs-5">@(s.BaseObj.Name)</p>
+							</li>
+						</ul>
+					}
+				</div>
+			}
+			@if (SelectedObjToAdd.TypeObj == (short)TypeObj.Games)
+			{
+				<div>
+					<div class="d-flex flex-row">
+						<div class="w-50">
+							@* Futur price charting price *@
+
+							<div class="m-4 border border-2 h-75">
+								<h4 class="border border-bottom border-2 p-1">Ancienne ventes</h4>
+								<div class="border border-bottom border-2 p-1 d-flex flex-row justify-content-between">
+									<p>Condition</p>
+									<p>Date de vente</p>
+									<p>Prix vendu</p>
+								</div>
+
+								@if (lstAncienneVentes.Count() > 0)
+								{
+									@foreach (Stocks s in lstAncienneVentes)
+									{
+										<div class="border border-bottom border-2 p-1 d-flex flex-row justify-content-between">
+											<p>@s.Condition.Name</p>
+											<p>@s.SoldDate</p>
+											<p>@s.SoldPrice</p>
+										</div>
+									}
+								}
+							</div>
+						</div>
+						<div class="me-4">
+							<h2 class="text-center">@($"{SelectedObjToAdd.Name} - {SelectedObjToAdd.Marque.Name} {SelectedObjToAdd.SaleType.Name}")</h2>
+							<div class="d-flex flex-row">
+
+								@* Condition *@
+								<div class="d-flex flex-column">
+									<label for="boite1" class="form-label">Condition<span class="text-warning">*</span></label>
+									<BLNB_MAGames.Pages.Components.Dropdown.Dropdown _lstObjects="allConditionLst.Select(tv => new DropdownString { Id = tv.Id, Info = tv.Name }).ToList()"
+																					 _isRequired="true"
+																					 _title="Condition"
+																					 _hasSearchBar="true"
+																					 _chosenObject="@(AddNewStocks.Condition == null || AddNewStocks.Condition.Id == 0 ? null : allConditionLst
+																						.Where(tv => tv.Id == AddNewStocks.Condition.Id)
+																						.Select(tv => new DropdownString { Id = tv.Id, Info = tv.Name })
+																						.FirstOrDefault())"
+																					 OnObjectSelected="GetCondition">
+									</BLNB_MAGames.Pages.Components.Dropdown.Dropdown>
+									@if (ErrorNoCondition)
+									{
+										<p class="text-danger fs-5">Vous devez choisir une condition</p>
+									}
+								</div>
+							</div>
+							<div class="d-flex flex-row gap-4 pt-4 justify-content-between m-2">
+								<div class="d-flex flex-column">
+									<label for="boite1" class="form-label">Boite</label>
+									<div class="input-group mb-3">
+										<input type="number" class="form-control" id="boite1" placeholder="Boite" aria-label="Boite" aria-describedby="basic-addon1" @oninput="e => GetConditionBoite(e)" value="@(AddNewStocks.BoxRate == null ? 0 : AddNewStocks.BoxRate)">
+										<div class="input-group-append">
+											<span class="input-group-text" id="basic-addon1"> /10 </span>
+										</div>
+									</div>
+									@if (ErrorRateBox)
+									{
+										<p class="text-danger fs-5">Doit être entre 1 et 10</p>
+									}
+								</div>
+
+								<div class="d-flex flex-column">
+									<label for="boite2" class="form-label">Manuel</label>
+									<div class="input-group mb-3">
+										<input type="number" class="form-control" id="boite2" placeholder="Manuel" aria-label="Boite" aria-describedby="basic-addon2" @oninput="e => GetConditionManuel(e)" value="@(AddNewStocks.ManualRate == null ? 0 : AddNewStocks.ManualRate)">
+										<div class="input-group-append">
+											<span class="input-group-text" id="basic-addon2"> /10 </span>
+										</div>
+									</div>
+									@if (ErrorRateManual)
+									{
+										<p class="text-danger fs-5">Doit être entre 1 et 10</p>
+									}
+								</div>
+
+								<div class="d-flex flex-column">
+									<label for="boite3" class="form-label">Disque</label>
+									<div class="input-group mb-3">
+										<input type="number" class="form-control" id="boite3" placeholder="Disque" aria-label="Boite" aria-describedby="basic-addon3" @oninput="e => GetConditionDisque(e)" value="@(AddNewStocks.CDRate == null ? 0 : AddNewStocks.CDRate)">
+										<div class="input-group-append">
+											<span class="input-group-text" id="basic-addon3"> /10 </span>
+										</div>
+									</div>
+									@if (ErrorRateCD)
+									{
+										<p class="text-danger fs-5">Doit être entre 1 et 10</p>
+									}
+								</div>
+							</div>
+							<div class="my-4 mx-2 d-flex flex-row gap-4">
+								<div class="w-75">
+									<label for="boite3" class="form-label">Commentaire</label>
+									<textarea id="Commentaire" class="form-control" placeholder="Entrez votre commentaire ici" @oninput="e => GetComment(e)" value="@AddNewStocks.Comments"></textarea>
+								</div>
+							</div>
+							<div class="my-4 mx-2 d-flex flex-row gap-4">
+								<div>
+									@* Statue *@
+									<label for="boite1" class="form-label">Statut<span class="text-warning">*</span></label>
+									<BLNB_MAGames.Pages.Components.Dropdown.Dropdown _lstObjects="allStatutLst.Select(tv => new DropdownString { Id = tv.Id, Info = tv.Name }).ToList()"
+																					 _isRequired="true"
+																					 _title="Statut"
+																					 _hasSearchBar="true"
+																					 _chosenObject="@(AddNewStocks.Status == null || AddNewStocks.Status.Id == 0 ? null : allStatutLst
+																						.Where(tv => tv.Id == AddNewStocks.Status.Id)
+																						.Select(tv => new DropdownString { Id = tv.Id, Info = tv.Name })
+																						.FirstOrDefault())"
+																					 OnObjectSelected="GetStatut">
+									</BLNB_MAGames.Pages.Components.Dropdown.Dropdown>
+									@if (ErrorNoStatut)
+									{
+										<p class="text-danger fs-5">Vous devez choisir un statut</p>
+									}
+								</div>
+
+								@if(!isAddToALot)
+								{
+									<div class="">
+										<label for="boite3" class="form-label">Prix d'achat<span class="text-warning">*</span></label>
+										<input id="buyValue" class="form-control" placeholder="Entrez le prix d'achat" @oninput="e => GetBuyValue(e)" value="@(AddNewStocks.BuyPrice == null ? 0 : AddNewStocks.BuyPrice)" />
+									</div>
+									@if (ErrorNoBuyPrice)
+									{
+										<p class="text-danger fs-5">Vous devez indiquer le prix d'achat</p>
+									}
+								}
+							</div>
+							<div>
+								<div class="d-flex flex-row justify-content-between">
+									<button class="btn btn-outline-dark" @onclick="() => Step2((short)TypeObj.Games)">Retour</button>
+									<button class="btn btn-primary" @onclick="Step4">Suivant</button>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+
+			}
+			else if (SelectedObjToAdd.TypeObj == (short)TypeObj.Hardware)
+			{
+
+			}
+			else
+			{
+
+			}
+		</div>
+		
+	}
+	@* Étape 4 si a vendre MKP et Ebay*@
+	@if (CurrentStep == 4)
+	{
+		<div class="d-flex flex-row">
+			@* Si c'est un ajout de lot (Liste de ce qu'il contient) *@
+			@if (isAddToALot)
+			{
+				<div class="w-25">
+					<h4 class="p-1">Élements du lot</h4>
+					@foreach (var s in AllLot)
+					{
+						<ul>
+							<li>
+								<p class="fs-5">@(s.BaseObj.Name)</p>
+							</li>
+						</ul>
+					}
+				</div>
+			}
+			@if (SelectedObjToAdd.TypeObj == (short)TypeObj.Games)
+			{
+				<div>
+					<div class="d-flex flex-row">
+						<div class="w-50">
+							@* Futur price charting price *@
+
+							<div class="m-4 border border-2 h-75">
+								<h4 class="border border-bottom border-2 p-1">Ancienne ventes</h4>
+								<div class="border border-bottom border-2 p-1 d-flex flex-row justify-content-between">
+									<p>Condition</p>
+									<p>Date de vente</p>
+									<p>Prix vendu</p>
+								</div>
+
+								@if (lstAncienneVentes.Count() > 0)
+								{
+									@foreach (Stocks s in lstAncienneVentes)
+									{
+										<div class="border border-bottom border-2 p-1 d-flex flex-row justify-content-between">
+											<p>@s.Condition.Name</p>
+											<p>@s.SoldDate</p>
+											<p>@s.SoldPrice</p>
+										</div>
+									}
+								}
+							</div>
+						</div>
+						<div class="w-auto">
+							<h2 class="text-center">@($"{SelectedObjToAdd.Name} - {SelectedObjToAdd.Marque.Name} {SelectedObjToAdd.SaleType.Name}")</h2>
+
+							<ul class="nav nav-tabs">
+								<li class="nav-item">
+									<p class="nav-link @(isAnnonceMkp ? "active" : "") cursor-pointer" @onclick="() => changeOngletAnnonce(true)">Annonce MKP</p>
+								</li>
+								<li class="nav-item">
+									<p class="nav-link @(isAnnonceMkp ? "" : "active") cursor-pointer" @onclick="() => changeOngletAnnonce(false)">Annonce Ebay</p>
+								</li>
+							</ul>
+
+							<div class="mt-2" style="@(isAnnonceMkp ? "" : "display: none;")">
+								<BLNB_MAGames.Pages.Components.VenteMkpFormulaire.VenteMkpFormulaire ReturnInfo="GetVenteMkp">
+								</BLNB_MAGames.Pages.Components.VenteMkpFormulaire.VenteMkpFormulaire>
+							</div>
+
+							<div class="mt-2" style="@(isAnnonceMkp ? "display: none;" : "")">
+								<BLNB_MAGames.Pages.Components.VenEbayFormulaire.VenEbayFormulaire ReturnInfo="GetVenteEbay">
+								</BLNB_MAGames.Pages.Components.VenEbayFormulaire.VenEbayFormulaire>
+							</div>
+
+
+							<div class="d-flex flex-row justify-content-between">
+								<button class="btn btn-outline-dark" @onclick="Step3">Retour</button>
+								@if (isAddToALot)
+								{
+									<button class="btn btn-primary" @onclick="Step5">Ajouter au lot</button>
+
+								}
+								else
+								{
+									<button class="btn btn-primary" @onclick="Step5">Enregistrer</button>
+
+								}
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+
+			}
+			else if (SelectedObjToAdd.TypeObj == (short)TypeObj.Hardware)
+			{
+
+			}
+			else
+			{
+
+			}
+		</div>
+	}
+	@* Etape 5  Ajout a l'inventaire*@
+	@if(CurrentStep == 5)
+	{
+		<div class="d-flex flex-column justify-content-center align-content-center">
+			<img class="mb-4" />
+			<h2 class="text-center">@($"{SelectedObjToAdd.Name} - {SelectedObjToAdd.Marque.Name} {SelectedObjToAdd.SaleType.Name}")</h2>
+
+			@if (AddNewStocks.Status.Id == (int)SharedParameters.Status.Garder)
+			{
+				<div>
+					<h3>À été ajouter avec sucès à la collection</h3>
+					<div class="">
+						<label for="keepvalueinput" class="form-label">Valeur<span class="text-warning">*</span></label>
+						<input id="keepValue" class="form-control" placeholder="Entrez la valeur" @bind="AddNewStocks.KeepValue" />
+					</div>
+					@if (ErrorKeepValue)
+					{
+						<p class="text-danger fs-5">Vous devez indiquer la valeur de l'objet garder</p>
+					}
+				</div>
+
+			}
+			else
+			{
+				<h3>À été ajouter avec sucès à l'inventaire</h3>
+
+			}
+
+			<div class="d-flex flex-row justify-content-between">
+				@if(isAddToALot)
+				{
+					<button class="btn btn-outline-dark" @onclick="Step1">Ajouter un autre elément au lot</button>
+					<button class="btn btn-outline-dark" @onclick="ResetStep1">Fin du lot</button>
+				}
+				else
+				{
+					<button class="btn btn-outline-dark" @onclick="Step1">Ajouter un autre elément</button>
+
+				}
+				<button class="btn btn-primary" @onclick="NavigateToHome">Accueil</button>
+			</div>
+		</div>
+	}
+</div>
+
+
+
+<style>
+
+	/* Switch */
+	.form-check {
+		display: flex;
+		align-items: center; /* Aligne le switch et le label au centre verticalement */
+	}
+
+	.form-check-input {
+		display: none; /* Masquer l'input original */
+	}
+
+	.toggle {
+		position: relative;
+		display: inline-block;
+		width: 60px;
+		height: 20px;
+		border: 2px solid #444249;
+		border-radius: 20px;
+		cursor: pointer;
+		transition: border-color 0.6s ease-out;
+		margin-right: 10px; /* Espace entre le switch et le label */
+	}
+
+	.form-check-input:checked + .toggle {
+		border-color: rgba(137, 194, 217, 0.4);
+	}
+
+	.toggle-button {
+		position: absolute;
+		top: 4px;
+		width: 20px;
+		bottom: 4px;
+		right: 32px;
+		background-color: #444249;
+		border-radius: 19px;
+		transition: all 0.3s;
+	}
+
+	.form-check-input:checked + .toggle .toggle-button {
+		top: 4px;
+		width: 48px;
+		right: 4px;
+		background-color: #89c2da;
+		box-shadow: 0 0 16px #4b7a8d;
+	}
+
+</style>

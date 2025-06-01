@@ -30,23 +30,15 @@ namespace api.Controller
 
 		[HttpGet]
 		[Route("{id}")]
-		public ActionResult<Base_Obj> GetGameById(int id)
+		public Base_Obj GetGameById(int id)
 		{
-			Base_Obj game = _bodl.GetBaseObjById(id);
-
-			if (game is null)
-				return BadRequest("Jeu non trouver.");
-
-			return Ok(game);
+			return _bodl.GetBaseObjById(id);
 		}
 
 		[HttpPost]
-		public async Task<ActionResult<List<Base_Obj>>> AddGame([FromBody] Base_Obj game)
+		public Base_Obj AddGame([FromBody] Base_Obj game)
 		{
-			_context.Base_Obj.Add(game);
-			await _context.SaveChangesAsync();
-
-			return Ok(await GetAllGames());
+			return _bodl.AddGame(game);
 		}
 
 		[HttpPut]

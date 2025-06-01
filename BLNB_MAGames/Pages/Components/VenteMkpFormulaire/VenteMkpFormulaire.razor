@@ -1,0 +1,13 @@
+﻿
+<div class="">
+    <h3>Ajout d'une annonce MKP</h3>
+
+    <div class="d-flex flex-column">
+        <label>Prix de vente<span class="text-warning">*</span></label>
+        <input class="form-control" type="number" step=".01" @oninput="e => GetSalePriceMkp(e)" />
+    </div>
+    <div class="d-flex flex-column w-100">
+        <label>Lien</label>
+        <input class="form-control w-100" type="text" @oninput="e => GetLink(e)" />
+    </div>
+</div>

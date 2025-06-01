@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.Data;
 
@@ -11,9 +12,11 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20241019224900_q")]
+    partial class q
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -196,26 +199,20 @@ namespace api.Migrations
                     b.Property<DateTime>("AddedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("BaseObjId")
+                    b.Property<int>("BoxRate")
                         .HasColumnType("int");
 
-                    b.Property<int?>("BoxRate")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("BuyPrice")
+                    b.Property<decimal>("BuyPrice")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("CDRate")
+                    b.Property<int>("CDRate")
                         .HasColumnType("int");
 
-                    b.Property<string>("Comments")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ConditionId")
+                    b.Property<int>("ComponentId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("EstimatedSalePrice")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -226,13 +223,10 @@ namespace api.Migrations
                     b.Property<int?>("LotId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ManualRate")
+                    b.Property<int>("ManualRate")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("SoldDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal?>("SoldPrice")
+                    b.Property<decimal?>("SalePrice")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("StatusId")
@@ -241,11 +235,14 @@ namespace api.Migrations
                     b.Property<bool>("ToMaya")
                         .HasColumnType("bit");
 
+                    b.Property<string>("comments")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("BaseObjId");
+                    b.HasIndex("ComponentId");
 
-                    b.HasIndex("ConditionId");
+                    b.HasIndex("GameId");
 
                     b.HasIndex("LotId");
 
@@ -369,20 +366,20 @@ namespace api.Migrations
 
             modelBuilder.Entity("SharedParams.Tables.Stocks", b =>
                 {
-                    b.HasOne("SharedParams.Tables.Base_Obj", "BaseObj")
+                    b.HasOne("SharedParams.Tables.Condition", "Complicity")
                         .WithMany()
-                        .HasForeignKey("BaseObjId")
+                        .HasForeignKey("ComponentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SharedParams.Tables.Condition", "Condition")
+                    b.HasOne("SharedParams.Tables.Base_Obj", "Game")
                         .WithMany()
-                        .HasForeignKey("ConditionId")
+                        .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("SharedParams.Tables.Lots", "Lot")
-                        .WithMany()
+                        .WithMany("Stocks")
                         .HasForeignKey("LotId");
 
                     b.HasOne("SharedParams.Tables.Status", "Status")
@@ -391,9 +388,9 @@ namespace api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("BaseObj");
+                    b.Navigation("Complicity");
 
-                    b.Navigation("Condition");
+                    b.Navigation("Game");
 
                     b.Navigation("Lot");
 
@@ -433,6 +430,11 @@ namespace api.Migrations
             modelBuilder.Entity("SharedParams.Tables.Base_Obj", b =>
                 {
                     b.Navigation("lstImages");
+                });
+
+            modelBuilder.Entity("SharedParams.Tables.Lots", b =>
+                {
+                    b.Navigation("Stocks");
                 });
 #pragma warning restore 612, 618
         }

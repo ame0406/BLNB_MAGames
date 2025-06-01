@@ -13,6 +13,6 @@ namespace SharedParams.Tables
         public DateTime CreationDate { get; set; } = DateTime.Now;
         public DateTime? EndDate { get; set; }
 
-        public List<Stocks>? Stocks { get; set; }
+        public List<Stocks>? Stocks { get; set; } = new List<Stocks>();
     }
 }

@@ -12,13 +12,13 @@ namespace SharedParams.Tables
 		public int? GoSpace { get; set; }	//Hardware
 		public short TypeObj { get; set; }	//All
 		public bool IsActive { get; set; } = true;
-		public List<ObjImages>? lstImages { get; set; }
+		public List<ObjImages>? lstImages { get; set; } = new List<ObjImages>();
 
 		public int SaleTypeId { get; set; }
 		[ForeignKey("SaleTypeId")]
-		public SaleType? SaleType { get; set; }
+		public SaleType? SaleType { get; set; } = new SaleType();
 		public int? MarqueId { get; set; } //Conosle, Games
 		[ForeignKey("MarqueId")]
-		public Marques? Marque { get; set; }
+		public Marques? Marque { get; set; } = new Marques();
 	}
 }

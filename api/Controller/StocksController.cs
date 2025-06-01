@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
+using api.BLogics;
 
 namespace api.Controller
 {
@@ -12,10 +13,12 @@ namespace api.Controller
     public class StocksController : ControllerBase
     {
         private readonly DataContext _context;
+        private StocksBL _bl;
 
-        public StocksController(DataContext context)
+        public StocksController(DataContext context, StocksBL bl)
         {
             _context = context;
+            _bl = bl;
         }
 
         //Tu peux faire  Task<ActionResult<List<Games>>> Pour savoir ce que tu recoit dans swagger
@@ -38,16 +41,14 @@ namespace api.Controller
             return Ok(stock);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<List<Stocks>>> AddStatus([FromBody] Stocks stock)
-        {
-            _context.Stocks.Add(stock);
-            await _context.SaveChangesAsync();
+		[HttpPost]
+		[Route("AddStock")]
+		public bool AddStock([FromBody] Stocks stock)
+		{
+			return _bl.AddStock(stock); 
+		}
 
-            return Ok(await GetAllStocks());
-        }
-
-        [HttpPut]
+		[HttpPut]
         public async Task<ActionResult<List<Stocks>>> UpdateStatus([FromBody] List<Stocks> updateStocks)
         {
             foreach (Stocks s in updateStocks)
@@ -63,14 +64,13 @@ namespace api.Controller
                 stock.BoxRate = s.BoxRate;
                 stock.ManualRate = s.ManualRate;
                 stock.CDRate = s.CDRate;
-                stock.comments = s.comments;
+                stock.Comments = s.Comments;
                 stock.BuyPrice = s.BuyPrice;
-                stock.SalePrice = s.SalePrice;
                 stock.KeepValue = s.KeepValue;
                 stock.AddedDate = s.AddedDate;
                 stock.ToMaya = s.ToMaya;
-                stock.GameId = s.GameId;
-                stock.ComponentId = s.ComponentId;
+                stock.BaseObjId = s.BaseObjId;
+                stock.ConditionId = s.ConditionId;
                 stock.StatusId = s.StatusId;
 
                 // Mettre à jour les relations many-to-many pour VentesMKP

@@ -70,14 +70,10 @@ public class ApiService
 	#region DropDeepSearch
 	public async Task<List<GenericObjDTO>> GetObjectsFilteredAsync(DropDeepSearchDTO searchDTO)
 	{
-		// Envoie une requête POST avec l'objet de recherche (searchDTO) dans le corps de la requête
-		var response = await _httpClient.PostAsJsonAsync("dropdeepsearch", searchDTO);
+        var response = await _httpClient.PostAsJsonAsync("dropdeepsearch", searchDTO);
+        response.EnsureSuccessStatusCode(); // Vérifie si la réponse est un succès
+        return await response.Content.ReadFromJsonAsync<List<GenericObjDTO>>(); // Retourne l'objet ajouté
 
-		// Vérifie si la requête a réussi
-		response.EnsureSuccessStatusCode();
-
-		// Retourne la liste des objets filtrés
-		return await response.Content.ReadFromJsonAsync<List<GenericObjDTO>>();
 	}
     #endregion#
 
@@ -95,6 +91,35 @@ public class ApiService
             return null;
         }
     }
-    #endregion
+	#endregion
+
+	#region Stocks
+	public async Task<List<Stocks>> GetAllStocksAsync()
+	{
+		return await _httpClient.GetFromJsonAsync<List<Stocks>>("stocks");
+	}
+	public async Task<bool> AddStockAsync(Stocks stock)
+	{
+		try
+		{
+			var response = await _httpClient.PostAsJsonAsync("stocks/AddStock", stock);
+
+			return response.IsSuccessStatusCode;
+		}
+		catch (Exception ex)
+		{
+			return false;
+		}
+	}
+	#endregion
+
+	#region Lots
+	public async Task<Lots> AddLotAsync(Lots lot)
+	{
+		var response = await _httpClient.PostAsJsonAsync("lots/AddLot", lot);
+		response.EnsureSuccessStatusCode(); 
+		return await response.Content.ReadFromJsonAsync<Lots>();
+	}
+	#endregion
 }
 

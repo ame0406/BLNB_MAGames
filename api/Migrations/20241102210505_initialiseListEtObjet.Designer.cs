@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.Data;
 
@@ -11,9 +12,11 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20241102210505_initialiseListEtObjet")]
+    partial class initialiseListEtObjet
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -196,9 +199,6 @@ namespace api.Migrations
                     b.Property<DateTime>("AddedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("BaseObjId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("BoxRate")
                         .HasColumnType("int");
 
@@ -211,11 +211,14 @@ namespace api.Migrations
                     b.Property<string>("Comments")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("ComponentId")
+                        .HasColumnType("int");
+
                     b.Property<int>("ConditionId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("EstimatedSalePrice")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -243,9 +246,9 @@ namespace api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BaseObjId");
+                    b.HasIndex("ComponentId");
 
-                    b.HasIndex("ConditionId");
+                    b.HasIndex("GameId");
 
                     b.HasIndex("LotId");
 
@@ -369,20 +372,18 @@ namespace api.Migrations
 
             modelBuilder.Entity("SharedParams.Tables.Stocks", b =>
                 {
-                    b.HasOne("SharedParams.Tables.Base_Obj", "BaseObj")
-                        .WithMany()
-                        .HasForeignKey("BaseObjId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("SharedParams.Tables.Condition", "Condition")
                         .WithMany()
-                        .HasForeignKey("ConditionId")
+                        .HasForeignKey("ComponentId");
+
+                    b.HasOne("SharedParams.Tables.Base_Obj", "Game")
+                        .WithMany()
+                        .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("SharedParams.Tables.Lots", "Lot")
-                        .WithMany()
+                        .WithMany("Stocks")
                         .HasForeignKey("LotId");
 
                     b.HasOne("SharedParams.Tables.Status", "Status")
@@ -391,9 +392,9 @@ namespace api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("BaseObj");
-
                     b.Navigation("Condition");
+
+                    b.Navigation("Game");
 
                     b.Navigation("Lot");
 
@@ -433,6 +434,11 @@ namespace api.Migrations
             modelBuilder.Entity("SharedParams.Tables.Base_Obj", b =>
                 {
                     b.Navigation("lstImages");
+                });
+
+            modelBuilder.Entity("SharedParams.Tables.Lots", b =>
+                {
+                    b.Navigation("Stocks");
                 });
 #pragma warning restore 612, 618
         }

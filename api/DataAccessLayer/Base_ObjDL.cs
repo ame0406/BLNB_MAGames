@@ -20,41 +20,32 @@ namespace api.DataAccessLayer
 
 		public List<Base_Obj> GetAllBaseObjFiltered(DropDeepSearchDTO ObjectToSearchInto)
 		{
-			var query = _context.Base_Obj
-				.Include(x => x.SaleType)
-				.Where(c => c.IsActive);
-
-			// Utilisez une variable pour stocker les conditions
-			var conditions = new List<Expression<Func<Base_Obj, bool>>>();
-
-			if (ObjectToSearchInto._haveGames)
-			{
-				conditions.Add(c => c.TypeObj == (short)TypeObj.Games);
-			}
-			if (ObjectToSearchInto._haveHardware)
-			{
-				conditions.Add(c => c.TypeObj == (short)TypeObj.Hardware);
-			}
-			if (ObjectToSearchInto._haveOther)
-			{
-				conditions.Add(c => c.TypeObj == (short)TypeObj.Other);
-			}
-
-			// Ajoutez les conditions avec un OU
-			if (conditions.Count > 0)
-			{
-				query = query.Where(c => conditions.Any(condition => condition.Compile()(c)));
-			}
-
-			return query.ToList();
+            return _context.Base_Obj
+                .Include(x => x.SaleType)
+				.Include(x => x.Marque)
+                .Where(c => c.IsActive).ToList();
 		}
 
 		public Base_Obj GetBaseObjById(int id)
 		{
             return _context.Base_Obj
                 .Include(x => x.SaleType)
+				.Include(x => x.Marque)
                 .Where(x => x.Id == id)
-                .FirstOrDefault();
+                .FirstOrDefault() ?? new Base_Obj();
         }
+
+		public Base_Obj AddGame(Base_Obj game)
+		{
+			if (game.Marque != null)
+				_context.Attach(game.Marque);
+			if (game.SaleType != null)
+				_context.Attach(game.SaleType);
+
+			_context.Base_Obj.Add(game);
+			_context.SaveChanges();  // Enregistre immédiatement les changements
+
+			return game; // game.Id est mis à jour automatiquement
+		}
 	}
 }

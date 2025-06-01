@@ -34,10 +34,13 @@
                                     </div>
                                 }
                                 <p class="mb-0">
-                                    @(" " + objects.DisplayName)
+                                    @(" " + objects.DisplayName + " - ")
                                     @foreach (string s in objects.DisplayProps)
                                     {
-                                        @(" - " + s)
+                                        if (s != null)
+                                        {
+                                            @(s + " ") 
+                                        }
                                     }
                                 </p>
                             </div>

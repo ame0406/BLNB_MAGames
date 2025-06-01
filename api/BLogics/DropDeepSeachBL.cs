@@ -18,7 +18,7 @@ namespace api.BLogics
 			_ObjDL = ObjDL;
 		}
 
-		public async Task<List<GenericObjDTO>> GetObjectsFiltered(DropDeepSearchDTO ObjectToSearchInto)
+		public List<GenericObjDTO> GetObjectsFiltered(DropDeepSearchDTO ObjectToSearchInto)
 		{
 			List<GenericObjDTO> result = new List<GenericObjDTO>();
 			List<Base_Obj>? allBase_Obj = new List<Base_Obj>();
@@ -54,18 +54,18 @@ namespace api.BLogics
 
 		private GenericObjDTO ConvertToGenericObjDTO(Base_Obj baseObj)
 		{
-			string language = Thread.CurrentThread.CurrentCulture.ToString();
-
 			return new GenericObjDTO
 			{
 				// Mapper les propriétés nécessaires
-				ImageToDisplay = baseObj.lstImages.First().Image,
-				DisplayName = baseObj.Name,
+				ImageToDisplay = baseObj.lstImages?.FirstOrDefault()?.Image ?? "Image par défaut",
+				DisplayName = baseObj.Name ?? "Nom par défaut",
+
 				DisplayProps = new List<string>
 				{
-					baseObj.Edition,
-					baseObj.SaleType.Name
-					
+					baseObj.Edition ?? string.Empty,
+					baseObj.Marque?.Name ?? string.Empty,
+					baseObj.SaleType?.Name ?? string.Empty
+
 				},
 				Id = baseObj.Id,
 			};

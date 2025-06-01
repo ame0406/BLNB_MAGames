@@ -1,7 +1,12 @@
 ﻿@rendermode InteractiveServer
 
 <div class="dropdown">
-    <button class="dropdown-toggle btn btn-light" disabled="@_isDisable" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+    <button class="dropdown-toggle btn btn-lg w-100 border border-2"
+            disabled="@_isDisable"
+            type="button"
+            id="dropdownMenuButton1"
+            data-bs-toggle="dropdown"
+            aria-expanded="false">
         <span class="toLong">
             @_displayedTitle
             @if (_isRequired)
@@ -11,13 +16,18 @@
         </span>
     </button>
 
-    <ul class="dropdown-menu dropdown-menu-compo-override" aria-labelledby="dropdownMenuButton1" id="list">
+    <ul class="dropdown-menu w-100"
+        aria-labelledby="dropdownMenuButton1"
+        id="list">
         @if (_hasSearchBar)
         {
-            <input class="form-control inputToSearch mx-auto my-2" @oninput="Filter" id="dropdownMenuButton1" aria-expanded="false" @bind="@value" />
+            <input class="form-control inputToSearch mx-auto my-2"
+                   @oninput="Filter"
+                   id="dropdownMenuButton1"
+                   aria-expanded="false"
+                   @bind="@value" />
         }
 
-        <!--Objets de la liste obligatoire-->
         @if (_lstObjectsDisplayed != null && _lstObjectsDisplayed.Count() != 0)
         {
             foreach (Object objects in _lstObjectsDisplayed)
@@ -52,7 +62,6 @@
         cursor: pointer;
         max-height: 200px;
         overflow-y: auto;
-        margin-left: 0em !important;
     }
 
     .toLong {
@@ -66,25 +75,13 @@
         width: 100% !important;
     }
 
-    .dropdown-menu-compo-override {
-        position: absolute !important;
-        top: 100%;
-        left: 0;
-        transform: none !important;
-        z-index: 1000;
+    .dropdown-menu {
+        width: 100%; /* The dropdown takes full width of the button */
+        margin-top: 0; /* Remove unnecessary margin */
     }
 
     .inputToSearch {
         width: 95%;
-    }
-
-    .borderDropButton {
-        border: 1px solid black !important;
-    }
-
-    .borderDrop {
-        border: 1px solid black !important;
-        border-top: none !important;
     }
 
     .disabled-item {
@@ -96,4 +93,8 @@
             background-color: #e9e9e9;
             color: #bfbebe;
         }
+
+    .mandatoryAsterisk {
+        color: red;
+    }
 </style>

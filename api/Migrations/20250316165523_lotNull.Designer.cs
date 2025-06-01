@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.Data;
 
@@ -11,9 +12,11 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250316165523_lotNull")]
+    partial class lotNull
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -382,7 +385,7 @@ namespace api.Migrations
                         .IsRequired();
 
                     b.HasOne("SharedParams.Tables.Lots", "Lot")
-                        .WithMany()
+                        .WithMany("Stocks")
                         .HasForeignKey("LotId");
 
                     b.HasOne("SharedParams.Tables.Status", "Status")
@@ -433,6 +436,11 @@ namespace api.Migrations
             modelBuilder.Entity("SharedParams.Tables.Base_Obj", b =>
                 {
                     b.Navigation("lstImages");
+                });
+
+            modelBuilder.Entity("SharedParams.Tables.Lots", b =>
+                {
+                    b.Navigation("Stocks");
                 });
 #pragma warning restore 612, 618
         }

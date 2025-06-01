@@ -1,4 +1,5 @@
 ﻿using api.Data;
+using api.DataAccessLayer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +12,12 @@ namespace api.Controller
     public class LotsController : ControllerBase
     {
         private readonly DataContext _context;
+        private readonly LotsDL _dl;
 
-        public LotsController(DataContext context)
+        public LotsController(DataContext context, LotsDL dl)
         {
             _context = context;
+            _dl = dl;
         }
 
         //Tu peux faire  Task<ActionResult<List<Games>>> Pour savoir ce que tu recoit dans swagger
@@ -38,12 +41,10 @@ namespace api.Controller
         }
 
         [HttpPost]
-        public async Task<ActionResult<List<Lots>>> AddLot([FromBody] Lots lot)
+		[Route("AddLot")]
+		public Lots AddLot([FromBody] Lots lot)
         {
-            _context.Lots.Add(lot);
-            await _context.SaveChangesAsync();
-
-            return Ok(await GetAllLots());
+            return _dl.AddLot(lot);
         }
 
         //[HttpPut]
