@@ -1,0 +1,49 @@
+﻿@using SharedParams.Parameters
+@using SharedParams.Tables
+@using static SharedParams.Parameters.SharedParameters
+
+@page "/Inventory/{BaseObjId}"
+
+@if (stocksByBaseObj.Count() > 0)
+{
+    <h1 class="mb-4">@stocksByBaseObj.First().BaseObj?.Name</h1>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <img src="@GetMainImage" class="img-fluid rounded border" alt="Image principale" />
+            <div class="d-flex flex-wrap mt-2">
+                @foreach (var img in stocksByBaseObj.First().BaseObj.lstImages)
+                {
+                    <img src="@img" class="img-thumbnail me-2" style="height: 80px; cursor: pointer;" @onclick="() => MainImage = img.Image" />
+                }
+            </div>
+        </div>
+        <div class="col-md-6">
+            <p><strong>Marque:</strong> @stocksByBaseObj.First().BaseObj.Marque?.Name</p>
+            <p><strong>Type de vente:</strong> @stocksByBaseObj.First().BaseObj.SaleType?.Name</p>
+            <p><strong>Description:</strong> à compléter...</p>
+        </div>
+    </div>
+
+    <h4>Choisissez une version :</h4>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+        @foreach (var stock in stocksByBaseObj)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    @*                 <img src="@GetMainImage(stock)" class="card-img-top" style="height: 140px; object-fit: contain;" />
+            *@                <div class="card-body">
+                        <h5 class="card-title">@stock.Condition?.Name</h5>
+                        <p class="card-text text-muted">État : @stock.Condition?.Name</p>
+                        <p class="card-text">Prix : <strong class="text-success">@stock.EstimatedSalePrice.ToString("C")</strong></p>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-outline-danger w-100">Marquer comme vendu</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+

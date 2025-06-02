@@ -32,7 +32,29 @@ namespace api.DataAccessLayer
             catch (Exception ex)
             {
                 Console.WriteLine("⚠️ EF crash: " + ex.Message);
-                throw; // tu peux aussi logger ou retourner une erreur spéciale
+                throw; 
+            }
+        }
+		public List<Stocks> GetAllInStocksByBaseObjId(int baseObjId)
+		{
+            try
+            {
+                var response = _context.Stocks
+				.Include(x => x.BaseObj)
+				.Include(x => x.BaseObj.Marque)
+				.Include(x => x.BaseObj.SaleType)
+				.Include(x => x.Status)
+				.Include(x => x.Lot)
+				.Include(x => x.Condition)
+				.Where(x => x.IsActive && x.BaseObjId == baseObjId)
+				.ToList();
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("⚠️ EF crash: " + ex.Message);
+                throw; 
             }
         }
 		public bool AddStock(Stocks stock)

@@ -23,6 +23,7 @@ namespace BLNB_MAGames.Pages.Inventory
         public int modeint { get; set; }
 
         private List<Stocks> AllInStocks { get; set; } = new List<Stocks>();
+        private List<StocksToShow> AllInStocksToShow { get; set; } = new List<StocksToShow>();
 
 
 		protected override async Task OnInitializedAsync()
@@ -32,7 +33,29 @@ namespace BLNB_MAGames.Pages.Inventory
             if (modeint == (int)InventoryMode.All)
 			{
 				await GetAllInStocks();
-			}
+
+                AllInStocksToShow = AllInStocks
+                .GroupBy(s => s.BaseObj.Id)
+                .Select(group =>
+                {
+                    var firstStock = group.First();
+                    var prixMin = group.Min(s => s.EstimatedSalePrice);
+                    var prixMax = group.Max(s => s.EstimatedSalePrice);
+
+                    return new StocksToShow
+                    {
+                        Image = (firstStock.BaseObj.lstImages.Count() > 0 ? firstStock.BaseObj.lstImages.FirstOrDefault().Image : "/images/placeholder.png"),
+                        Name = firstStock.BaseObj.Name,
+                        Marque = firstStock.BaseObj.Marque?.Name ?? string.Empty,
+                        SaleType = firstStock.BaseObj.SaleType?.Name ?? string.Empty,
+                        PrixVenteMin = prixMin,
+                        PrixVenteMax = (prixMin != prixMax) ? prixMax : 0, // Si égal, on met 0 pour éviter l'affichage de 2 prix identiques
+                        BaseObjId = firstStock.BaseObj.Id,
+                        stockQte = group.Count(),
+                    };
+                })
+                .ToList();
+            }
 		}
 
 		private async Task GetAllInStocks()
@@ -40,12 +63,10 @@ namespace BLNB_MAGames.Pages.Inventory
 			AllInStocks = await _apiService.GetAllInStocksAsync();
 		}
 
-        string GetMainImage(Base_Obj obj)
+        private void GoToInventory(int baseObjId)
         {
-            return (obj?.lstImages.Count() > 0 ? obj?.lstImages.FirstOrDefault().Image  : "/images/placeholder.png");
+            _navigationManager.NavigateTo($"/Inventory/{baseObjId}");
         }
-
-        
     }
 }
 
@@ -54,4 +75,16 @@ public enum InventoryMode
 {
     All = 1,
     ByLots = 2
+}
+
+public class StocksToShow
+{
+	public string Image { get; set; } = string.Empty;
+	public string Name { get; set; } = string.Empty;
+	public string Marque { get; set; } = string.Empty;
+	public string SaleType { get; set; } = string.Empty;
+	public decimal PrixVenteMin { get; set; } = 0;
+	public decimal PrixVenteMax { get; set; } = 0;
+    public int BaseObjId { get; set; }
+    public int stockQte { get; set; } = 0;
 }

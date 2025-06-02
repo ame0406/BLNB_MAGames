@@ -107,7 +107,20 @@ public class ApiService
 			return new List<Stocks>();
 		}
 	}
-	public async Task<bool> AddStockAsync(Stocks stock)
+    public async Task<List<Stocks>> GetAllInStocksByBaseObjIdAsync(int baseObjId)
+    {
+        try
+        {
+            var response = await _httpClient.GetFromJsonAsync<List<Stocks>>($"stocks/GetAllInStocksByBaseObjId?baseObjId={baseObjId}");
+
+            return response ?? new List<Stocks>();
+        }
+        catch (Exception ex)
+        {
+            return new List<Stocks>();
+        }
+    }
+    public async Task<bool> AddStockAsync(Stocks stock)
 	{
 		try
 		{

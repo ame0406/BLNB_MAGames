@@ -31,6 +31,13 @@ namespace api.Controller
         {
 			return _dl.GetAllInStocks();
 		}
+        
+        [HttpGet]
+        [Route("GetAllInStocksByBaseObjId")]
+        public async Task<ActionResult<List<Stocks>>> GetAllInStocksByBaseObjId(int baseObjId)
+        {
+			return _dl.GetAllInStocksByBaseObjId(baseObjId);
+		}
 
 		[HttpGet]
         [Route("{id}")]
