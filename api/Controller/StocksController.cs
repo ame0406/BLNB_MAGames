@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 using api.BLogics;
+using api.DataAccessLayer;
 
 namespace api.Controller
 {
@@ -14,22 +15,24 @@ namespace api.Controller
     {
         private readonly DataContext _context;
         private StocksBL _bl;
+        private StocksDL _dl;
 
-        public StocksController(DataContext context, StocksBL bl)
+        public StocksController(DataContext context, StocksBL bl, StocksDL dl)
         {
             _context = context;
             _bl = bl;
+            _dl = dl;
         }
 
         //Tu peux faire  Task<ActionResult<List<Games>>> Pour savoir ce que tu recoit dans swagger
         [HttpGet]
-        public async Task<ActionResult<List<Stocks>>> GetAllStocks()
+        [Route("GetAllInStocks")]
+        public async Task<ActionResult<List<Stocks>>> GetAllInStocks()
         {
-            List<Stocks> stocks = await _context.Stocks.ToListAsync();
-            return Ok(stocks);
-        }
+			return _dl.GetAllInStocks();
+		}
 
-        [HttpGet]
+		[HttpGet]
         [Route("{id}")]
         public async Task<ActionResult<Stocks>> GetStock(int id)
         {
@@ -115,7 +118,7 @@ namespace api.Controller
 
             await _context.SaveChangesAsync();
 
-            return Ok(await GetAllStocks());
+            return Ok(await GetAllInStocks());
         }
         [HttpDelete]
         public async Task<ActionResult<List<Stocks>>> DeleteStocks(int id)
@@ -129,7 +132,7 @@ namespace api.Controller
 
             await _context.SaveChangesAsync();
 
-            return Ok(await GetAllStocks());
+            return Ok(await GetAllInStocks());
         }
     }
 }

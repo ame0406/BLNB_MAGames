@@ -94,9 +94,18 @@ public class ApiService
 	#endregion
 
 	#region Stocks
-	public async Task<List<Stocks>> GetAllStocksAsync()
+	public async Task<List<Stocks>> GetAllInStocksAsync()
 	{
-		return await _httpClient.GetFromJsonAsync<List<Stocks>>("stocks");
+		try
+		{
+			var response = await _httpClient.GetFromJsonAsync<List<Stocks>>("stocks/GetAllInStocks");
+
+			return response ?? new List<Stocks>();
+		}
+		catch (Exception ex)
+		{
+			return new List<Stocks>();
+		}
 	}
 	public async Task<bool> AddStockAsync(Stocks stock)
 	{

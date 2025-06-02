@@ -1,5 +1,26 @@
-﻿<h3>AllInventory</h3>
+﻿@using SharedParams.Parameters
+@using SharedParams.Tables
+@using static SharedParams.Parameters.SharedParameters
 
-@code {
+@page "/AllInventory/{mode}"
 
-}
+<div class="container mt-4">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        @foreach (var stock in AllInStocks)
+        {
+            <div class="col">
+                <div class="card h-100 text-center">
+                    <img src="@GetMainImage(stock.BaseObj)" class="card-img-top" alt="Jeu image" style="height: 120px; object-fit: contain; padding: 10px;" />
+                    <div class="card-body">
+                        <h5 class="card-title">@stock.BaseObj.Name</h5>
+                        <p class="card-text text-muted">@stock.BaseObj.Marque?.Name - @stock.BaseObj.SaleType.Name</p>
+                        <p class="card-text">@stock.Condition?.Name</p>
+                    </div>
+                    <div class="card-footer">
+                        <strong class="text-success">@stock.EstimatedSalePrice.ToString("C")</strong>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
