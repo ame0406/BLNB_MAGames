@@ -26,17 +26,18 @@ namespace BLNB_MAGames.Pages.Inventory
         private List<Stocks> stocksByBaseObj = new List<Stocks>();
         private string MainImage { get; set; } = string.Empty;
 
+        private bool isModaleSoldOpen = false;
+        private Stocks SoldStock { get; set; } = new Stocks();
+
 
         protected override async Task OnInitializedAsync()
         {
             await GetStocksByBaseObjId();
         }
-
         private async Task GetStocksByBaseObjId()
         {
             stocksByBaseObj = await _apiService.GetAllInStocksByBaseObjIdAsync(int.Parse(BaseObjId));
         }
-
         private void GetMainImage(ObjImages img)
         {
             if(img.Id != 0)
@@ -46,5 +47,30 @@ namespace BLNB_MAGames.Pages.Inventory
 
             MainImage = stocksByBaseObj.First().BaseObj.lstImages.FirstOrDefault()?.Image ?? "/images/default.png";
         }
+        private void OpenModaleSold(Stocks stock)
+        {
+            SoldStock = stock;
+            isModaleSoldOpen = !isModaleSoldOpen;
+        }
+        private async Task HandlePriceSold(decimal price)
+        {
+            SoldStock.SoldPrice = price;
+            SoldStock.SoldDate = DateTime.Now;
+
+            List<Stocks> temp = (List<Stocks>)await _apiService.UpdateSoldPrice(new List<Stocks> { SoldStock });
+            SoldStock = temp.FirstOrDefault();
+
+            OpenModaleSold(new Stocks());
+
+            await GetStocksByBaseObjId();
+
+            if(stocksByBaseObj.Count() <= 0)
+            {
+                _navigationManager.NavigateTo("/AllInventory/1");
+            }
+
+            //await _showToast.InvokeAsync(ToastType.SUCCESS, "text");
+        }
+
     }
 }

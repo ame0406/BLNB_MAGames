@@ -64,9 +64,9 @@ namespace api.Controller
             foreach (Stocks s in updateStocks)
             {
                 var stock = await _context.Stocks
-                    .Include(s => s.VentesMKP) // Inclure les ventes pour la mise à jour
-                    .Include(s => s.VentesEbay) // Inclure les ventes Ebay pour la mise à jour
-                    .FirstOrDefaultAsync(s => s.Id == s.Id);
+                    .Include(x => x.VentesMKP) // Inclure les ventes pour la mise à jour
+                    .Include(x => x.VentesEbay) // Inclure les ventes Ebay pour la mise à jour
+                    .FirstOrDefaultAsync(x => x.Id == s.Id);
 
                 if (stock == null)
                     return NotFound($"L'objet de l'inventaire n'a pas été trouvé.");
@@ -136,6 +136,27 @@ namespace api.Controller
 
             stock.IsActive = false;
             //_context.Games.Remove(game);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(await GetAllInStocks());
+        }
+        [HttpPost]
+        [Route("UpdateSoldPrice")]
+        public async Task<ActionResult<List<Stocks>>> UpdateSoldPrice([FromBody] List<Stocks> updateStocks)
+        {
+            foreach (Stocks s in updateStocks)
+            {
+                var stock = await _context.Stocks
+                    .FirstOrDefaultAsync(x => x.Id == s.Id);
+
+                if (stock == null)
+                    return NotFound($"L'objet de l'inventaire n'a pas été trouvé.");
+
+                stock.SoldPrice = s.SoldPrice;
+                stock.SoldDate = s.SoldDate;
+                stock.IsActive = false;
+            }
 
             await _context.SaveChangesAsync();
 

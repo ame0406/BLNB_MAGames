@@ -39,11 +39,17 @@
                         <p class="card-text">Prix : <strong class="text-success">@stock.EstimatedSalePrice.ToString("C")</strong></p>
                     </div>
                     <div class="card-footer">
-                        <button class="btn btn-outline-danger w-100">Marquer comme vendu</button>
+                        <button class="btn btn-outline-danger w-100" @onclick="() => OpenModaleSold(stock)">Marquer comme vendu</button>
                     </div>
                 </div>
             </div>
         }
     </div>
 }
+
+<BLNB_MAGames.Pages.Components.Modale.Modale _isShown="isModaleSoldOpen" _noButton=true _onClose="() => OpenModaleSold(new Stocks())">
+    <_body>
+        <BLNB_MAGames.Pages.Components.MarquerCommeVendu.MarquerCommeVendu name="@SoldStock.BaseObj.Name" OnPriceSoldChanged="HandlePriceSold"></BLNB_MAGames.Pages.Components.MarquerCommeVendu.MarquerCommeVendu>
+    </_body>
+</BLNB_MAGames.Pages.Components.Modale.Modale>
 

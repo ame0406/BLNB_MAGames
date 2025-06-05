@@ -133,10 +133,36 @@ public class ApiService
 			return false;
 		}
 	}
-	#endregion
 
-	#region Lots
-	public async Task<Lots> AddLotAsync(Lots lot)
+    public async Task<List<Stocks>> UpdateSoldPrice(List<Stocks> stock)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync("stocks/UpdateSoldPrice", stock);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<List<Stocks>>();
+                return result ?? new List<Stocks>();
+            }
+            else
+            {
+                // Logique d'erreur éventuelle (facultatif)
+                return new List<Stocks>();
+            }
+        }
+        catch (Exception ex)
+        {
+            // Log ex.Message si nécessaire
+            return new List<Stocks>();
+        }
+    }
+
+
+    #endregion
+
+    #region Lots
+    public async Task<Lots> AddLotAsync(Lots lot)
 	{
 		var response = await _httpClient.PostAsJsonAsync("lots/AddLot", lot);
 		response.EnsureSuccessStatusCode(); 
