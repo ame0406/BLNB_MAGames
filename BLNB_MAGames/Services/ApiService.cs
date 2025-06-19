@@ -168,6 +168,28 @@ public class ApiService
 		response.EnsureSuccessStatusCode(); 
 		return await response.Content.ReadFromJsonAsync<Lots>();
 	}
-	#endregion
+    #endregion
+
+    #region Session
+    public async Task<string> GetProfile()
+    {
+        try
+        {
+            var response = await _httpClient.GetFromJsonAsync<string>("session/GetProfile");
+
+            return response ?? "";
+        }
+        catch (Exception ex)
+        {
+            return "";
+        }
+    }
+
+    public async Task SetProfile(string profile)
+    {
+        await _httpClient.PostAsJsonAsync("session/SetProfile", profile);
+    }
+
+    #endregion
 }
 

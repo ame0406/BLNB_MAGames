@@ -1,4 +1,4 @@
-using api.BLogics;
+﻿using api.BLogics;
 using api.Data;
 using api.DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +30,18 @@ builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddDistributedMemoryCache(); // ✅ nécessaire pour la session
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromHours(8); // tu peux la remettre si besoin
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -44,6 +56,7 @@ if (app.Environment.IsDevelopment())
 app.UseDeveloperExceptionPage();
 
 app.UseAuthorization();
+app.UseSession(); // ✅ active la session ici
 
 app.MapControllers();
 

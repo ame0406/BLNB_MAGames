@@ -52,10 +52,10 @@ namespace BLNB_MAGames.Pages.Inventory
             SoldStock = stock;
             isModaleSoldOpen = !isModaleSoldOpen;
         }
-        private async Task HandlePriceSold(decimal price)
+        private async Task HandlePriceSold(Stocks stockSold)
         {
-            SoldStock.SoldPrice = price;
-            SoldStock.SoldDate = DateTime.Now;
+            SoldStock.SoldPrice = stockSold.SoldPrice;
+            SoldStock.SoldDate = stockSold.SoldDate;
 
             List<Stocks> temp = (List<Stocks>)await _apiService.UpdateSoldPrice(new List<Stocks> { SoldStock });
             SoldStock = temp.FirstOrDefault();

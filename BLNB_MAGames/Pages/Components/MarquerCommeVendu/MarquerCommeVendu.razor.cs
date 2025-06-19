@@ -17,16 +17,18 @@ namespace BLNB_MAGames.Pages.Components.MarquerCommeVendu
         [Parameter]
         public string name { get; set; } = string.Empty;
         [Parameter]
-        public EventCallback<decimal> OnPriceSoldChanged { get; set; }
+        public EventCallback<Stocks> OnPriceSoldChanged { get; set; }
 
-        public decimal PriceSold { get; set; } = 0;
+        public Stocks gameSold { get; set; } = new Stocks();
         public bool ErrorPriceSold { get; set; } = false;
 
-
-
+		protected override async Task OnInitializedAsync()
+        {
+            gameSold.SoldDate = DateTime.Now;
+        }
 		private async Task ReturnSold(bool isSold)
         {
-            if(PriceSold < 0)
+            if(gameSold.SoldPrice < 0)
             {
                 ErrorPriceSold = true;
 			}
@@ -35,11 +37,11 @@ namespace BLNB_MAGames.Pages.Components.MarquerCommeVendu
             {
                 if(isSold)
                 {
-                    await OnPriceSoldChanged.InvokeAsync(PriceSold);
+                    await OnPriceSoldChanged.InvokeAsync(gameSold);
 				}
                 else
                 {
-                    await OnPriceSoldChanged.InvokeAsync(-1);
+                    await OnPriceSoldChanged.InvokeAsync(new Stocks());
 				}
             }
         }

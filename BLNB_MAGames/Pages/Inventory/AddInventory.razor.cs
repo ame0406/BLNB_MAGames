@@ -76,8 +76,6 @@ namespace BLNB_MAGames.Pages.Inventory
 				}
 				SelectedObjToAdd.TypeObj = typeAjout;
 				CurrentStep = 2;
-
-
 			}
 		}
 		private async Task Step3()
@@ -177,7 +175,7 @@ namespace BLNB_MAGames.Pages.Inventory
 			}
 			else
 			{
-				//await _showToast.InvokeAsync(ToastType.FAIL, "Le jeu n'a pas été trouver");
+				await _showToast.InvokeAsync((ToastType.FAIL, "Le jeu n'a pas été trouver"));
 			}
 
 		}

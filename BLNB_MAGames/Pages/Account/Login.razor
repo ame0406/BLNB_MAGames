@@ -1,0 +1,16 @@
+﻿@inject NavigationManager Nav
+@inject IHttpContextAccessor HttpContextAccessor
+@page "/Login"
+
+
+<h3>Choisis ton profil</h3>
+<div style="display: flex; gap: 20px;">
+    <div class="border border-2 p-5 bg-primary" @onclick='() => SelectProfile("Amelie")'>
+        Profil Amélie
+    </div>
+    <div class="border border-2 p-5 bg-primary" @onclick='() => SelectProfile("Maya")'>
+        Profil Maya
+    </div>
+</div>
+
+

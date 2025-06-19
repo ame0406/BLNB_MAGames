@@ -1,9 +1,15 @@
 ﻿@using static BLNB_MAGames.Pages.Components.Toast.Toast
 @using BLNB_MAGames.Pages.Components.Toast
+@inject IHttpContextAccessor HttpContextAccessor
+@inject NavigationManager NavigationManager
+
 
 @inherits LayoutComponentBase
 
 @inject NavigationManager NavigationManager
+@inject ProfileStateService ProfileState
+@inject IJSRuntime _js
+
 
 <div class="page">
     <div class="sidebar">
@@ -120,6 +126,8 @@
 
     [Inject]
     private NavigationManager _navigationManager { get; set; }
+    [Inject]
+    private ApiService _apiService { get; set; }
     [CascadingParameter]
     private EventCallback<(ToastType, string)> _showToast { get; set; }
 
@@ -130,7 +138,8 @@
     private Toast _toast { get; set; } = new();
     private List<Toast> _lstToasts { get; set; } = new();
     private bool IsPage404 => NavigationManager.Uri.Contains("404");
-
+    private bool IsPageLogin => NavigationManager.Uri.Contains("Login");
+    private bool _hasCheckedSession = false;
 
     private void ShowLoader(bool showloader)
     {
@@ -144,5 +153,17 @@
                 _description = toast.Item2,
                 _toastType = toast.Item1,
             });
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ProfileState.InitializeAsync();
+
+        var profile = await _js.InvokeAsync<string>("localStorageHelper.getProfile");
+
+        if (string.IsNullOrEmpty(profile) && !_navigationManager.Uri.Contains("/login"))
+        {
+            _navigationManager.NavigateTo("/login", true);
+        }
     }
 }
