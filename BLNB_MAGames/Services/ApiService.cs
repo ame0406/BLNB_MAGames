@@ -190,6 +190,26 @@ public class ApiService
         await _httpClient.PostAsJsonAsync("session/SetProfile", profile);
     }
 
+    #endregion    
+
+    #region Statistiques
+    public async Task<StatsDTO> GetTotalDepenseStats()
+    {
+        try
+        {
+            var response = await _httpClient.GetFromJsonAsync<StatsDTO>("statistiques/GetTotalDepenseStats");
+
+            return response ?? new StatsDTO();
+        }
+        catch (Exception ex)
+        {
+            return new StatsDTO();
+        }
+    }
+
+
     #endregion
+
+
 }
 

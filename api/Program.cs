@@ -11,6 +11,7 @@ builder.Services.AddControllers();
 //BL
 builder.Services.AddScoped<DropDeepSeachBL>();
 builder.Services.AddScoped<StocksBL>();
+builder.Services.AddScoped<StatistiquesBL>();
 
 //DL
 builder.Services.AddScoped<Base_ObjDL>();
@@ -19,6 +20,7 @@ builder.Services.AddScoped<StocksDL>();
 builder.Services.AddScoped<VenteEbayDL>();
 builder.Services.AddScoped<VenteMKPDL>();
 builder.Services.AddScoped<LotsDL>();
+builder.Services.AddScoped<StatistiquesDL>();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

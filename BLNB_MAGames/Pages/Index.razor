@@ -1,4 +1,93 @@
 ﻿@page "/"
+@inject ApiService ApiService
 
-<h3>Index</h3>
+<h2 class="mb-4 text-center text-primary-emphasis">📊 Statistiques Générales</h2>
 
+@if (_stats is null)
+{
+    <p>Chargement...</p>
+}
+else
+{
+    <div class="row g-4">
+        <div class="stats-container d-flex justify-content-center gap-4 flex-wrap mt-4">
+            @Cylinder("Total dépensé", _stats.TotalDepenser.ToString("C"), "bi-cash-stack", "depense")
+            @Cylinder("Total revenu", _stats.TotalRevenue.ToString("C"), "bi-graph-up", "revenu")
+            @Cylinder("Total gardé", _stats.TotalKeep.ToString("C"), "bi-box-seam", "garder")
+            @Cylinder("Profit net", _stats.Profit.ToString("C"), "bi-coin", _stats.Profit >= 0 ? "profit-positif" : "profit-negatif")
+        </div>
+    </div>
+}
+
+
+
+<style>
+    .cylinder-stat {
+        width: 180px;
+        height: 220px;
+        border-radius: 90px;
+        background: linear-gradient(135deg, #2f2f2f, #b0b0b0);
+        padding: 2px;
+        position: relative;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+        /* Bordure intérieure grise + néon bleu extérieur */
+        .cylinder-stat::before {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            right: 3px;
+            bottom: 3px;
+            background: transparent;
+            border: 3px solid #00b7ff; /* bleu néon */
+            border-radius: 88px;
+            z-index: 0;
+        }
+        .cylinder-stat > * {
+            position: relative;
+            z-index: 1;
+            color: white;
+        }
+
+        .cylinder-stat h5 {
+            font-size: 1.1rem;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .cylinder-stat p {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+    .icon-style {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .profit-negatif {
+        background: linear-gradient(180deg, #2f2f2f 0%, #b0b0b0 50%, #ff7f7f 100%);
+    }
+
+    .profit-positif {
+        background: linear-gradient(180deg, #2f2f2f 0%, #b0b0b0 50%, #7fff7f 100%);
+    }
+
+
+    /* Pour override : remet le fond gris → gris si pas override */
+    .depense,
+    .revenu,
+    .garder {
+        background: linear-gradient(180deg, #2f2f2f, #b0b0b0);
+    }
+
+</style>
