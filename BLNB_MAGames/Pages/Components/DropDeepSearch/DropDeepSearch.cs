@@ -31,11 +31,20 @@ namespace BLNB_MAGames.Pages.Components.DropDeepSearch
 		public EventCallback<GenericObjDTO> OnChosenObject { get; set; }
 		[Parameter]
 		public EventCallback<string> OnFocusOutNoCoresponding { get; set; }
+		//Si elle est set c'est quon a une petite liste et on veux oas aller chercher a l'api (marque status...)
+		[Parameter]
+		public List<GenericObjDTO> _lstObjects { get; set; } = new List<GenericObjDTO>();
+		[Parameter]
+		public bool ToApi { get; set; } = false; 
+		[Parameter]
+		public bool CallBackOutside { get; set; } = false;
+		[Parameter]
+		public bool trueIfIsSearchBarFalseIfIsDropdown { get; set; } = false;
+		public List<GenericObjDTO> _lstObjectsDisplayed { get; set; } = new List<GenericObjDTO>();
 
 
 		private DropDeepSearchDTO dropDto { get; set; } = new DropDeepSearchDTO();
 		private string value { get; set; } = "";
-		private List<GenericObjDTO> _lstObjectsDisplayed { get; set; } = new List<GenericObjDTO>();
 
 		protected override async Task OnInitializedAsync()
 		{
@@ -64,10 +73,36 @@ namespace BLNB_MAGames.Pages.Components.DropDeepSearch
 
 		private async Task<List<GenericObjDTO>> GetObjectsFiltered()
 		{
-			return await _apiService.GetObjectsFilteredAsync(dropDto);
+			dropDto.strSearch = dropDto.strSearch.ToLower(); // rendre la recherche insensible à la casse
+
+			if (ToApi)
+			{
+				return await _apiService.GetObjectsFilteredAsync(dropDto);
+			}
+			else
+			{
+				if (string.IsNullOrWhiteSpace(dropDto.strSearch))
+					return _lstObjectsDisplayed = _lstObjects.ToList();
+
+				return _lstObjectsDisplayed
+					.Where(obj =>
+						obj.DisplayName.ToLower().Contains(dropDto.strSearch) ||
+						obj.DisplayProps.Any(p => p.ToLower().Contains(dropDto.strSearch)))
+					.ToList();
+			}
 		}
 		private async void SelectThis(GenericObjDTO obj)
 		{
+			value = (" " + obj.DisplayName + (obj.DisplayProps.Count() > 0 ? " - " : ""));
+
+			foreach (string s in obj.DisplayProps)
+			{
+				if (s != null)
+				{
+					value += (s + " ");
+				}
+			}
+
 			await OnChosenObject.InvokeAsync(obj);
 		}
 		private async void CallBackNoCoresponding(FocusEventArgs e)

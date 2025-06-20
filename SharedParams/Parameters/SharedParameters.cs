@@ -12,30 +12,69 @@ namespace SharedParams.Parameters
 
         public enum Status
         {
-            Vente = 1,
+			Vente = 1,
             Garder = 2,
-        }
+            Échange = 3,
+            Terminer = 4,
+            NonFonctionnel = 5,
+		}
 
         public enum SaleType
         {
-			Switch = 1,
-            Xbox360 = 2,
-            Playstation3 = 3,
-            Wii = 4,
+			Xbox360 = 1,
+            PS3 = 2,
+            Switc = 3,
+            NES = 4,
+            SNES = 5,
+            N64 = 6,
+            Gamecube = 7,
+            Gameboy = 8,
+            GameboyColor = 9,
+            GameboyAdvance = 10,
+            DS = 11,
+            DS3 = 12,
+            Wii = 13,
+            WiiU = 14,
+            PS1 = 15,
+            PS2 = 16,
+            PS4 = 17,
+            PS5 = 18,
+            PSP = 19,
+            PSVita = 20,
+            XBOX = 21,
+            XboxOne = 22,
+            XboxSeriesX = 23,
+            PC = 24,
+            Sega = 25,
+            Coleco = 26,
+            Atari = 27,
+            DVD = 28,
+            Skylanders = 29,
+            Figurine = 30,
+            CartePokemon = 31,
+            Lego = 32,
+            Pop = 33,
+            Supplies = 34,
 		}
 
         public enum Marque
         {
-			Nintendo = 1,
-            Sony = 2,
-            Microsoft = 3,
+			Microsoft = 1,
+			Nintendo = 2,
+            Sony = 3,
 		}
 
         public enum Condition
         {
 			CIB = 1,
-            Loose = 2,
-            Boxed = 3,
+            Boxed = 2,
+            Loose = 3,
+            CD_Manuel = 4,
+            Boxe_Manuel = 5,
+            Boxe = 6,
+            Manuel = 7,
+            Sealed = 8,
+            CIB_ = 9,
 		}
 
         // -----------------------------------------------------------------------------------

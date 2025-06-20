@@ -1,11 +1,10 @@
-﻿@inject ProfileStateService ProfileState
+﻿
 @inject ApiService _apiService
 
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">BLNB_MAGames</a>
-        <small class="color-white">@profile</small>
     </div>
 </div>
 
@@ -13,6 +12,8 @@
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
+        <small class="text-white ms-4">Bonjour @profilChoosen</small>
+
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
@@ -40,22 +41,24 @@
 </div>
 
 @code {
-    private string profile = "";
+    [Inject]
+    private ProfileStateService _profileStateService { get; set; }
+    private string profilChoosen = "";
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        profile = ProfileState.Profile;
-        ProfileState.OnProfileChanged += UpdateProfile;
+        await _profileStateService.InitializeAsync();
+        profilChoosen = _profileStateService.Profile;
     }
 
     private void UpdateProfile()
     {
-        profile = ProfileState.Profile;
+        profilChoosen = _profileStateService.Profile;
         InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()
     {
-        ProfileState.OnProfileChanged -= UpdateProfile;
+        _profileStateService.OnProfileChanged -= UpdateProfile;
     }
 }

@@ -4,7 +4,7 @@
 
 <div class="dropdown w-100 position-relative">
     <input type="text"
-           class="form-control form-control-lg dropdown-toggle"
+           class="form-control form-control-lg dropdown-toggle" 
            id="dropdownMenuButton1"
            data-bs-toggle="dropdown"
            aria-expanded="false"
@@ -13,7 +13,14 @@
            @oninput="Filter"
            @onfocusout="CallBackNoCoresponding" />
 
-    <i class="bi bi-search icon-loupe position-absolute top-50 start-0 ms-3 translate-middle-y text-muted"></i>
+    @if (trueIfIsSearchBarFalseIfIsDropdown)
+    {
+        <i class="bi bi-search icon-loupe position-absolute top-50 start-0 ms-3 translate-middle-y text-muted"></i>
+    }
+    else
+    {
+        <i class="bi bi-caret-down-fill position-absolute top-50 end-0 me-3 translate-middle-y text-muted"></i>
+    }
 
     <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton1" id="list">
         @if (_lstObjectsDisplayed != null && _lstObjectsDisplayed.Count() != 0)
@@ -34,7 +41,7 @@
                                     </div>
                                 }
                                 <p class="mb-0">
-                                    @(" " + objects.DisplayName + " - ")
+                                    @(" " + objects.DisplayName + (objects.DisplayProps.Count() > 0 ? " - " : ""))
                                     @foreach (string s in objects.DisplayProps)
                                     {
                                         if (s != null)

@@ -1,4 +1,5 @@
-﻿@using SharedParams.Parameters
+﻿@using SharedParams.DTOs
+@using SharedParams.Parameters
 @using SharedParams.Tables
 @using static SharedParams.Parameters.SharedParameters
 
@@ -6,7 +7,10 @@
 
 
 <div class="vh-100">
-	<h2 class="text-center mb-5 text-decoration-underline">Ajout dans l'inventaire @(isAddToALot ? " (Lots)" : "")</h2>
+	<div class="d-flex flex-row justify-content-center mb-5">
+		<h2 class="text-decoration-underline">Ajout dans l'inventaire @(isAddToALot ? " (Lots)" : "")</h2>
+		<span class="btn btn-outline-danger ms-2">@profilChoosen</span>
+	</div>
 	@* Étape 1 Choix Lot et du type d'ajout*@
 	@if (CurrentStep == 1)
 	{
@@ -57,32 +61,25 @@
 
 			@* Nom du jeu *@
 			<div class="mb-5">
-				<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Quelle jeu cherche tu?" _hasGames=true OnChosenObject="SelectObj" OnFocusOutNoCoresponding="GetNewObjName">
+				<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Quelle jeu cherche tu?" trueIfIsSearchBarFalseIfIsDropdown=true _hasGames=true OnChosenObject="SelectObj" CallBackOutside=true ToApi="true" OnFocusOutNoCoresponding="GetNewObjName">
 				</BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
 			</div>
 
 			<div class="d-flex flex-row justify-content-center gap-4">
 
-				@* Marque *@
-				<BLNB_MAGames.Pages.Components.Dropdown.Dropdown
-					_lstObjects="allMarquesLst.Select(tv => new DropdownString { Id = tv.Id, Info = tv.Name }).ToList()"
-					_isRequired="true"
-					_chosenObject="@(SelectedObjToAdd.Id != 0 ? allMarquesLst.Where(x => x.Id == SelectedObjToAdd.Marque.Id).Select(m => new DropdownString { Id = m.Id, Info = m.Name }).FirstOrDefault() : null)"
-					_title="Marque"
-					_hasSearchBar="true"
-					OnObjectSelected="GetNewObjMarque">
-				</BLNB_MAGames.Pages.Components.Dropdown.Dropdown>
+				<div class="w-25">
+					@* Marque *@
+					<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Marque" OnChosenObject="GetNewObjMarque" 
+						_lstObjects="allMarquesLst.Select(tv => new GenericObjDTO { Id = tv.Id, DisplayName = tv.Name }).ToList()">
+					</BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
+				</div>
 
-
-				@* Type de vente *@
-				<BLNB_MAGames.Pages.Components.Dropdown.Dropdown 
-					_lstObjects="allTypeVenteLst.Select(tv => new DropdownString { Id = tv.Id, Info = tv.Name }).ToList()"
-					_isRequired=true
-					_chosenObject="@(SelectedObjToAdd.Id != 0 ? allTypeVenteLst.Where(x => x.Id == SelectedObjToAdd.SaleType.Id).Select(m => new DropdownString { Id = m.Id, Info = m.Name }).FirstOrDefault() : null)"
-					_title="Console"
-					_hasSearchBar=true
-					OnObjectSelected="GetNewObjSaleType">
-				</BLNB_MAGames.Pages.Components.Dropdown.Dropdown>
+				<div class="w-25">
+					@* Sale Type *@
+					<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Console" OnChosenObject="GetNewObjSaleType"
+						_lstObjects="allTypeVenteLst.Select(tv => new GenericObjDTO { Id = tv.Id, DisplayName = tv.Name }).ToList()">
+					</BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
+				</div>
 
 				@* Edition Special *@
 				<div class="d-flex justify-content-center">
@@ -101,32 +98,25 @@
 		else if (SelectedObjToAdd.TypeObj == (short)TypeObj.Hardware)
 		{
 			<div class="mb-5">
-				<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Quelle Console/Accesssoires cherche tu?" _hasHardware=true OnChosenObject="SelectObj" OnFocusOutNoCoresponding="GetNewObjName">
+				<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Quelle Console/Accesssoires cherche tu?" trueIfIsSearchBarFalseIfIsDropdown=true _hasHardware=true OnChosenObject="SelectObj" OnFocusOutNoCoresponding="GetNewObjName">
 				</BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
 			</div>
 
 			<div class="d-flex flex-row justify-content-center gap-4">
 
-				@* Marque *@
-				<BLNB_MAGames.Pages.Components.Dropdown.Dropdown
-					_lstObjects="allMarquesLst.Select(tv => new DropdownString { Id = tv.Id, Info = tv.Name }).ToList()"
-					_isRequired="true"
-					_chosenObject="@(SelectedObjToAdd.Id != 0 ? allMarquesLst.Where(x => x.Id == SelectedObjToAdd.Marque.Id).Select(m => new DropdownString { Id = m.Id, Info = m.Name }).FirstOrDefault() : null)"
-					_title="Marque"
-					_hasSearchBar="true"
-					OnObjectSelected="GetNewObjMarque">
-				</BLNB_MAGames.Pages.Components.Dropdown.Dropdown>
+				<div class="w-25">
+					@* Marque *@
+					<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Marque" OnChosenObject="GetNewObjMarque"
+																				 _lstObjects="allMarquesLst.Select(tv => new GenericObjDTO { Id = tv.Id, DisplayName = tv.Name }).ToList()">
+					</BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
+				</div>
 
-
-				@* Type de vente *@
-				<BLNB_MAGames.Pages.Components.Dropdown.Dropdown 
-					_lstObjects="allTypeVenteLst.Select(tv => new DropdownString { Id = tv.Id, Info = tv.Name }).ToList()"
-					_isRequired=true
-					_chosenObject="@(SelectedObjToAdd.Id != 0 ? allTypeVenteLst.Where(x => x.Id == SelectedObjToAdd.SaleType.Id).Select(m => new DropdownString { Id = m.Id, Info = m.Name }).FirstOrDefault() : null)"
-					_title="Console"
-					_hasSearchBar=true
-					OnObjectSelected="GetNewObjSaleType">
-				</BLNB_MAGames.Pages.Components.Dropdown.Dropdown>
+				<div class="w-25">
+					@* Sale Type *@
+					<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Console" OnChosenObject="GetNewObjSaleType"
+																				 _lstObjects="allTypeVenteLst.Select(tv => new GenericObjDTO { Id = tv.Id, DisplayName = tv.Name }).ToList()">
+					</BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
+				</div>
 
 				@* Edition Special *@
 				<div class="d-flex justify-content-center">
@@ -144,7 +134,7 @@
 		}
 		else
 		{
-			<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Que cherchez-vous?" _hasOther=true OnChosenObject="SelectObj"></BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
+			<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Que cherchez-vous?" trueIfIsSearchBarFalseIfIsDropdown=true _hasOther=true OnChosenObject="SelectObj"></BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
 		}
 	}
 
@@ -159,9 +149,9 @@
 					<h4 class="p-1">Élements du lot</h4>
 					@foreach(var s in AllLot)
 					{
-						<ul>
+						<ul class="m-0">
 							<li>
-								<p class="fs-5">@(s.BaseObj.Name)</p>
+								<p class="fs-6 m-0">@(s.BaseObj.Name)</p>
 							</li>
 						</ul>
 					}
@@ -201,17 +191,12 @@
 
 								@* Condition *@
 								<div class="d-flex flex-column">
-									<label for="boite1" class="form-label">Condition<span class="text-warning">*</span></label>
-									<BLNB_MAGames.Pages.Components.Dropdown.Dropdown _lstObjects="allConditionLst.Select(tv => new DropdownString { Id = tv.Id, Info = tv.Name }).ToList()"
-																					 _isRequired="true"
-																					 _title="Condition"
-																					 _hasSearchBar="true"
-																					 _chosenObject="@(AddNewStocks.Condition == null || AddNewStocks.Condition.Id == 0 ? null : allConditionLst
-																						.Where(tv => tv.Id == AddNewStocks.Condition.Id)
-																						.Select(tv => new DropdownString { Id = tv.Id, Info = tv.Name })
-																						.FirstOrDefault())"
-																					 OnObjectSelected="GetCondition">
-									</BLNB_MAGames.Pages.Components.Dropdown.Dropdown>
+									<div class="">
+										<label for="boite1" class="form-label">Condition<span class="text-warning">*</span></label>
+										<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Condition" OnChosenObject="GetCondition"
+																									 _lstObjects="allConditionLst.Select(tv => new GenericObjDTO { Id = tv.Id, DisplayName = tv.Name }).ToList()">
+										</BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
+									</div>
 									@if (ErrorNoCondition)
 									{
 										<p class="text-danger fs-5">Vous devez choisir une condition</p>
@@ -268,19 +253,14 @@
 								</div>
 							</div>
 							<div class="my-4 mx-2 d-flex flex-row gap-4">
-								<div>
+								<div class="d-flex flex-column">
 									@* Statue *@
-									<label for="boite1" class="form-label">Statut<span class="text-warning">*</span></label>
-									<BLNB_MAGames.Pages.Components.Dropdown.Dropdown _lstObjects="allStatutLst.Select(tv => new DropdownString { Id = tv.Id, Info = tv.Name }).ToList()"
-																					 _isRequired="true"
-																					 _title="Statut"
-																					 _hasSearchBar="true"
-																					 _chosenObject="@(AddNewStocks.Status == null || AddNewStocks.Status.Id == 0 ? null : allStatutLst
-																						.Where(tv => tv.Id == AddNewStocks.Status.Id)
-																						.Select(tv => new DropdownString { Id = tv.Id, Info = tv.Name })
-																						.FirstOrDefault())"
-																					 OnObjectSelected="GetStatut">
-									</BLNB_MAGames.Pages.Components.Dropdown.Dropdown>
+									<div class="">
+										<label for="boite1" class="form-label">Statut<span class="text-warning">*</span></label>
+										<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Statut" OnChosenObject="GetStatut"
+																									 _lstObjects="allStatutLst.Select(tv => new GenericObjDTO { Id = tv.Id, DisplayName = tv.Name }).ToList()">
+										</BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
+									</div>
 									@if (ErrorNoStatut)
 									{
 										<p class="text-danger fs-5">Vous devez choisir un statut</p>
@@ -297,6 +277,20 @@
 									{
 										<p class="text-danger fs-5">Vous devez indiquer le prix d'achat</p>
 									}
+								}
+
+								@if (AddNewStocks.Status != null && AddNewStocks.Status.Id == (int)SharedParameters.Status.Garder)
+								{
+									<div>
+										<div class="">
+											<label for="keepvalueinput" class="form-label">Valeur<span class="text-warning">*</span></label>
+											<input id="keepValue" class="form-control" placeholder="Entrez la valeur" @bind="AddNewStocks.KeepValue" />
+										</div>
+										@if (ErrorKeepValue)
+										{
+											<p class="text-danger fs-5">Vous devez indiquer la valeur de l'objet garder</p>
+										}
+									</div>
 								}
 							</div>
 							<div>
@@ -330,9 +324,9 @@
 					<h4 class="p-1">Élements du lot</h4>
 					@foreach (var s in AllLot)
 					{
-						<ul>
+						<ul class="m-0">
 							<li>
-								<p class="fs-5">@(s.BaseObj.Name)</p>
+								<p class="fs-6 m-0">@(s.BaseObj.Name)</p>
 							</li>
 						</ul>
 					}
@@ -428,17 +422,8 @@
 
 			@if (AddNewStocks.Status.Id == (int)SharedParameters.Status.Garder)
 			{
-				<div>
-					<h3>À été ajouter avec sucès à la collection</h3>
-					<div class="">
-						<label for="keepvalueinput" class="form-label">Valeur<span class="text-warning">*</span></label>
-						<input id="keepValue" class="form-control" placeholder="Entrez la valeur" @bind="AddNewStocks.KeepValue" />
-					</div>
-					@if (ErrorKeepValue)
-					{
-						<p class="text-danger fs-5">Vous devez indiquer la valeur de l'objet garder</p>
-					}
-				</div>
+
+				<h3>À été ajouter avec sucès à la collection</h3>
 
 			}
 			else

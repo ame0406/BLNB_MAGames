@@ -13,10 +13,13 @@ namespace BLNB_MAGames.Pages.Inventory
         [Inject]
         private ApiService _apiService { get; set; }
 		[Inject]
+		private ProfileStateService _profileStateService { get; set; }
+		[Inject]
 		private NavigationManager _navigationManager { get; set; }
 		[CascadingParameter]
 		private EventCallback<(ToastType, string)> _showToast { get; set; }
 		private int CurrentStep { get; set; } = 1;
+		private string profilChoosen { get; set; } = "";
 		private Base_Obj SelectedObjToAdd { get; set; } = new Base_Obj();
 		private Lots AddedLot { get; set; } = new Lots();
 		private List<Stocks> AllLot { get; set; } = new List<Stocks>();
@@ -39,6 +42,11 @@ namespace BLNB_MAGames.Pages.Inventory
 		private bool ErrorKeepValue { get; set; } = false;
 		private bool isAnnonceMkp { get; set; } = true;
 
+		protected override async Task OnInitializedAsync()
+		{
+			await _profileStateService.InitializeAsync();
+            profilChoosen = _profileStateService.Profile;
+		}
 		private void Step1()
 		{
 			AddNewStocks = new Stocks();
@@ -113,7 +121,6 @@ namespace BLNB_MAGames.Pages.Inventory
 				
 			}
 		}
-		
 		private async Task Step5()
 		{
 			//Calcul de la moyenne des deux prix pour avoir le prix estimer
@@ -156,6 +163,7 @@ namespace BLNB_MAGames.Pages.Inventory
 
 			if(!ErrorKeepValue)
 			{
+				AddNewStocks.ToMaya = (profilChoosen == "Maya" ? true : false);
 				//Ajout a la BD
 				bool isAdded = await _apiService.AddStockAsync(AddNewStocks);
 				//Si sa a fonctionner 
@@ -183,32 +191,44 @@ namespace BLNB_MAGames.Pages.Inventory
         {
             SelectedObjToAdd.Name = name;
 		}
-        private void GetNewObjSaleType(Object select)
+        private void GetNewObjSaleType(GenericObjDTO select)
         {
-			if (select is DropdownString selected)
+			SaleType SelectedObj = allTypeVenteLst.FirstOrDefault(x => x.Id == select.Id);
+
+			if (SelectedObj != null && SelectedObj.Id != 0)
 			{
-				SelectedObjToAdd.SaleType = allTypeVenteLst.First(x => x.Id == selected.Id);
+				SelectedObjToAdd.SaleType = SelectedObj;
 			}
 		}
-        private void GetNewObjMarque(Object select)
+        private void GetNewObjMarque(GenericObjDTO select)
         {
-			if (select is DropdownString selected)
+			Marques SelectedObj = allMarquesLst.FirstOrDefault(x => x.Id == select.Id);
+
+			if (SelectedObj != null && SelectedObj.Id != 0)
 			{
-				SelectedObjToAdd.Marque = allMarquesLst.First(x => x.Id == selected.Id);
+				SelectedObjToAdd.Marque = SelectedObj;
 			}
 		}
-		private void GetCondition(Object select)
+		private void GetCondition(GenericObjDTO select)
 		{
-			if (select is DropdownString selected)
+			Condition SelectedObj = allConditionLst.FirstOrDefault(x => x.Id == select.Id);
+
+			if (SelectedObj != null && SelectedObj.Id != 0)
 			{
-				AddNewStocks.Condition = allConditionLst.Where(x => x.Id == selected.Id).First();
+				AddNewStocks.Condition = SelectedObj;
 			}
 		}
-		private void GetStatut(Object select)
+		private void GetStatut(GenericObjDTO select)
 		{
-			if (select is DropdownString selected)
+			Status SelectedObj = allStatutLst.FirstOrDefault(x => x.Id == select.Id);
+
+			if (SelectedObj != null && SelectedObj.Id != 0)
 			{
-				AddNewStocks.Status = allStatutLst.Where(x => x.Id == selected.Id).First();
+				AddNewStocks.Status = SelectedObj;
+				if(AddNewStocks.Status.Id != (int)SharedParameters.Status.Garder)
+				{
+					AddNewStocks.KeepValue = 0;
+				}
 			}
 		}
 		private void GetConditionBoite(ChangeEventArgs e)

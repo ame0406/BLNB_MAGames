@@ -1,5 +1,6 @@
 ﻿using api.Data;
 using Microsoft.EntityFrameworkCore;
+using SharedParams.Parameters;
 using SharedParams.Tables;
 
 namespace api.DataAccessLayer
@@ -24,7 +25,7 @@ namespace api.DataAccessLayer
 				.Include(x => x.Status)
 				.Include(x => x.Lot)
 				.Include(x => x.Condition)
-				.Where(x => x.IsActive)
+				.Where(x => x.IsActive && x.StatusId == (int)SharedParameters.Status.Vente)
 				.ToList();
 
                 return response;
