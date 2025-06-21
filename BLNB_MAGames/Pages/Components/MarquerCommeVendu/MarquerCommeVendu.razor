@@ -2,12 +2,14 @@
 @using SharedParams.Tables
 @using static SharedParams.Parameters.SharedParameters
 
-<div>
-	<h2>Tu as vendu @name!</h2>
+<div class="d-flex flex-column align-items-center text-center justify-content-center">
+	<h2 class="mb-0 pb-0">Tu as vendu</h2>
+	<h2 class="mb-4">@name!</h2>
 	<p>Indique ici le prix au quel tu l'as vendu!</p>
 
-	<div class="d-flex flex-row">
+	<div class="d-flex flex-row gap-5">
 		<div class="d-flex flex-column">
+			<label class="text-start">Prix de vente</label>
 			<div class="input-group mb-3">
 				<input type="number" step="0.01" class="form-control" @bind="gameSold.SoldPrice">
 				<span class="input-group-text">$</span>
@@ -17,14 +19,14 @@
 				<p class="text-danger fs-5">Vous devex entrer un prix de vente</p>
 			}
 		</div>
-		<div>
-			<label>Date de vente</label>
-			<input type="date" @bind="gameSold.SoldDate"/>
+		<div class="d-flex flex-column w-75">
+			<label class="text-start">Date de vente</label>
+			<input class="form-control" type="date" @bind="gameSold.SoldDate"/>
 		</div>
 	</div>
 
 
-	<div class="d-flex flex-row justify-content-center gap-4">
+	<div class="d-flex flex-row justify-content-center gap-4 mt-4">
 		<button class="btn btn-outline-dark" @onclick="() => ReturnSold(false)">Annuler</button>
 		<button class="btn btn-success" @onclick="() => ReturnSold(true)">Vendu!</button>
 	</div>

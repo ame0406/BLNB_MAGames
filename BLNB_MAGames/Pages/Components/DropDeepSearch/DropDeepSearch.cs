@@ -19,7 +19,7 @@ namespace BLNB_MAGames.Pages.Components.DropDeepSearch
 		private EventCallback<(ToastType, string)> _showToast { get; set; }
 
 
-		[Parameter]
+		[Parameter] 
 		public string _title { get; set; } = "";
 		[Parameter]
 		public bool _hasGames { get; set; } = false;
@@ -40,6 +40,9 @@ namespace BLNB_MAGames.Pages.Components.DropDeepSearch
 		public bool CallBackOutside { get; set; } = false;
 		[Parameter]
 		public bool trueIfIsSearchBarFalseIfIsDropdown { get; set; } = false;
+		[Parameter]
+		public GenericObjDTO _SelectedObjectsDisplayed { get; set; } = new GenericObjDTO();
+
 		public List<GenericObjDTO> _lstObjectsDisplayed { get; set; } = new List<GenericObjDTO>();
 
 
@@ -51,6 +54,11 @@ namespace BLNB_MAGames.Pages.Components.DropDeepSearch
 			if (string.IsNullOrEmpty(_title))
 			{
 				_title = "Rechercher...";
+			}
+
+			if(_SelectedObjectsDisplayed != null && !string.IsNullOrEmpty(_SelectedObjectsDisplayed.DisplayName))
+			{
+				SelectThis(_SelectedObjectsDisplayed);
 			}
 
 			dropDto._haveGames = _hasGames;

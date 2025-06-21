@@ -15,7 +15,7 @@ namespace BLNB_MAGames.Pages.Account
         private async Task SelectProfile(string profile)
         {
             await _profileStateService.SetProfile(profile);
-            Nav.NavigateTo("/");
+            Nav.NavigateTo("/", true);
         }
     }
 }

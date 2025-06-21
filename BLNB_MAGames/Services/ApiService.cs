@@ -94,26 +94,26 @@ public class ApiService
 	#endregion
 
 	#region Stocks
-	public async Task<List<Stocks>> GetAllInStocksAsync()
+	public async Task<List<Stocks>> GetAllInStocksAsync(Filters statsFilters)
 	{
 		try
 		{
-			var response = await _httpClient.GetFromJsonAsync<List<Stocks>>("stocks/GetAllInStocks");
-
-			return response ?? new List<Stocks>();
+			var response = await _httpClient.PostAsJsonAsync("stocks/GetAllInStocks", statsFilters);
+            response.EnsureSuccessStatusCode(); // Vérifie si la réponse est un succès
+            return await response.Content.ReadFromJsonAsync<List<Stocks>>(); // Retourne l'objet ajouté
 		}
 		catch (Exception ex)
 		{
 			return new List<Stocks>();
 		}
 	}
-    public async Task<List<Stocks>> GetAllInStocksByBaseObjIdAsync(int baseObjId)
+    public async Task<List<Stocks>> GetAllInStocksByBaseObjIdAsync(int baseObjId, Filters statsFilters)
     {
         try
         {
-            var response = await _httpClient.GetFromJsonAsync<List<Stocks>>($"stocks/GetAllInStocksByBaseObjId?baseObjId={baseObjId}");
-
-            return response ?? new List<Stocks>();
+            var response = await _httpClient.PostAsJsonAsync($"stocks/GetAllInStocksByBaseObjId?baseObjId={baseObjId}", statsFilters);
+            response.EnsureSuccessStatusCode(); // Vérifie si la réponse est un succès
+            return await response.Content.ReadFromJsonAsync<List<Stocks>>(); // Retourne l'objet ajouté
         }
         catch (Exception ex)
         {
@@ -193,13 +193,13 @@ public class ApiService
     #endregion    
 
     #region Statistiques
-    public async Task<StatsDTO> GetTotalDepenseStats()
+    public async Task<StatsDTO> GetTotalDepenseStats(Filters filters)
     {
         try
         {
-            var response = await _httpClient.GetFromJsonAsync<StatsDTO>("statistiques/GetTotalDepenseStats");
-
-            return response ?? new StatsDTO();
+            var response = await _httpClient.PostAsJsonAsync("statistiques/GetTotalDepenseStats", filters);
+            response.EnsureSuccessStatusCode(); // Vérifie si la réponse est un succès
+            return await response.Content.ReadFromJsonAsync<StatsDTO>(); // Retourne l'objet ajouté
         }
         catch (Exception ex)
         {

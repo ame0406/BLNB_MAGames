@@ -1,5 +1,6 @@
 ﻿@using static BLNB_MAGames.Pages.Components.Toast.Toast
 @using BLNB_MAGames.Pages.Components.Toast
+@using BLNB_MAGames.Services
 @inject IHttpContextAccessor HttpContextAccessor
 @inject NavigationManager NavigationManager
 
@@ -17,8 +18,21 @@
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+        <div class="top-row px-4 gap-4">
+            <div class="position-relative">
+                <a class="text-white ms-4 px-3" href="Cart">
+                    🛒 Vente En Lot
+                    @if (_cartService.Items.Count > 0)
+                    {
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info text-dark">
+                            @_cartService.Items.Count
+                        </span>
+                    }
+                </a>
+            </div>
+
+            <a class="text-white me-4" href="Login">@profilChoosen</a>
+
         </div>
 
         <article class="content px-4">
@@ -128,6 +142,13 @@
     private NavigationManager _navigationManager { get; set; }
     [Inject]
     private ApiService _apiService { get; set; }
+    [Inject]
+    private ProfileStateService _profileStateService { get; set; }
+    [Inject]
+    private CartService _cartService { get; set; }
+
+
+    private string profilChoosen = "";
     [CascadingParameter]
     private EventCallback<(ToastType, string)> _showToast { get; set; }
 
@@ -157,13 +178,19 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await ProfileState.InitializeAsync();
+        await _profileStateService.InitializeAsync();
+        profilChoosen = _profileStateService.Profile;
 
-        var profile = await _js.InvokeAsync<string>("localStorageHelper.getProfile");
+        _cartService.OnChange += StateHasChanged;
 
-        if (string.IsNullOrEmpty(profile) && !_navigationManager.Uri.Contains("/login"))
+        if (string.IsNullOrEmpty(profilChoosen) && !_navigationManager.Uri.Contains("/login"))
         {
             _navigationManager.NavigateTo("/login", true);
         }
+    }
+
+    public void Dispose()
+    {
+        _cartService.OnChange -= StateHasChanged;
     }
 }

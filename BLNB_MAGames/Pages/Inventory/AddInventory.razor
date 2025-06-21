@@ -15,7 +15,7 @@
 	@if (CurrentStep == 1)
 	{
 		<div class="">
-			<div class="d-flex flex-column justify-content-center gap-4 mb-4">
+			<div class="d-flex flex-row justify-content-center gap-4 mb-4">
 				<div class="form-check form-switch mb-4 d-flex justify-content-center">
 					<input class="form-check-input" type="checkbox" role="switch" id="AddLot" @bind="isAddToALot">
 					<label class="toggle" for="AddLot">
@@ -27,15 +27,13 @@
 
 				@if(isAddToALot)
 				{
-					<div class="d-flex justify-content-center">
-						<div class="form-floating mb-3">
-							<input type="number" class="form-control @(AllLot.Count > 0 ? "disabled" : "")" id="prixAchat" @bind="AddedLot.PrixDachat">
-							<label for="prixAchat">Prix d'achat</label>
-							@if(ErrorNoPrixAchat)
-							{
-								<p class="text-danger fs-5">Vous devez entrer un prix d'achat</p>
-							}
-						</div>
+					<div class="mb-3 w-25 d-flex flex-column">
+						<label for="prixAchat">Prix d'achat</label>
+						<input type="number" class="form-control" id="prixAchat" @bind="AddedLot.PrixDachat" disabled="@(AllLot.Count > 0)">
+						@if(ErrorNoPrixAchat)
+						{
+							<p class="text-error">Vous devez entrer un prix d'achat</p>
+						}
 					</div>
 
 				}
@@ -60,82 +58,80 @@
 			*@
 
 			@* Nom du jeu *@
-			<div class="mb-5">
+			<div class="mb-5 d-flex flex-column">
+				<label>Jeu rechercher</label>
 				<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Quelle jeu cherche tu?" trueIfIsSearchBarFalseIfIsDropdown=true _hasGames=true OnChosenObject="SelectObj" CallBackOutside=true ToApi="true" OnFocusOutNoCoresponding="GetNewObjName">
 				</BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
 			</div>
 
 			<div class="d-flex flex-row justify-content-center gap-4">
 
-				<div class="w-25">
+				<div class="w-25 d-flex flex-column">
 					@* Marque *@
+					<label>Marque</label>
 					<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Marque" OnChosenObject="GetNewObjMarque" 
 						_lstObjects="allMarquesLst.Select(tv => new GenericObjDTO { Id = tv.Id, DisplayName = tv.Name }).ToList()">
 					</BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
 				</div>
 
-				<div class="w-25">
+				<div class="w-25`d-flex flex-column">
 					@* Sale Type *@
+					<label>Console</label>
 					<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Console" OnChosenObject="GetNewObjSaleType"
 						_lstObjects="allTypeVenteLst.Select(tv => new GenericObjDTO { Id = tv.Id, DisplayName = tv.Name }).ToList()">
 					</BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
 				</div>
 
 				@* Edition Special *@
-				<div class="d-flex justify-content-center">
-					<div class="form-floating mb-3">
-						<input type="text" class="form-control" id="edition" @bind="SelectedObjToAdd.Edition">
-						<label for="prixAchat">Edition</label>
-					</div>
+				<div class="d-flex flex-column">
+					<label for="prixAchat">Edition</label>
+					<input type="text" class="form-control" id="edition" @bind="SelectedObjToAdd.Edition">
 				</div>
 			</div>
 
-			<div class="d-flex flex-row justify-content-between">
-				<button class="btn btn-outline-dark" @onclick="Step1">Retour</button>
-				<button class="btn btn-primary" @onclick="Step3">Suivant</button>
-			</div>
 		}
 		else if (SelectedObjToAdd.TypeObj == (short)TypeObj.Hardware)
 		{
-			<div class="mb-5">
-				<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Quelle Console/Accesssoires cherche tu?" trueIfIsSearchBarFalseIfIsDropdown=true _hasHardware=true OnChosenObject="SelectObj" OnFocusOutNoCoresponding="GetNewObjName">
+			<div class="mb-5 d-flex flex-column">
+				<label>Console / Asccessoire rechercher</label>
+				<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Quelle Console/Accesssoires cherche tu?" trueIfIsSearchBarFalseIfIsDropdown=true _hasHardware=true OnChosenObject="SelectObj" CallBackOutside=true ToApi="true" OnFocusOutNoCoresponding="GetNewObjName">
 				</BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
 			</div>
 
 			<div class="d-flex flex-row justify-content-center gap-4">
 
-				<div class="w-25">
+				<div class="w-25 d-flex flex-column">
 					@* Marque *@
-					<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Marque" OnChosenObject="GetNewObjMarque"
-																				 _lstObjects="allMarquesLst.Select(tv => new GenericObjDTO { Id = tv.Id, DisplayName = tv.Name }).ToList()">
+					<label>Marque</label>
+					<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Marque" OnChosenObject="GetNewObjMarque" _lstObjects="allMarquesLst.Select(tv => new GenericObjDTO { Id = tv.Id, DisplayName = tv.Name }).ToList()">
 					</BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
 				</div>
 
-				<div class="w-25">
+				<div class="w-25 d-flex flex-column">
 					@* Sale Type *@
-					<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Console" OnChosenObject="GetNewObjSaleType"
-																				 _lstObjects="allTypeVenteLst.Select(tv => new GenericObjDTO { Id = tv.Id, DisplayName = tv.Name }).ToList()">
+					<label>Console</label>
+					<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Console" OnChosenObject="GetNewObjSaleType" _lstObjects="allTypeVenteLst.Select(tv => new GenericObjDTO { Id = tv.Id, DisplayName = tv.Name }).ToList()">
 					</BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
 				</div>
 
 				@* Edition Special *@
-				<div class="d-flex justify-content-center">
-					<div class="form-floating mb-3">
-						<input type="text" class="form-control" id="edition" @bind="SelectedObjToAdd.Edition">
-						<label for="prixAchat">Edition</label>
-					</div>
+				<div class="d-flex flex-column">
+					<label for="prixAchat">Edition</label>
+					<input type="text" class="form-control" id="edition" @bind="SelectedObjToAdd.Edition">
 				</div>
 			</div>
 
-			<div class="d-flex flex-row justify-content-between">
-				<button class="btn btn-outline-dark" @onclick="Step1">Retour</button>
-				<button class="btn btn-primary" @onclick="Step3">Suivant</button>
-			</div>
+
 		}
 		else
 		{
 			<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Que cherchez-vous?" trueIfIsSearchBarFalseIfIsDropdown=true _hasOther=true OnChosenObject="SelectObj"></BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
 		}
+
+		<div class="d-flex flex-row justify-content-between">
+			<button class="btn btn-outline-dark" @onclick="Step1">Retour</button>
+			<button class="btn btn-primary" @onclick="Step3">Suivant</button>
+		</div>
 	}
 
 	@* Étape 3 All info garder ou vendre*@
@@ -161,51 +157,30 @@
 			{
 				<div>
 					<div class="d-flex flex-row">
-						<div class="w-50">
-							@* Futur price charting price *@
-
-							<div class="m-4 border border-2 h-75">
-								<h4 class="border border-bottom border-2 p-1">Ancienne ventes</h4>
-								<div class="border border-bottom border-2 p-1 d-flex flex-row justify-content-between">
-									<p>Condition</p>
-									<p>Date de vente</p>
-									<p>Prix vendu</p>
-								</div>
-
-								@if (lstAncienneVentes.Count() > 0)
-								{
-									@foreach (Stocks s in lstAncienneVentes)
-									{
-										<div class="border border-bottom border-2 p-1 d-flex flex-row justify-content-between">
-											<p>@s.Condition.Name</p>
-											<p>@s.SoldDate</p>
-											<p>@s.SoldPrice</p>
-										</div>
-									}
-								}
-							</div>
-						</div>
 						<div class="me-4">
-							<h2 class="text-center">@($"{SelectedObjToAdd.Name} - {SelectedObjToAdd.Marque.Name} {SelectedObjToAdd.SaleType.Name}")</h2>
+							<h2 class="text-center">
+								@($"{SelectedObjToAdd.Name} " +
+									$"{(string.IsNullOrEmpty(SelectedObjToAdd.Edition) ? "" : $"( {SelectedObjToAdd.Edition} ) ")}" +
+									$"- {SelectedObjToAdd.Marque.Name} {SelectedObjToAdd.SaleType.Name}")
+							</h2>
 							<div class="d-flex flex-row">
 
 								@* Condition *@
 								<div class="d-flex flex-column">
 									<div class="">
 										<label for="boite1" class="form-label">Condition<span class="text-warning">*</span></label>
-										<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Condition" OnChosenObject="GetCondition"
-																									 _lstObjects="allConditionLst.Select(tv => new GenericObjDTO { Id = tv.Id, DisplayName = tv.Name }).ToList()">
+										<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Condition" OnChosenObject="GetCondition" _lstObjects="allConditionLst.Select(tv => new GenericObjDTO { Id = tv.Id, DisplayName = tv.Name }).ToList()">
 										</BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
 									</div>
 									@if (ErrorNoCondition)
 									{
-										<p class="text-danger fs-5">Vous devez choisir une condition</p>
+										<p class="text-error">Vous devez choisir une condition</p>
 									}
 								</div>
 							</div>
 							<div class="d-flex flex-row gap-4 pt-4 justify-content-between m-2">
 								<div class="d-flex flex-column">
-									<label for="boite1" class="form-label">Boite</label>
+									<label for="boite1" class="form-label cursor-pointer">Boite</label>
 									<div class="input-group mb-3">
 										<input type="number" class="form-control" id="boite1" placeholder="Boite" aria-label="Boite" aria-describedby="basic-addon1" @oninput="e => GetConditionBoite(e)" value="@(AddNewStocks.BoxRate == null ? 0 : AddNewStocks.BoxRate)">
 										<div class="input-group-append">
@@ -214,7 +189,7 @@
 									</div>
 									@if (ErrorRateBox)
 									{
-										<p class="text-danger fs-5">Doit être entre 1 et 10</p>
+										<p class="text-error">Doit être entre 1 et 10</p>
 									}
 								</div>
 
@@ -228,7 +203,7 @@
 									</div>
 									@if (ErrorRateManual)
 									{
-										<p class="text-danger fs-5">Doit être entre 1 et 10</p>
+										<p class="text-error">Doit être entre 1 et 10</p>
 									}
 								</div>
 
@@ -242,7 +217,7 @@
 									</div>
 									@if (ErrorRateCD)
 									{
-										<p class="text-danger fs-5">Doit être entre 1 et 10</p>
+										<p class="text-error">Doit être entre 1 et 10</p>
 									}
 								</div>
 							</div>
@@ -257,45 +232,44 @@
 									@* Statue *@
 									<div class="">
 										<label for="boite1" class="form-label">Statut<span class="text-warning">*</span></label>
-										<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Statut" OnChosenObject="GetStatut"
-																									 _lstObjects="allStatutLst.Select(tv => new GenericObjDTO { Id = tv.Id, DisplayName = tv.Name }).ToList()">
+										<BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Statut" OnChosenObject="GetStatut" _lstObjects="allStatutLst.Select(tv => new GenericObjDTO { Id = tv.Id, DisplayName = tv.Name }).ToList()" _SelectedObjectsDisplayed="@(new GenericObjDTO { Id = allStatutLst.First().Id, DisplayName = allStatutLst.First().Name })">
 										</BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
 									</div>
 									@if (ErrorNoStatut)
 									{
-										<p class="text-danger fs-5">Vous devez choisir un statut</p>
+										<p class="text-error">Vous devez choisir un statut</p>
 									}
 								</div>
 
 								@if(!isAddToALot)
 								{
-									<div class="">
-										<label for="boite3" class="form-label">Prix d'achat<span class="text-warning">*</span></label>
+									<div class="d-flex flex-column">
+										<label for="boite3" class="form-label">Prix d'achat<span class="text-danger">*</span></label>
 										<input id="buyValue" class="form-control" placeholder="Entrez le prix d'achat" @oninput="e => GetBuyValue(e)" value="@(AddNewStocks.BuyPrice == null ? 0 : AddNewStocks.BuyPrice)" />
 									</div>
 									@if (ErrorNoBuyPrice)
 									{
-										<p class="text-danger fs-5">Vous devez indiquer le prix d'achat</p>
+										<p class="text-error">Vous devez indiquer le prix d'achat</p>
 									}
 								}
 
 								@if (AddNewStocks.Status != null && AddNewStocks.Status.Id == (int)SharedParameters.Status.Garder)
 								{
 									<div>
-										<div class="">
+										<div class="d-flex flex-column">
 											<label for="keepvalueinput" class="form-label">Valeur<span class="text-warning">*</span></label>
 											<input id="keepValue" class="form-control" placeholder="Entrez la valeur" @bind="AddNewStocks.KeepValue" />
 										</div>
 										@if (ErrorKeepValue)
 										{
-											<p class="text-danger fs-5">Vous devez indiquer la valeur de l'objet garder</p>
+											<p class="text-error">Vous devez indiquer la valeur de l'objet garder</p>
 										}
 									</div>
 								}
 							</div>
 							<div>
 								<div class="d-flex flex-row justify-content-between">
-									<button class="btn btn-outline-dark" @onclick="() => Step2((short)TypeObj.Games)">Retour</button>
+									<button class="btn btn-outline-dark" @onclick="() => Step2((SelectedObjToAdd.TypeObj == (short)TypeObj.Games ? (short)TypeObj.Games : (short)TypeObj.Hardware))">Retour</button>
 									<button class="btn btn-primary" @onclick="Step4">Suivant</button>
 								</div>
 							</div>
@@ -361,7 +335,11 @@
 							</div>
 						</div>
 						<div class="w-auto">
-							<h2 class="text-center">@($"{SelectedObjToAdd.Name} - {SelectedObjToAdd.Marque.Name} {SelectedObjToAdd.SaleType.Name}")</h2>
+							<h2 class="text-center">
+								@($"{SelectedObjToAdd.Name} " +
+															$"{(string.IsNullOrEmpty(SelectedObjToAdd.Edition) ? "" : $"( {SelectedObjToAdd.Edition} ) ")}" +
+															$"- {SelectedObjToAdd.Marque.Name} {SelectedObjToAdd.SaleType.Name}")
+							</h2>
 
 							<ul class="nav nav-tabs">
 								<li class="nav-item">
@@ -418,7 +396,11 @@
 	{
 		<div class="d-flex flex-column justify-content-center align-content-center">
 			<img class="mb-4" />
-			<h2 class="text-center">@($"{SelectedObjToAdd.Name} - {SelectedObjToAdd.Marque.Name} {SelectedObjToAdd.SaleType.Name}")</h2>
+			<h2 class="text-center">
+				@($"{SelectedObjToAdd.Name} " +
+							$"{(string.IsNullOrEmpty(SelectedObjToAdd.Edition) ? "" : $"( {SelectedObjToAdd.Edition} ) ")}" +
+							$"- {SelectedObjToAdd.Marque.Name} {SelectedObjToAdd.SaleType.Name}")
+			</h2>
 
 			@if (AddNewStocks.Status.Id == (int)SharedParameters.Status.Garder)
 			{

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 using api.BLogics;
 using api.DataAccessLayer;
+using SharedParams.DTOs;
 
 namespace api.Controller
 {
@@ -25,18 +26,18 @@ namespace api.Controller
         }
 
         //Tu peux faire  Task<ActionResult<List<Games>>> Pour savoir ce que tu recoit dans swagger
-        [HttpGet]
+        [HttpPost]
         [Route("GetAllInStocks")]
-        public async Task<ActionResult<List<Stocks>>> GetAllInStocks()
+        public async Task<ActionResult<List<Stocks>>> GetAllInStocks(Filters filters)
         {
-			return _dl.GetAllInStocks();
+			return _dl.GetAllInStocks(filters);
 		}
         
-        [HttpGet]
+        [HttpPost]
         [Route("GetAllInStocksByBaseObjId")]
-        public async Task<ActionResult<List<Stocks>>> GetAllInStocksByBaseObjId(int baseObjId)
+        public async Task<ActionResult<List<Stocks>>> GetAllInStocksByBaseObjId(int baseObjId, Filters filters)
         {
-			return _dl.GetAllInStocksByBaseObjId(baseObjId);
+			return _dl.GetAllInStocksByBaseObjId(baseObjId, filters);
 		}
 
 		[HttpGet]
@@ -125,7 +126,12 @@ namespace api.Controller
 
             await _context.SaveChangesAsync();
 
-            return Ok(await GetAllInStocks());
+            Filters statsFilters = new Filters
+            {
+                ToMaya = updateStocks.First().ToMaya,
+            };
+
+            return Ok(await GetAllInStocks(statsFilters));
         }
         [HttpDelete]
         public async Task<ActionResult<List<Stocks>>> DeleteStocks(int id)
@@ -139,7 +145,12 @@ namespace api.Controller
 
             await _context.SaveChangesAsync();
 
-            return Ok(await GetAllInStocks());
+            Filters statsFilters = new Filters
+            {
+                ToMaya = stock.ToMaya,
+            };
+
+            return Ok(await GetAllInStocks(statsFilters));
         }
         [HttpPost]
         [Route("UpdateSoldPrice")]
@@ -160,7 +171,12 @@ namespace api.Controller
 
             await _context.SaveChangesAsync();
 
-            return Ok(await GetAllInStocks());
+            Filters statsFilters = new Filters
+            {
+                ToMaya = updateStocks.First().ToMaya,
+            };
+
+            return Ok(await GetAllInStocks(statsFilters));
         }
     }
 }

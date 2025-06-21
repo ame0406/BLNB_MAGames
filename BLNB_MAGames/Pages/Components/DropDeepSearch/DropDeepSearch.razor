@@ -1,10 +1,10 @@
-﻿@using SharedParams.DTOs
+﻿@using SharedParams.DTOs 
 
 @rendermode InteractiveServer
 
 <div class="dropdown w-100 position-relative">
     <input type="text"
-           class="form-control form-control-lg dropdown-toggle" 
+           class="form-control dropdown-toggle @(trueIfIsSearchBarFalseIfIsDropdown ? "loupeIcon" : "")"
            id="dropdownMenuButton1"
            data-bs-toggle="dropdown"
            aria-expanded="false"
@@ -41,7 +41,7 @@
                                     </div>
                                 }
                                 <p class="mb-0">
-                                    @(" " + objects.DisplayName + (objects.DisplayProps.Count() > 0 ? " - " : ""))
+                                    @(" " + objects.DisplayName + (!string.IsNullOrEmpty(objects.DisplayEdition) ? " ( " + objects.DisplayEdition + " ) " : "" ) + (objects.DisplayProps.Count() > 0 ? " - " : ""))
                                     @foreach (string s in objects.DisplayProps)
                                     {
                                         if (s != null)
@@ -66,7 +66,7 @@
 </div>
 
 <style>
-    .dropdown .form-control {
+    .loupeIcon {
         padding-left: 2.5rem; /* Adjusts padding to create space for the icon */
     }
 
@@ -81,5 +81,10 @@
 
     .dropdown .icon-loupe {
         font-size: 1.25rem; /* Bootstrap-compatible icon size */
+    }
+
+    .dropdown-menu {
+        max-height: 5rem;
+        overflow-y: auto;
     }
 </style>

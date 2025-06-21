@@ -14,8 +14,11 @@ namespace BLNB_MAGames.Pages.Inventory
 		private ApiService _apiService { get; set; }
 		[Inject]
 		private NavigationManager _navigationManager { get; set; }
+        [Inject]
+        private ProfileStateService _profileStateService { get; set; }
+        private string profilChoosen = "";
 
-		[CascadingParameter]
+        [CascadingParameter]
 		private EventCallback<(ToastType, string)> _showToast { get; set; }
 
 		[Parameter]
@@ -25,10 +28,21 @@ namespace BLNB_MAGames.Pages.Inventory
         private List<Stocks> AllInStocks { get; set; } = new List<Stocks>();
         private List<StocksToShow> AllInStocksToShow { get; set; } = new List<StocksToShow>();
 
+        private int currentPage = 1;
+        private int pageSize = 12;
 
-		protected override async Task OnInitializedAsync()
+        private int TotalPages => (int)Math.Ceiling((double)filteredStocks.Count / pageSize);
+
+        private IEnumerable<StocksToShow> PagedStocks { get; set; } = new List<StocksToShow>();
+        private string strSearch { get; set; } = "";
+        private List<StocksToShow> filteredStocks = new();
+
+
+        protected override async Task OnInitializedAsync()
 		{
             modeint = int.Parse(mode);
+            await _profileStateService.InitializeAsync();
+            profilChoosen = _profileStateService.Profile;
 
             if (modeint == (int)InventoryMode.All)
 			{
@@ -46,6 +60,7 @@ namespace BLNB_MAGames.Pages.Inventory
                     {
                         Image = (firstStock.BaseObj.lstImages.Count() > 0 ? firstStock.BaseObj.lstImages.FirstOrDefault().Image : "/images/placeholder.png"),
                         Name = firstStock.BaseObj.Name,
+                        Edition = firstStock.BaseObj.Edition ?? "",
                         Marque = firstStock.BaseObj.Marque?.Name ?? string.Empty,
                         SaleType = firstStock.BaseObj.SaleType?.Name ?? string.Empty,
                         PrixVenteMin = prixMin,
@@ -55,17 +70,92 @@ namespace BLNB_MAGames.Pages.Inventory
                     };
                 })
                 .ToList();
+
+                ApplySearch();
+                StateHasChanged();
             }
 		}
 
 		private async Task GetAllInStocks()
 		{
-			AllInStocks = await _apiService.GetAllInStocksAsync();
+            Filters statsFilters = new Filters
+            {
+                ToMaya = (profilChoosen == "Maya" ? true : false),
+            };
+
+            AllInStocks = await _apiService.GetAllInStocksAsync(statsFilters);
 		}
 
         private void GoToInventory(int baseObjId)
         {
             _navigationManager.NavigateTo($"/Inventory/{baseObjId}");
+        }
+
+        private void GoToPage(int page)
+        {
+            currentPage = page;
+
+            GetPageContent();
+            StateHasChanged();
+
+        }
+
+        private void PreviousPage()
+        {
+            if (currentPage > 1)
+            {
+                currentPage--;
+            }
+
+            GetPageContent();
+            StateHasChanged();
+
+        }
+
+        private void NextPage()
+        {
+            if (currentPage < TotalPages)
+            {
+                currentPage++;
+            }
+
+            GetPageContent();
+            StateHasChanged();
+
+        }
+
+        private void GetPageContent()
+        {
+            PagedStocks = filteredStocks
+                .Skip((currentPage - 1) * pageSize)
+                .Take(pageSize);
+        }
+
+        private void Filter(ChangeEventArgs e)
+        {
+            strSearch = e.Value?.ToString() ?? string.Empty;
+            ApplySearch();
+        }
+
+        private void ApplySearch()
+        {
+            if (string.IsNullOrWhiteSpace(strSearch))
+            {
+                filteredStocks = AllInStocksToShow;
+            }
+            else
+            {
+                filteredStocks = AllInStocksToShow
+                    .Where(s =>
+                        (s.Name?.Contains(strSearch, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                        (s.Marque?.Contains(strSearch, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                        (s.SaleType?.Contains(strSearch, StringComparison.OrdinalIgnoreCase) ?? false))
+                    .ToList();
+            }
+
+            currentPage = 1;
+            GetPageContent();
+
         }
     }
 }
@@ -81,6 +171,7 @@ public class StocksToShow
 {
 	public string Image { get; set; } = string.Empty;
 	public string Name { get; set; } = string.Empty;
+	public string Edition { get; set; } = string.Empty;
 	public string Marque { get; set; } = string.Empty;
 	public string SaleType { get; set; } = string.Empty;
 	public decimal PrixVenteMin { get; set; } = 0;

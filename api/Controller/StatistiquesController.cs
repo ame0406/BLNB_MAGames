@@ -15,10 +15,10 @@ namespace api.Controller
 			_bl = bl;
 		}
 
-		[HttpGet("GetTotalDepenseStats")]
-		public StatsDTO GetTotalDepenseStats(DateTime? dateDebut = null, DateTime? dateFin = null)
+		[HttpPost("GetTotalDepenseStats")]
+		public StatsDTO GetTotalDepenseStats(Filters filters)
 		{
-			return _bl.GetTotalDepenseStats(dateDebut, dateFin);
+			return _bl.GetTotalDepenseStats(filters);
 		}
 	}
 }

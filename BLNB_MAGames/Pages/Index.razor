@@ -14,7 +14,14 @@ else
             @Cylinder("Total dépensé", _stats.TotalDepenser.ToString("C"), "bi-cash-stack", "depense")
             @Cylinder("Total revenu", _stats.TotalRevenue.ToString("C"), "bi-graph-up", "revenu")
             @Cylinder("Total gardé", _stats.TotalKeep.ToString("C"), "bi-box-seam", "garder")
-            @Cylinder("Profit net", _stats.Profit.ToString("C"), "bi-coin", _stats.Profit >= 0 ? "profit-positif" : "profit-negatif")
+            @Cylinder(
+                     "Profit net",
+                     _stats.Profit >= 0
+                     ? _stats.Profit.ToString("C")
+                     : "-" + (-_stats.Profit).ToString("C"),
+                     "bi-coin",
+                     _stats.Profit >= 0 ? "profit-positif" : "profit-negatif"
+                     )
         </div>
     </div>
 }

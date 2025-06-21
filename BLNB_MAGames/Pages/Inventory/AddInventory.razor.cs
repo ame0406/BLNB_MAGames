@@ -66,7 +66,8 @@ namespace BLNB_MAGames.Pages.Inventory
 		}
 		private async Task Step2(short typeAjout)
         {
-            ErrorNoPrixAchat = false;
+			SelectedObjToAdd = new Base_Obj();
+			ErrorNoPrixAchat = false;
 
 
 			if (isAddToALot && AddedLot.PrixDachat < 0)
@@ -189,7 +190,9 @@ namespace BLNB_MAGames.Pages.Inventory
 		}
         private void GetNewObjName(string name)
         {
-            SelectedObjToAdd.Name = name;
+			SelectedObjToAdd.Name = name;
+			AddNewStocks.BaseObj = new Base_Obj();
+			AddNewStocks.BaseObjId = 0;
 		}
         private void GetNewObjSaleType(GenericObjDTO select)
         {
@@ -227,7 +230,7 @@ namespace BLNB_MAGames.Pages.Inventory
 				AddNewStocks.Status = SelectedObj;
 				if(AddNewStocks.Status.Id != (int)SharedParameters.Status.Garder)
 				{
-					AddNewStocks.KeepValue = 0;
+					AddNewStocks.KeepValue = null;
 				}
 			}
 		}
@@ -297,7 +300,7 @@ namespace BLNB_MAGames.Pages.Inventory
 
 			if (decimal.TryParse(e.Value?.ToString(), out decimal value))
 			{
-				if (value < 1 || value > 10)
+				if (value < 0)
 				{
 					ErrorNoBuyPrice = true;
 				}

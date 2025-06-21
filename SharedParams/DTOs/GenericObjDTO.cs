@@ -10,6 +10,7 @@ namespace SharedParams.DTOs
     {
         public string ImageToDisplay {  get; set; } = string.Empty;
         public string DisplayName { get; set; } = string.Empty;
+        public string DisplayEdition { get; set; } = string.Empty;  
         public List<string> DisplayProps { get; set;} = new List<string>();
         public int Id { get; set; }
         public EnumGenericObjType EnumGenericObjType { get; set; }  

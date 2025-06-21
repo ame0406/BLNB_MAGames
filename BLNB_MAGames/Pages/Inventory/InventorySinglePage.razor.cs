@@ -5,6 +5,7 @@ using SharedParams.DTOs;
 using SharedParams.Tables;
 using static BLNB_MAGames.Pages.Components.Toast.Toast;
 using SharedParams.Parameters;
+using BLNB_MAGames.Services;
 
 
 namespace BLNB_MAGames.Pages.Inventory
@@ -16,6 +17,11 @@ namespace BLNB_MAGames.Pages.Inventory
         private ApiService _apiService { get; set; }
         [Inject]
         private NavigationManager _navigationManager { get; set; }
+        [Inject]
+        private CartService _cartService { get; set; }
+        [Inject]
+        private ProfileStateService _profileStateService { get; set; }
+        private string profilChoosen = "";
 
         [CascadingParameter]
         private EventCallback<(ToastType, string)> _showToast { get; set; }
@@ -32,11 +38,22 @@ namespace BLNB_MAGames.Pages.Inventory
 
         protected override async Task OnInitializedAsync()
         {
+            await _profileStateService.InitializeAsync();
+            profilChoosen = _profileStateService.Profile;
+
+            _cartService.OnChange += StateHasChanged;
+
             await GetStocksByBaseObjId();
+            GetMainImage(new ObjImages());
         }
         private async Task GetStocksByBaseObjId()
         {
-            stocksByBaseObj = await _apiService.GetAllInStocksByBaseObjIdAsync(int.Parse(BaseObjId));
+            Filters statsFilters = new Filters
+            {
+                ToMaya = (profilChoosen == "Maya" ? true : false),
+            };
+
+            stocksByBaseObj = await _apiService.GetAllInStocksByBaseObjIdAsync(int.Parse(BaseObjId), statsFilters);
         }
         private void GetMainImage(ObjImages img)
         {
@@ -44,8 +61,10 @@ namespace BLNB_MAGames.Pages.Inventory
             {
                 MainImage = img.Image;
             }
-
-            MainImage = stocksByBaseObj.First().BaseObj.lstImages.FirstOrDefault()?.Image ?? "/images/default.png";
+            else
+            {
+                MainImage = stocksByBaseObj.First().BaseObj.lstImages != null && stocksByBaseObj.First().BaseObj.lstImages.Count() > 0 ? stocksByBaseObj.First().BaseObj.lstImages.FirstOrDefault()?.Image : "/images/placeholder.png";
+            }
         }
         private void OpenModaleSold(Stocks stock)
         {
@@ -72,5 +91,14 @@ namespace BLNB_MAGames.Pages.Inventory
             //await _showToast.InvokeAsync(ToastType.SUCCESS, "text");
         }
 
+        private void GoToLot()
+        {
+
+        }
+
+        public void Dispose()
+        {
+            _cartService.OnChange -= StateHasChanged;
+        }
     }
 }

@@ -15,27 +15,34 @@ namespace api.DataAccessLayer
 			_context = context;
 		}
 
-		public List<Stocks> GetAllStocksWithLotsAsync()
+		public decimal GetTotalPrixStocks(Filters filters)
+		{
+            decimal totalStocks = _context.Stocks
+				.Where(s => s.StatusId != (int)SharedParameters.Status.Garder && s.BuyPrice != null && s.ToMaya == filters.ToMaya)
+				.Sum(s => s.BuyPrice!.Value);
+
+            decimal totalLots = _context.Stocks
+                .Where(s => s.ToMaya == filters.ToMaya && s.Lot != null)
+                .Select(s => s.Lot)
+                .Distinct()
+                .Sum(l => l.PrixDachat);
+
+            return totalStocks + totalLots;
+        }
+
+        public decimal GetTotalRevenu(Filters filters)
 		{
 			return _context.Stocks
-				.Include(s => s.Lot)
-				.Where(s => s.StatusId != (int)SharedParameters.Status.Garder)
-				.ToList();
+				.Where(s => s.StatusId != (int)SharedParameters.Status.Garder && s.SoldPrice != null && s.ToMaya == filters.ToMaya)
+				.Sum(s => s.SoldPrice!.Value);
+
 		}
 
-		public decimal GetTotalRevenuAsync()
+		public decimal GetTotalRevenuInStocksKeep(Filters filters)
 		{
 			return _context.Stocks
-				.Where(s => s.StatusId != (int)SharedParameters.Status.Garder && s.SoldPrice != null)
-				.Sum(s => s.SoldPrice.Value);
-
-		}
-
-		public decimal GetTotalRevenuInStocksKeep()
-		{
-			return _context.Stocks
-				.Where(s => s.StatusId == (int)SharedParameters.Status.Garder && s.KeepValue != null)
-				.Sum(s => s.KeepValue.Value);
+				.Where(s => s.StatusId == (int)SharedParameters.Status.Garder && s.KeepValue != null && s.ToMaya == filters.ToMaya)
+				.Sum(s => s.KeepValue!.Value);
 
 		}
 	}

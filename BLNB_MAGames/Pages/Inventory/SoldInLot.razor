@@ -1,0 +1,145 @@
+﻿@page "/Cart"
+@using SharedParams.Tables
+@using System.Globalization
+
+<div class="container mt-5">
+    <h2 class="text-center text-white neon-text mb-4">Vente en Lot</h2>
+
+    @if (_cartService.Items.Count == 0)
+    {
+        <p class="text-center text-muted fs-4">Le lot de vente est vide.</p>
+
+        <button class="btn btn-success btn-lg neon-btn px-4 mt-3" @onclick="GoToInventory">
+            Voire l'inventaire
+        </button>
+    }
+    else
+    {
+        <div class="row g-4 justify-content-center">
+            @foreach (Stocks group in _cartService.Items)
+            {
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card bg-dark text-white neon-border">
+                        <div class="card-body d-flex flex-column gap-2">
+                            <h5 class="card-title text-center">
+                                @($"{group.BaseObj?.Name} " +
+                                    $"{(string.IsNullOrEmpty(group.BaseObj?.Edition) ? "" : $"( {group.BaseObj?.Edition} ) ")}")
+                            </h5>
+                            <p class="mb-1">Type : <strong>@group.BaseObj.SaleType?.Name</strong></p>
+                            <p class="mb-1">Marque : <strong>@group.BaseObj.Marque?.Name</strong></p>
+                            <p class="mb-1">Prix d'achat : <strong>@(group.BuyPrice == null ? "Dans un lot" : group.BuyPrice + " $")</strong></p>
+                            <p class="mb-1">Prix de vente : <strong>@group.EstimatedSalePrice $</strong></p>
+
+                            <button class="btn btn-outline-danger mt-2"
+                                    @onclick="() => RemoveGroup(group.Id)">
+                                Retirer ce groupe
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="text-center mt-5">
+            <h4 class="text-white neon-text">Prix estimer de vente du lot : @_cartService.Items.Sum(i => i.EstimatedSalePrice).ToString("C")</h4>
+
+            <button class="btn btn-success btn-lg neon-btn px-4 mt-3" @onclick="ProceedToCheckout">
+                Vendre ce lot
+            </button>
+        </div>
+    }
+</div>
+
+<BLNB_MAGames.Pages.Components.Modale.Modale _isShown="isModaleSoldOpen" _class="col-8" _noButton=true _onClose="ProceedToCheckout">
+    <_body>
+        <BLNB_MAGames.Pages.Components.MarquerCommeVendu.MarquerCommeVendu name="Lot de vente" OnPriceSoldChanged="HandlePriceSold"></BLNB_MAGames.Pages.Components.MarquerCommeVendu.MarquerCommeVendu>
+    </_body>
+</BLNB_MAGames.Pages.Components.Modale.Modale>
+
+<BLNB_MAGames.Pages.Components.Modale.Modale _isShown="isModaleManualOpen" _class="col-8" _noButton=true _onClose="ShowManualSale">
+    <_body>
+        <h2 class="text-center mb-4">Répartir le prix de vente</h2>
+
+        <div class="d-flex flex-row justify-content-center mb-4">
+            <div class="card bg-dark text-white neon-border w-50">
+                <div class="card-body d-flex flex-column gap-2">
+                    <h5 class="card-title text-center">Total à répartir</h5>
+                    <h3 class="text-center">@RemainingToDistribute.ToString("C", CultureInfo.CreateSpecificCulture("fr-CA")).Replace("(", "-").Replace(")", "")</h3>
+                </div>
+            </div>
+        </div>
+
+        <table class="table table-dark table-hover text-white">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Condition</th>
+                    <th>Estimation</th>
+                    <th>Prix vendu</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var stock in _cartService.Items)
+                {
+                    <tr>
+                        <td>
+                            @($"{stock.BaseObj?.Name} " +
+                                $"{(string.IsNullOrEmpty(stock.BaseObj?.Edition) ? "" : $"( {stock.BaseObj?.Edition} ) ")}")
+                        </td>
+                        <td>@stock.Condition?.Name</td>
+                        <td>@(stock.EstimatedSalePrice.ToString("C") ?? "—")</td>
+                        <td>
+                            <div class="input-group mb-3" @oninput="UpdateRemaining">
+                                <input type="number" step="0.01" class="form-control"
+                                       @bind="stock.SoldPrice"
+                                       @bind:event="oninput">
+                                <span class="input-group-text">$</span>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="d-flex justify-content-center mt-3 gap-4">
+            <button class="btn btn-outline-dark"
+                    @onclick="ShowManualSale">
+                Fermer
+            </button>
+
+            <button class="btn btn-success"
+                    @onclick="() => FinaliserVente((List<Stocks>)_cartService.Items)"
+                    disabled="@(RemainingToDistribute == 0 && _cartService.Items.All(s => s.SoldPrice != null && s.SoldPrice >= 0) ? false : true)">
+                Vendre le lot
+            </button>
+        </div>
+    </_body>
+</BLNB_MAGames.Pages.Components.Modale.Modale>
+
+                                    <style>
+    .neon-border {
+        border: 2px solid #00b7ff;
+        border-radius: 1rem;
+        box-shadow: 0 0 10px #00b7ff;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .neon-text {
+        text-shadow: 0 0 8px #00b7ff;
+    }
+
+    .neon-btn {
+        background-color: #00b7ff;
+        color: black;
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 0 10px #00b7ff;
+        transition: all 0.3s ease-in-out;
+    }
+
+        .neon-btn:hover {
+            box-shadow: 0 0 20px #00b7ff, 0 0 40px #00b7ff;
+            transform: scale(1.05);
+        }
+
+                                    </style>

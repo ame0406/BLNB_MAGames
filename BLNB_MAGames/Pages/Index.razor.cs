@@ -9,11 +9,21 @@ namespace BLNB_MAGames.Pages
         private StatsDTO _stats { get; set; } = new StatsDTO();
         [Inject]
         private ApiService _apiService { get; set; }
-
+        [Inject]
+        private ProfileStateService _profileStateService { get; set; }
+        private string profilChoosen = "";
 
         protected override async Task OnInitializedAsync()
         {
-            _stats = await _apiService.GetTotalDepenseStats();
+            await _profileStateService.InitializeAsync();
+            profilChoosen = _profileStateService.Profile;
+
+            Filters statsFilters = new Filters
+            {
+                ToMaya = (profilChoosen == "Maya" ? true : false),
+            };
+
+            _stats = await _apiService.GetTotalDepenseStats(statsFilters);
         }
 
         RenderFragment Cylinder(string title, string value, string icon, string styleClass) => __builder =>

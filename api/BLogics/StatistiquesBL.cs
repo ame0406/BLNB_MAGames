@@ -12,28 +12,19 @@ namespace api.BLogics
 			_dl = dl;
 		}
 
-		public StatsDTO GetTotalDepenseStats(DateTime? dateDebut = null, DateTime? dateFin = null)
+		public StatsDTO GetTotalDepenseStats(Filters filters)
 		{
 			StatsDTO statsDTO = new StatsDTO();
 
 
-			//Calcul TotalDepenser
-			var stocks = _dl.GetAllStocksWithLotsAsync();
-
-			// Filtrer par date si nécessaire (ex: s.DateAjout) — à adapter selon ton modèle
-			// if (dateDebut.HasValue || dateFin.HasValue)
-			//     stocks = stocks.Where(...).ToList();
-
-			statsDTO.TotalDepenser = stocks.Sum(s =>
-				s.BuyPrice.HasValue ? s.BuyPrice.Value :
-				s.Lot != null ? s.Lot.PrixDachat : 0m);
-
+            //Calcul TotalDepenser
+            statsDTO.TotalDepenser = _dl.GetTotalPrixStocks(filters);
 
 			//Calcul TotalRevenue
-			statsDTO.TotalRevenue = _dl.GetTotalRevenuAsync();
+			statsDTO.TotalRevenue = _dl.GetTotalRevenu(filters);
 
 			//Calcul TotalKeep
-			statsDTO.TotalKeep = _dl.GetTotalRevenuInStocksKeep();
+			statsDTO.TotalKeep = _dl.GetTotalRevenuInStocksKeep(filters);
 
 			return statsDTO;
 		}

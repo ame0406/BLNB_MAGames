@@ -59,10 +59,10 @@ namespace api.BLogics
 				// Mapper les propriétés nécessaires
 				ImageToDisplay = baseObj.lstImages?.FirstOrDefault()?.Image ?? "Image par défaut",
 				DisplayName = baseObj.Name ?? "Nom par défaut",
+				DisplayEdition = baseObj.Edition ?? "",
 
 				DisplayProps = new List<string>
 				{
-					baseObj.Edition ?? string.Empty,
 					baseObj.Marque?.Name ?? string.Empty,
 					baseObj.SaleType?.Name ?? string.Empty
 

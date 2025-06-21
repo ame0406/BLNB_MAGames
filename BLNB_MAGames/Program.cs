@@ -1,5 +1,6 @@
 ﻿using BLNB_MAGames;
 using BLNB_MAGames.Pages;
+using BLNB_MAGames.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +13,7 @@ builder.Services.AddControllers();
 builder.Services.AddHttpClient<ApiService>(); // Configurer HttpClient
 builder.Services.AddScoped<ApiService>();
 builder.Services.AddScoped<ProfileStateService>();
-
+builder.Services.AddScoped<CartService>();
 
 builder.Services.AddHttpContextAccessor(); // utile si tu veux accéder au contexte partout
 builder.Services.AddDistributedMemoryCache(); // Nécessaire pour IDistributedCache

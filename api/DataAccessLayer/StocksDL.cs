@@ -1,7 +1,9 @@
 ﻿using api.Data;
 using Microsoft.EntityFrameworkCore;
+using SharedParams.DTOs;
 using SharedParams.Parameters;
 using SharedParams.Tables;
+using static SharedParams.Parameters.SharedParameters;
 
 namespace api.DataAccessLayer
 {
@@ -14,7 +16,7 @@ namespace api.DataAccessLayer
 			_context = context;
 		}
 
-		public List<Stocks> GetAllInStocks()
+		public List<Stocks> GetAllInStocks(Filters filters)
 		{
             try
             {
@@ -25,7 +27,7 @@ namespace api.DataAccessLayer
 				.Include(x => x.Status)
 				.Include(x => x.Lot)
 				.Include(x => x.Condition)
-				.Where(x => x.IsActive && x.StatusId == (int)SharedParameters.Status.Vente)
+				.Where(x => x.IsActive && x.StatusId == filters.status && x.ToMaya == filters.ToMaya)
 				.ToList();
 
                 return response;
@@ -36,7 +38,7 @@ namespace api.DataAccessLayer
                 throw; 
             }
         }
-		public List<Stocks> GetAllInStocksByBaseObjId(int baseObjId)
+		public List<Stocks> GetAllInStocksByBaseObjId(int baseObjId, Filters filters)
 		{
             try
             {
@@ -47,7 +49,7 @@ namespace api.DataAccessLayer
 				.Include(x => x.Status)
 				.Include(x => x.Lot)
 				.Include(x => x.Condition)
-				.Where(x => x.IsActive && x.BaseObjId == baseObjId)
+				.Where(x => x.IsActive && x.BaseObjId == baseObjId && x.StatusId == filters.status && x.ToMaya == filters.ToMaya)
 				.ToList();
 
                 return response;
