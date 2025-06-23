@@ -7,64 +7,99 @@
 <div class="container my-4">
     <h1 class="text-center">Inventaire</h1>
 
-    <div class="d-flex flex-row justify-content-center my-4">
-        <input type="text"
-               class="form-control w-75"
-               id="searchInInventory"
-               placeholder="Rechercher..."
-               @bind="@strSearch"
-               @oninput="Filter" />
-    </div>
+    @if (modeint == (int)InventoryMode.All)
+    {
+        <div class="d-flex flex-row justify-content-center my-4">
+            <input type="text"
+                   class="form-control w-75"
+                   id="searchInInventory"
+                   placeholder="Rechercher..."
+                   @bind="@strSearch"
+                   @oninput="Filter" />
+        </div>
 
 
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-        @foreach (var stock in PagedStocks)
-        {
-            <div class="col" @onclick="() => GoToInventory(stock.BaseObjId)">
-                <div class="card h-100 text-center position-relative">
-                    <!-- Quantité -->
-                    <div class="position-absolute top-0 end-0 m-2">
-                        <p class="">Qté : @stock.stockQte</p>
-                    </div>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            @foreach (var stock in PagedStocks)
+            {
+                <div class="col" @onclick="() => GoToInventory(stock.BaseObjId, (int)InventoryMode.All)">
+                    <div class="card h-100 text-center position-relative">
+                        <!-- Quantité -->
+                        <div class="position-absolute top-0 end-0 m-2">
+                            <p class="">Qté : @stock.stockQte</p>
+                        </div>
 
-                    <!-- Image -->
-                    <img src="@stock.Image" class="card-img-top" alt="Jeu image" style="height: 120px; object-fit: contain; padding: 10px;" />
+                        <!-- Image -->
+                        <img src="@stock.Image" class="card-img-top" alt="Jeu image" style="height: 120px; object-fit: contain; padding: 10px;" />
 
-                    <!-- Corps de la carte -->
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            @($"{stock.Name} " +
-                                $"{(string.IsNullOrEmpty(stock.Edition) ? "" : $"( {stock.Edition} ) ")}")
-                        </h5>
-                        <p class="card-text text-muted">@stock.Marque - @stock.SaleType</p>
-                    </div>
+                        <!-- Corps de la carte -->
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                @($"{stock.Name} " +
+                                    $"{(string.IsNullOrEmpty(stock.Edition) ? "" : $"( {stock.Edition} ) ")}")
+                            </h5>
+                            <p class="card-text text-muted">@stock.Marque - @stock.SaleType</p>
+                        </div>
 
-                    <!-- Footer -->
-                    <div class="card-footer">
-                        <strong class="text-success">
-                            @(stock.PrixVenteMax == 0
-                                ? stock.PrixVenteMin.ToString("C")
-                                : $"{stock.PrixVenteMin.ToString("C")} - {stock.PrixVenteMax.ToString("C")}")
-                        </strong>
+                        <!-- Footer -->
+                        <div class="card-footer">
+                            <strong class="text-success">
+                                @(stock.PrixVenteMax == 0
+                                    ? stock.PrixVenteMin.ToString("C")
+                                    : $"{stock.PrixVenteMin.ToString("C")} - {stock.PrixVenteMax.ToString("C")}")
+                            </strong>
+                        </div>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
+            }
+        </div>
 
-    <div class="d-flex justify-content-center mt-4 neon-pagination">
-        <button class="neon-btn" @onclick="PreviousPage" disabled="@(currentPage == 1)">⟨</button>
+        <div class="d-flex justify-content-center mt-4 neon-pagination">
+            <button class="neon-btn" @onclick="PreviousPage" disabled="@(currentPage == 1)">⟨</button>
 
-        @for (int i = 1; i <= TotalPages; i++)
-        {
-            var p = i;
-            <button class="neon-btn @(p == currentPage ? "active" : "")" @onclick="() => GoToPage(p)">
-                @p
-            </button>
-        }
+            @for (int i = 1; i <= TotalPages; i++)
+            {
+                var p = i;
+                <button class="neon-btn @(p == currentPage ? "active" : "")" @onclick="() => GoToPage(p)">
+                    @p
+                </button>
+            }
 
-        <button class="neon-btn" @onclick="NextPage" disabled="@(currentPage == TotalPages)">⟩</button>
-    </div>
+            <button class="neon-btn" @onclick="NextPage" disabled="@(currentPage == TotalPages)">⟩</button>
+        </div>
+    }
+    else if (modeint == (int)InventoryMode.ByLots)
+    {
+        <div class="row g-4 justify-content-center mt-3">
+            @foreach (var lot in AllLotsToShow)
+            {
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card bg-dark text-white neon-border p-3 h-100">
+                        <h5 class="mb-2">Lot #@lot.Id</h5>
+                        <p class="mb-1">Ajouté le : @lot.CreationDate.ToString("yyyy-MM-dd")</p>
+                        <p class="mb-1">Objets : @lot.TotalItems / Vendu : @lot.SoldItems</p>
+
+                        <div class="progress mb-3" style="height: 1.25rem;">
+                            <div class="progress-bar bg-info text-dark fw-bold"
+                                 role="progressbar"
+                                 style="width: @lot.SaleProgress%;"
+                                 aria-valuenow="@lot.SaleProgress"
+                                 aria-valuemin="0" aria-valuemax="100">
+                                @lot.SaleProgress%
+                            </div>
+                        </div>
+
+                        <p class="mb-1 text-success">Valeur estimée : @lot.EstimatedTotalSale.ToString("C")</p>
+                        <p class="mb-1 text-warning">Prix d'achat : @lot.TotalBuyPrice.ToString("C")</p>
+
+                        <button class="btn btn-outline-info mt-2 w-100" @onclick="() => GoToInventory(lot.Id, (int)InventoryMode.ByLots)">
+                            Voir ce lot
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    }
 </div>
 
 <style>
@@ -92,6 +127,18 @@
             opacity: 0.3;
             cursor: not-allowed;
             box-shadow: none;
+        }
+
+    .neon-border {
+        border: 2px solid #00b7ff;
+        border-radius: 1rem;
+        box-shadow: 0 0 10px #00b7ff44;
+        transition: transform 0.2s;
+    }
+
+        .neon-border:hover {
+            box-shadow: 0 0 15px #00b7ffcc;
+            transform: scale(1.02);
         }
 
 </style>

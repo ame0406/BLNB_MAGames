@@ -2,10 +2,16 @@
 @using SharedParams.Tables
 @using static SharedParams.Parameters.SharedParameters
 
-@page "/Inventory/{BaseObjId}"
+@page "/Inventory/{mode}/{BaseObjId}"
 
 <div class="mb-4">
-    @if (stocksByBaseObj.Count() > 0)
+    <a class="neon-back-arrow text-decoration-none d-inline-flex align-items-center mb-3"
+       href="/AllInventory/1">
+        <i class="bi bi-arrow-left-circle-fill me-2"></i>
+        <span>Retour</span>
+    </a>
+
+    @if (stocksByBaseObj.Count() > 0 && modeint == (int)InventoryMode.All)
     {
         <h1 class="mb-4">
             @($"{stocksByBaseObj.First().BaseObj?.Name} " +
@@ -86,6 +92,48 @@
             }
         </div>
     }
+    else if (modeint == (int)InventoryMode.ByLots)
+    {
+        <div class="card bg-dark text-light p-4 mb-5 shadow-lg rounded-4 border border-info">
+            <h3 class="text-info mb-3">🧾 Informations générales</h3>
+            <p><strong>Date de création :</strong> @Lot.CreationDate.ToString("yyyy-MM-dd")</p>
+            <p><strong>Prix d'achat :</strong> @Lot.PrixDachat.ToString("C")</p>
+            <p><strong>Total estimé de vente :</strong> @Lot.Stocks.Sum(s => s.EstimatedSalePrice ?? 0).ToString("C")</p>
+            <p><strong>Nombre d’objets :</strong> @Lot.Stocks.Count</p>
+            <p><strong>Objets vendus :</strong> @Lot.Stocks.Count(s => s.SoldPrice != null)</p>
+        </div>
+
+        <h3 class="text-info mb-3">📦 Objets dans le lot</h3>
+
+        <div class="table-responsive">
+            <table class="table table-dark table-bordered table-hover text-center align-middle">
+                <thead class="table-info text-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Estimation</th>
+                        <th>Prix vendu</th>
+                        <th>Date de vente</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var stock in Lot.Stocks)
+                    {
+                        <tr class="@((stock.SoldPrice != null ? "table-success" : "table-secondary"))">
+                            <td>@stock.Id</td>
+                            <td>@(stock.EstimatedSalePrice?.ToString("C") ?? "-")</td>
+                            <td>@(stock.SoldPrice?.ToString("C") ?? "-")</td>
+                            <td>@(stock.SoldDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                            <td>
+                                @(stock.SoldPrice != null ? "Vendu" : "Actif")
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    
 </div>
 
 
@@ -95,3 +143,21 @@
     </_body>
 </BLNB_MAGames.Pages.Components.Modale.Modale>
 
+<style>
+    .neon-back-arrow {
+        color: #00b7ff;
+        font-size: 1.2rem;
+        transition: all 0.2s ease-in-out;
+        text-shadow: 0 0 5px #00b7ff;
+    }
+
+        .neon-back-arrow:hover {
+            color: white;
+            text-shadow: 0 0 8px #00b7ff, 0 0 16px #00b7ff;
+            transform: scale(1.05);
+        }
+
+        .neon-back-arrow i {
+            font-size: 1.5rem;
+        }
+</style>

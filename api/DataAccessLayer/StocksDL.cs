@@ -10,10 +10,13 @@ namespace api.DataAccessLayer
 	public class StocksDL
 	{
 		private readonly DataContext _context;
+        private LotsDL _lotDL;
 
-		public StocksDL(DataContext context)
+
+        public StocksDL(DataContext context, LotsDL lotDl)
 		{
 			_context = context;
+            _lotDL = lotDl;
 		}
 
 		public List<Stocks> GetAllInStocks(Filters filters)
@@ -84,6 +87,37 @@ namespace api.DataAccessLayer
 
 			return true;
 		}
+        public void UpdateStocksAsSold(List<Stocks> updateStocks)
+        {
+            foreach (var s in updateStocks)
+            {
+                var stock = _context.Stocks
+                    .First(x => x.Id == s.Id);
 
-	}
+                if (stock == null)
+                    throw new Exception($"Stock ID {s.Id} non trouvé.");
+
+                stock.SoldPrice = s.SoldPrice;
+                stock.SoldDate = s.SoldDate;
+                stock.IsActive = false;
+
+                // Vérifie si tous les stocks du lot sont vendus
+                if (stock.Lot != null && stock.Lot.Id != 0)
+                {
+                    var lotStocks = _context.Stocks
+                        .Where(x => x.Lot.Id == stock.Lot.Id)
+                        .ToList();
+
+                    if (lotStocks.All(x => !x.IsActive))
+                    {
+                        LotsAndContent lot = _lotDL.GetLotById(stock.Lot.Id);
+                        if (lot != null)
+                            lot.IsActive = false;
+                    }
+                }
+            }
+
+            _context.SaveChanges();
+        }
+    }
 }

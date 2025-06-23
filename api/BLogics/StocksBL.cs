@@ -1,6 +1,7 @@
 ﻿using api.DataAccessLayer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SharedParams.DTOs;
 using SharedParams.Tables;
 
 namespace api.BLogics
@@ -102,7 +103,19 @@ namespace api.BLogics
 				return false;
 			}
 		}
-				
-	}
+
+        public async Task<List<Stocks>> UpdateSoldPriceAsync(List<Stocks> updateStocks)
+        {
+            _stocksDL.UpdateStocksAsSold(updateStocks);
+
+            Filters statsFilters = new Filters
+            {
+                ToMaya = updateStocks.First().ToMaya
+            };
+
+            return _stocksDL.GetAllInStocks(statsFilters);
+        }
+
+    }
 
 }

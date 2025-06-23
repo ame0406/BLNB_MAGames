@@ -28,23 +28,36 @@ namespace BLNB_MAGames.Pages.Inventory
 
         [Parameter]
         public string BaseObjId { get; set; }
+        [Parameter]
+        public string mode { get; set; }
+        public int modeint { get; set; }
+
 
         private List<Stocks> stocksByBaseObj = new List<Stocks>();
         private string MainImage { get; set; } = string.Empty;
 
         private bool isModaleSoldOpen = false;
         private Stocks SoldStock { get; set; } = new Stocks();
+        private LotsAndContent? Lot { get; set; } = new LotsAndContent();
 
 
         protected override async Task OnInitializedAsync()
         {
-            await _profileStateService.InitializeAsync();
-            profilChoosen = _profileStateService.Profile;
+            if(modeint == (int)InventoryMode.All)
+            {
+                await _profileStateService.InitializeAsync();
+                profilChoosen = _profileStateService.Profile;
+                modeint = int.Parse(mode);
 
-            _cartService.OnChange += StateHasChanged;
+                _cartService.OnChange += StateHasChanged;
 
-            await GetStocksByBaseObjId();
-            GetMainImage(new ObjImages());
+                await GetStocksByBaseObjId();
+                GetMainImage(new ObjImages());
+            }
+            else if(modeint == (int)InventoryMode.ByLots)
+            {
+                Lot = await _apiService.GetLotById(int.Parse(BaseObjId));
+            }
         }
         private async Task GetStocksByBaseObjId()
         {
@@ -85,7 +98,7 @@ namespace BLNB_MAGames.Pages.Inventory
 
             if(stocksByBaseObj.Count() <= 0)
             {
-                _navigationManager.NavigateTo("/AllInventory/1");
+                _navigationManager.NavigateTo($"/AllInventory/{mode}");
             }
 
             //await _showToast.InvokeAsync(ToastType.SUCCESS, "text");

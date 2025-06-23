@@ -152,31 +152,22 @@ namespace api.Controller
 
             return Ok(await GetAllInStocks(statsFilters));
         }
-        [HttpPost]
-        [Route("UpdateSoldPrice")]
+
+        [HttpPost("UpdateSoldPrice")]
         public async Task<ActionResult<List<Stocks>>> UpdateSoldPrice([FromBody] List<Stocks> updateStocks)
         {
-            foreach (Stocks s in updateStocks)
+            if (updateStocks == null || updateStocks.Count == 0)
+                return BadRequest("Aucun stock fourni.");
+
+            try
             {
-                var stock = await _context.Stocks
-                    .FirstOrDefaultAsync(x => x.Id == s.Id);
-
-                if (stock == null)
-                    return NotFound($"L'objet de l'inventaire n'a pas été trouvé.");
-
-                stock.SoldPrice = s.SoldPrice;
-                stock.SoldDate = s.SoldDate;
-                stock.IsActive = false;
+                var result = await _bl.UpdateSoldPriceAsync(updateStocks);
+                return Ok(result);
             }
-
-            await _context.SaveChangesAsync();
-
-            Filters statsFilters = new Filters
+            catch (Exception ex)
             {
-                ToMaya = updateStocks.First().ToMaya,
-            };
-
-            return Ok(await GetAllInStocks(statsFilters));
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

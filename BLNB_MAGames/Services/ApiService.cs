@@ -168,6 +168,18 @@ public class ApiService
 		response.EnsureSuccessStatusCode(); 
 		return await response.Content.ReadFromJsonAsync<Lots>();
 	}
+    public async Task<List<LotsAndContent>> GetAllActiveLotAndContent(Filters filters)
+	{
+		var response = await _httpClient.PostAsJsonAsync("lots/GetAllActiveLotAndContent", filters);
+		response.EnsureSuccessStatusCode(); 
+		return await response.Content.ReadFromJsonAsync<List<LotsAndContent>>();
+	}
+    public async Task<LotsAndContent> GetLotById(int id)
+	{
+		var response = await _httpClient.PostAsJsonAsync("lots/GetAllActiveLotAndContent", id);
+		response.EnsureSuccessStatusCode(); 
+		return await response.Content.ReadFromJsonAsync<LotsAndContent>();
+	}
     #endregion
 
     #region Session

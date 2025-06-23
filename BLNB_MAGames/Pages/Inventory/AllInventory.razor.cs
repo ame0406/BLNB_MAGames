@@ -37,6 +37,9 @@ namespace BLNB_MAGames.Pages.Inventory
         private string strSearch { get; set; } = "";
         private List<StocksToShow> filteredStocks = new();
 
+        //Mode lots
+        private List<LotToShow> AllLotsToShow = new();
+
 
         protected override async Task OnInitializedAsync()
 		{
@@ -74,6 +77,23 @@ namespace BLNB_MAGames.Pages.Inventory
                 ApplySearch();
                 StateHasChanged();
             }
+            else if(modeint == (int)InventoryMode.ByLots)
+            {
+                List<LotsAndContent> lots = await GetAllLots();
+
+                AllLotsToShow = lots
+                    .Where(l => l.IsActive && l.Stocks.Count > 0)
+                    .OrderByDescending(l => l.CreationDate)
+                    .Select(l => new LotToShow
+                    {
+                        Id = l.Id,
+                        CreationDate = l.CreationDate,
+                        TotalItems = l.Stocks.Count,
+                        SoldItems = l.Stocks.Count(s => s.StatusId == (int)SharedParameters.Status.Vente),
+                        EstimatedTotalSale = l.Stocks.Sum(s => (decimal)s.EstimatedSalePrice),
+                        TotalBuyPrice = l.PrixDachat,
+                    }).ToList();
+            }
 		}
 
 		private async Task GetAllInStocks()
@@ -86,9 +106,19 @@ namespace BLNB_MAGames.Pages.Inventory
             AllInStocks = await _apiService.GetAllInStocksAsync(statsFilters);
 		}
 
-        private void GoToInventory(int baseObjId)
+        private async Task<List<LotsAndContent>> GetAllLots()
         {
-            _navigationManager.NavigateTo($"/Inventory/{baseObjId}");
+            Filters statsFilters = new Filters
+            {
+                ToMaya = (profilChoosen == "Maya" ? true : false),
+            };
+
+            return await _apiService.GetAllActiveLotAndContent(statsFilters);
+        }
+
+        private void GoToInventory(int baseObjId, int mode)
+        {
+            _navigationManager.NavigateTo($"/Inventory/{mode}/{baseObjId}");
         }
 
         private void GoToPage(int page)
@@ -178,4 +208,16 @@ public class StocksToShow
 	public decimal PrixVenteMax { get; set; } = 0;
     public int BaseObjId { get; set; }
     public int stockQte { get; set; } = 0;
+}
+
+public class LotToShow
+{
+    public int Id { get; set; }
+    public DateTime CreationDate { get; set; }
+    public int TotalItems { get; set; }
+    public int SoldItems { get; set; }
+    public decimal EstimatedTotalSale { get; set; }
+    public decimal TotalBuyPrice { get; set; }
+
+    public int SaleProgress => TotalItems == 0 ? 0 : (int)((SoldItems / (decimal)TotalItems) * 100);
 }

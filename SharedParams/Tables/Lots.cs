@@ -9,7 +9,5 @@ namespace SharedParams.Tables
         public DateTime CreationDate { get; set; } = DateTime.Now;
         public decimal PrixDachat { get; set; } 
         public bool IsActive { get; set; } = true;
-
-
     }
 }
