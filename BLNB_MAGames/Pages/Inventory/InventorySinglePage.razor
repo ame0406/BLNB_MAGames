@@ -139,7 +139,7 @@
 
 <BLNB_MAGames.Pages.Components.Modale.Modale _isShown="isModaleSoldOpen" _class="col-8" _noButton=true _onClose="() => OpenModaleSold(new Stocks())">
     <_body>
-        <BLNB_MAGames.Pages.Components.MarquerCommeVendu.MarquerCommeVendu name="@(SoldStock.BaseObj.Name + (!string.IsNullOrEmpty(SoldStock.BaseObj.Edition) ? " ( " + SoldStock.BaseObj.Edition + " )" : "" ))" OnPriceSoldChanged="HandlePriceSold"></BLNB_MAGames.Pages.Components.MarquerCommeVendu.MarquerCommeVendu>
+        <BLNB_MAGames.Pages.Components.MarquerCommeVendu.MarquerCommeVendu name="@(SoldStock.BaseObj.Name + (!string.IsNullOrEmpty(SoldStock.BaseObj.Edition) ? " ( " + SoldStock.BaseObj.Edition + " )" : "" ))" OnPriceSoldChanged="HandlePriceSold" CloseModale="() => OpenModaleSold(new Stocks())"></BLNB_MAGames.Pages.Components.MarquerCommeVendu.MarquerCommeVendu>
     </_body>
 </BLNB_MAGames.Pages.Components.Modale.Modale>
 

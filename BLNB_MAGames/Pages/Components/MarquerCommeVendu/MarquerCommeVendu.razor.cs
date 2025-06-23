@@ -18,6 +18,8 @@ namespace BLNB_MAGames.Pages.Components.MarquerCommeVendu
         public string name { get; set; } = string.Empty;
         [Parameter]
         public EventCallback<Stocks> OnPriceSoldChanged { get; set; }
+        [Parameter]
+        public EventCallback<Stocks> CloseModale { get; set; }
 
         public Stocks gameSold { get; set; } = new Stocks();
         public bool ErrorPriceSold { get; set; } = false;
@@ -41,7 +43,7 @@ namespace BLNB_MAGames.Pages.Components.MarquerCommeVendu
 				}
                 else
                 {
-                    await OnPriceSoldChanged.InvokeAsync(new Stocks());
+                    await CloseModale.InvokeAsync();
 				}
             }
         }

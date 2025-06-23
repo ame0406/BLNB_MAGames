@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using api.Migrations;
+using Microsoft.EntityFrameworkCore;
 using SharedParams.Tables;
 
 namespace api.Data
@@ -19,5 +20,19 @@ namespace api.Data
         public DbSet<Stocks> Stocks { get; set; }
         public DbSet<VenteMKP> VenteMKP { get; set; }
         public DbSet<VenteEbay> VenteEbay { get; set; }
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Désactive la suppression en cascade globalement
+            foreach (var foreignKey in modelBuilder.Model
+                .GetEntityTypes()
+                .SelectMany(e => e.GetForeignKeys()))
+            {
+                foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
+            }
+        }
     }
 }

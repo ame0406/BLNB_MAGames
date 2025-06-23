@@ -31,6 +31,7 @@ namespace api.DataAccessLayer
 				.Include(x => x.Lot)
 				.Include(x => x.Condition)
 				.Where(x => x.IsActive && x.StatusId == filters.status && x.ToMaya == filters.ToMaya)
+                .OrderByDescending(s => s.AddedDate)
 				.ToList();
 
                 return response;

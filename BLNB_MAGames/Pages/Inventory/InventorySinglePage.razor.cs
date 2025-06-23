@@ -43,14 +43,14 @@ namespace BLNB_MAGames.Pages.Inventory
 
         protected override async Task OnInitializedAsync()
         {
-            if(modeint == (int)InventoryMode.All)
+            await _profileStateService.InitializeAsync();
+            profilChoosen = _profileStateService.Profile;
+            modeint = int.Parse(mode);
+
+            _cartService.OnChange += StateHasChanged;
+
+            if (modeint == (int)InventoryMode.All)
             {
-                await _profileStateService.InitializeAsync();
-                profilChoosen = _profileStateService.Profile;
-                modeint = int.Parse(mode);
-
-                _cartService.OnChange += StateHasChanged;
-
                 await GetStocksByBaseObjId();
                 GetMainImage(new ObjImages());
             }
@@ -86,22 +86,23 @@ namespace BLNB_MAGames.Pages.Inventory
         }
         private async Task HandlePriceSold(Stocks stockSold)
         {
+            
             SoldStock.SoldPrice = stockSold.SoldPrice;
             SoldStock.SoldDate = stockSold.SoldDate;
 
             List<Stocks> temp = (List<Stocks>)await _apiService.UpdateSoldPrice(new List<Stocks> { SoldStock });
             SoldStock = temp.FirstOrDefault();
 
-            OpenModaleSold(new Stocks());
-
             await GetStocksByBaseObjId();
 
-            if(stocksByBaseObj.Count() <= 0)
+            if (stocksByBaseObj.Count() <= 0)
             {
                 _navigationManager.NavigateTo($"/AllInventory/{mode}");
             }
 
-            //await _showToast.InvokeAsync(ToastType.SUCCESS, "text");
+            await _showToast.InvokeAsync((ToastType.SUCCESS, "L'objet as été vendu!"));
+            
+            OpenModaleSold(new Stocks());
         }
 
         private void GoToLot()
