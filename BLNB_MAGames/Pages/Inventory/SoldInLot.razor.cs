@@ -64,10 +64,13 @@ namespace BLNB_MAGames.Pages.Inventory
                 List<Stocks> temp = (List<Stocks>)await _apiService.UpdateSoldPrice((List<Stocks>)_cartService.Items);
                 isModaleSoldOpen = false;
                 _cartService.Clear();
-                _navigationManager.NavigateTo("/");
+				await _showToast.InvokeAsync((ToastType.SUCCESS, "Le lot est vendu!"));
 
-            }
-            else
+				_navigationManager.NavigateTo("/");
+
+
+			}
+			else
             {
                 isModaleSoldOpen = false;
                 isModaleManualOpen = true;
@@ -95,7 +98,7 @@ namespace BLNB_MAGames.Pages.Inventory
 
             isModaleManualOpen = false;
             _cartService.Clear();
-            _showToast.InvokeAsync((ToastType.SUCCESS, "Lot vendu avec succès !"));
+            await _showToast.InvokeAsync((ToastType.SUCCESS, "Lot vendu avec succès !"));
 
             _navigationManager.NavigateTo("/");
 

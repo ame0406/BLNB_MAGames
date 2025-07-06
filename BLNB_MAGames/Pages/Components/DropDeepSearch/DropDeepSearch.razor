@@ -4,7 +4,7 @@
 
 <div class="dropdown w-100 position-relative">
     <input type="text"
-           class="form-control dropdown-toggle @(trueIfIsSearchBarFalseIfIsDropdown ? "loupeIcon" : "")"
+           class="form-control dropdown-toggle bg-dark text-white @(trueIfIsSearchBarFalseIfIsDropdown ? "loupeIcon" : "")"
            id="dropdownMenuButton1"
            data-bs-toggle="dropdown"
            aria-expanded="false"
@@ -22,14 +22,14 @@
         <i class="bi bi-caret-down-fill position-absolute top-50 end-0 me-3 translate-middle-y text-muted"></i>
     }
 
-    <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton1" id="list">
+    <ul class="dropdown-menu w-100 bg-dark text-white" aria-labelledby="dropdownMenuButton1" id="list">
         @if (_lstObjectsDisplayed != null && _lstObjectsDisplayed.Count() != 0)
         {
             @foreach (GenericObjDTO objects in _lstObjectsDisplayed)
             {
                 if (objects != null)
                 {
-                    <li @onclick="() => SelectThis(objects)" class="dropdown-item cursor-pointer">
+                    <li @onclick="() => SelectThis(objects)" class="dropdown-item cursor-pointer text-white bg-dark">
                         @if (objects.EnumGenericObjType == EnumGenericObjType.Games)
                         {
                             <div class="d-flex gap-2 align-items-center">
@@ -40,7 +40,7 @@
                                         <img src="@imgPath" alt="Product Image" class="img-fluid" />
                                     </div>
                                 }
-                                <p class="mb-0">
+                                <p class="mb-0 text-white">
                                     @(" " + objects.DisplayName + (!string.IsNullOrEmpty(objects.DisplayEdition) ? " ( " + objects.DisplayEdition + " ) " : "" ) + (objects.DisplayProps.Count() > 0 ? " - " : ""))
                                     @foreach (string s in objects.DisplayProps)
                                     {
@@ -58,8 +58,8 @@
         }
         else
         {
-            <li class="dropdown-item cursor-pointer">
-                <p class="mb-0">Aucun Élement</p>
+            <li class="dropdown-item cursor-pointer bg-dark text-white">
+                <p class="mb-0 text-white">Aucun Élement</p>
             </li>
         }
     </ul>

@@ -40,7 +40,7 @@
             @foreach (var stock in stocksByBaseObj)
             {
                 <div class="col">
-                    <div class="card h-100">
+                    <div class="card h-100 bg-dark">
                         <div class="card-body">
                             <divc class="d-flex flex-row justify-content-between">
                                 <h5 class="card-title">@stock.Condition?.Name</h5>
@@ -75,7 +75,7 @@
                             }
                             else
                             {
-                                <p class="card-text text-muted fs-6 my-0">Dans le <span class="text-primary text-decoration-underline cursor-pointer" @onclick="GoToLot">lot #@stock.Lot!.Id</span></p>
+                                <p class="card-text text-muted fs-6 my-0">Dans le <span class="text-primary text-decoration-underline cursor-pointer" @onclick="() => GoToLot(stock.Lot!.Id)">lot #@stock.Lot!.Id</span></p>
                             }
 
                         </div>

@@ -105,12 +105,12 @@ namespace BLNB_MAGames.Pages.Inventory
             OpenModaleSold(new Stocks());
         }
 
-        private void GoToLot()
+        private void GoToLot(int lotId)
         {
+			_navigationManager.NavigateTo($"/Inventory/{(int)InventoryMode.ByLots}/{lotId}");
+		}
 
-        }
-
-        public void Dispose()
+		public void Dispose()
         {
             _cartService.OnChange -= StateHasChanged;
         }

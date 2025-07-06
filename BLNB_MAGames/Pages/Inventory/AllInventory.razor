@@ -5,10 +5,12 @@
 @page "/AllInventory/{mode}"
 
 <div class="container my-4">
-    <h1 class="text-center">Inventaire</h1>
 
     @if (modeint == (int)InventoryMode.All)
     {
+        <h1 class="text-center">@("Inventaire (" + AllInStocks.Count() + ")")</h1>
+
+
         <div class="d-flex flex-row justify-content-center my-4">
             <input type="text"
                    class="form-control w-75"
@@ -23,7 +25,7 @@
             @foreach (var stock in PagedStocks)
             {
                 <div class="col" @onclick="() => GoToInventory(stock.BaseObjId, (int)InventoryMode.All)">
-                    <div class="card h-100 text-center position-relative">
+                    <div class="card h-100 text-center position-relative bg-dark">
                         <!-- Quantité -->
                         <div class="position-absolute top-0 end-0 m-2">
                             <p class="">Qté : @stock.stockQte</p>
@@ -70,6 +72,9 @@
     }
     else if (modeint == (int)InventoryMode.ByLots)
     {
+        <h1 class="text-center">@("Inventaire en lots")</h1>
+
+
         <div class="row g-4 justify-content-center mt-3">
             @foreach (var lot in AllLotsToShow)
             {

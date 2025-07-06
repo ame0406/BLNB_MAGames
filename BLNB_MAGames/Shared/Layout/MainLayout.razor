@@ -13,15 +13,23 @@
 
 
 <div class="page">
-    <div class="sidebar">
+@*     <div class="sidebar">
         <NavMenu />
-    </div>
+    </div> *@
 
     <main>
-        <div class="top-row px-4 gap-4">
-            <div class="position-relative">
-                <a class="text-white ms-4 px-3" href="Cart">
-                    🛒 Vente En Lot
+        <div class="top-row px-4">
+            <div class="left-items d-flex align-items-center gap-3">
+                <img src="/images/logo.png" alt="Logo" class="logo-img" />
+                <a class="text-white" href="/">Accueil</a>
+                <a class="text-white" href="/GestionListes">Gestion des listes</a>
+                <a class="text-white" href="/AddToStocks">Ajout a l'inventaire</a>
+                <a class="text-white" href="/AllInventory/1">Voir l'inventaire</a>
+            </div>
+
+            <div class="right-items position-relative rightRow d-flex align-items-center gap-4">
+                <a class="text-white" href="Cart">
+                    🛒 de vente
                     @if (_cartService.Items.Count > 0)
                     {
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info text-dark">
@@ -29,10 +37,18 @@
                         </span>
                     }
                 </a>
+                <div class="dropdown top-dropdown position-relative">
+                    <a class="dropdown-toggle dropdown-glow text-white" href="javascript:void(0)" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        @profilChoosen
+                        <span class="arrow-full"></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark neon-dropdown position-absolute">
+                        <li><a class="dropdown-item" href="/Parametres">Paramètres</a></li>
+                        <li><a class="dropdown-item" href="/chooseprofile">Changer de profil</a></li>
+                    </ul>
+
+                </div>
             </div>
-
-            <a class="text-white me-4" href="Login">@profilChoosen</a>
-
         </div>
 
         <article class="content px-4">
@@ -60,16 +76,16 @@
         z-index: 99999;
         position: fixed;
     }
-
+/* 
     .dropdown button, .dropdown-menu {
         min-width: 13rem;
     }
-
+ */
 /*     .topBarDropdown {
         justify-content: space-evenly !important;
     } */
 
-        .topBarDropdown:focus {
+/*         .topBarDropdown:focus {
             box-shadow: none !important;
         }
 
@@ -84,16 +100,16 @@
 
     .search-bar div{
         margin-left: 0.5em;
-    }
+    } */
 
-    .dropSettings div:first-of-type{
+/*     .dropSettings div:first-of-type{
         margin-left: 0.5em;
     }
     .dropSettings div:last-of-type{
         margin-left: 0.5em;
     }
-
-    @@media screen and (max-width: 1400px) {
+ */
+    /* @@media screen and (max-width: 1400px) {
         .top-row {
             flex-direction: column !important;
         }
@@ -132,7 +148,7 @@
                 margin-left: 0;
                 margin-top: 0.25em;
             }
-    }
+    } */
 
 </style>
 

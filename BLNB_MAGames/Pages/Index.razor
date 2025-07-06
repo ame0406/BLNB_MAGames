@@ -1,62 +1,133 @@
 ﻿@page "/"
-@inject ApiService ApiService
+@inject NavigationManager _navigationManager
 
-<h2 class="mb-4 text-center text-primary-emphasis">📊 Statistiques Générales</h2>
-
-@if (_stats is null)
-{
-    <p>Chargement...</p>
-}
-else
-{
-    <div class="row g-4">
-        <div class="stats-container d-flex justify-content-center gap-4 flex-wrap mt-4">
-            @Cylinder("Total dépensé", _stats.TotalDepenser.ToString("C"), "bi-cash-stack", "depense")
-            @Cylinder("Total revenu", _stats.TotalRevenue.ToString("C"), "bi-graph-up", "revenu")
-            @Cylinder("Total gardé", _stats.TotalKeep.ToString("C"), "bi-box-seam", "garder")
-            @Cylinder(
-                     "Profit net",
-                     _stats.Profit >= 0
-                     ? _stats.Profit.ToString("C")
-                     : "-" + (-_stats.Profit).ToString("C"),
-                     "bi-coin",
-                     _stats.Profit >= 0 ? "profit-positif" : "profit-negatif"
-                     )
+<div class="allIndex">
+    <div>
+        <div class="d-flex flex-row justify-content-start g-4">
+            <div class="stats-container d-flex justify-content-center gap-4 flex-wrap mt-4">
+                @Cylinder("Dépense", _stats.TotalDepenser.ToString("C"), "bi-cash-stack", "depense", EventCallback.Factory.Create(this, () => GoToHistory((int)HistoryMode.Depense)))
+                @Cylinder("Revenu", _stats.TotalRevenue.ToString("C"), "bi-graph-up", "revenu", EventCallback.Factory.Create(this, () => GoToHistory((int)HistoryMode.Revenu)))
+                @Cylinder("Collection", _stats.TotalKeep.ToString("C"), "bi-box-seam", "garder", EventCallback.Factory.Create(this, () => GoToHistory((int)HistoryMode.Garder)))
+                @Cylinder(
+                         "Profit",
+                         _stats.Profit >= 0 ? _stats.Profit.ToString("C") : "-" + (-_stats.Profit).ToString("C"),
+                         "bi-coin",
+                         _stats.Profit >= 0 ? "profit-positif" : "profit-negatif",
+                         EventCallback.Factory.Create(this, () => GoToHistory(0))
+                         )
+            </div>
         </div>
+
+        <div class="floating-links">
+            <div class="nav-circle" @onclick='() => _navigationManager.NavigateTo("GestionListes")'>
+                <div class="icon-only">
+                    <i class="bi bi-list-check"></i>
+                </div>
+                <span class="nav-label">Listes</span>
+            </div>
+            <div class="nav-circle" @onclick='() => _navigationManager.NavigateTo("AddToStocks")'>
+                <div class="icon-only">
+                    <i class="bi bi-box-arrow-in-down"></i>
+                </div>
+                <span class="nav-label">Ajouter</span>
+            </div>
+            <div class="nav-circle" @onclick='() => _navigationManager.NavigateTo("AllInventory/1")'>
+                <div class="icon-only">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+                <span class="nav-label">Inventaire</span>
+            </div>
+        </div>
+
     </div>
-}
+
+</div>
+
+
+<div class="indexImg">
+    <div class="indexContent">
+    </div>
+</div>
+
+
 
 
 
 <style>
-    .cylinder-stat {
-        width: 180px;
-        height: 220px;
-        border-radius: 90px;
-        background: linear-gradient(135deg, #2f2f2f, #b0b0b0);
-        padding: 2px;
+    .allIndex{
+        z-index:5;
         position: relative;
-        text-align: center;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+    }
+    .top-row{
+        display:none !important;
     }
 
-        /* Bordure intérieure grise + néon bleu extérieur */
+    /* Background */
+    .indexImg {
+        margin-top: 0%;
+        margin-bottom: 0%;
+        margin-left: 40%;
+        margin-right: 5%;
+        position: fixed;
+        inset: 0; /* prend tout l'écran */
+        background-image: url('/images/indexImg.jpg');
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: right center; /* alignée à droite */
+        background-color: black;
+        color: #fff;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 2rem 4rem;
+        z-index: 0; /* en arrière-plan */
+    }
+
+        .indexImg::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+            pointer-events: none;
+            background: linear-gradient( to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.7) 5%, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0) 80%, rgba(0, 0, 0, 0.7) 95%, rgba(0, 0, 0, 1) 100% );
+        }
+
+
+    /**/
+    /*Cylindre*/
+    /* Cylindres horizontaux */
+    .cylinder-stat {
+        width: 260px;
+        height: 70px;
+        border-radius: 50px;
+        background: linear-gradient(to right, #2a2a2a, #0f0f0f);
+        padding: 3px;
+        position: relative;
+        text-align: left;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        z-index:1;  
+    }
+
+        /* Glow autour du cylindre */
         .cylinder-stat::before {
             content: "";
             position: absolute;
-            top: 3px;
-            left: 3px;
-            right: 3px;
-            bottom: 3px;
+            inset: 2px;
+            border-radius: 48px;
+            border: 2px solid transparent;
             background: transparent;
-            border: 3px solid #00b7ff; /* bleu néon */
-            border-radius: 88px;
             z-index: 0;
+            pointer-events: none;
         }
+
         .cylinder-stat > * {
             position: relative;
             z-index: 1;
@@ -64,37 +135,138 @@ else
         }
 
         .cylinder-stat h5 {
-            font-size: 1.1rem;
-            margin-top: 1rem;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
+            font-size: 1rem;
+            margin: 0;
+            font-weight: 500;
         }
 
         .cylinder-stat p {
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             font-weight: bold;
             margin: 0;
         }
 
     .icon-style {
-        font-size: 2.5rem;
-        margin-bottom: 0.5rem;
+        font-size: 1.8rem;
+        margin-left: 1rem;
     }
 
-    .profit-negatif {
-        background: linear-gradient(180deg, #2f2f2f 0%, #b0b0b0 50%, #ff7f7f 100%);
+    /* Type de cylindre */
+    .depense {
+        background: linear-gradient(to right, #2a2a2a, #0f0f0f);
     }
 
-    .profit-positif {
-        background: linear-gradient(180deg, #2f2f2f 0%, #b0b0b0 50%, #7fff7f 100%);
+    .revenu {
+        background: linear-gradient(to right, #2a2a2a, #0f0f0f);
     }
 
-
-    /* Pour override : remet le fond gris → gris si pas override */
-    .depense,
-    .revenu,
     .garder {
-        background: linear-gradient(180deg, #2f2f2f, #b0b0b0);
+        background: linear-gradient(to right, #2a2a2a, #0f0f0f);
     }
+
+    /* Profit positif : vert néon */
+    .profit-positif {
+        background: linear-gradient(to right, #2a2a2a 45%, #00ff99);
+    }
+
+/*         .profit-positif::before {
+            border-color: #00ff99;
+            box-shadow: 0 0 8px #00ff99, 0 0 15px #00ff99;
+        } */
+
+    /* Profit négatif : rouge néon */
+    .profit-negatif {
+        background: linear-gradient(to right, #2a2a2a 45%, #ff3c6d);
+    }
+/* 
+        .profit-negatif::before {
+            border-color: #ff3c6d;
+            box-shadow: 0 0 8px #ff3c6d, 0 0 15px #ff3c6d;
+        } */
+
+    .floating-links {
+        display: flex;
+        flex-direction: column; /* vertical au lieu d'horizontal */
+        gap: 1rem;
+        position: fixed;
+        top:2rem;
+        right: 2rem;
+        z-index: 10;
+        filter: drop-shadow(0 0 4px #1e40af) drop-shadow(0 0 6px #ffd60a);
+    }
+
+    .nav-circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(to bottom right, #111, #1a1a1a);
+        border: 2px solid #222;
+        box-shadow: 0 0 12px 1e40af(0, 255, 255, 0.3);
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        overflow: hidden;
+        position: relative;
+        animation: glowPulse 2s ease-in-out infinite;
+
+    }
+
+    @@keyframes glowPulse {
+        0% {
+            box-shadow: 0 0 4px #1e40af, 0 0 6px #1e40af;
+        }
+        50% {
+            box-shadow: 0 0 6px #1e40af, 0 0 8px #1e40af;
+        }
+        100% {
+            box-shadow: 0 0 4px #1e40af, 0 0 6px #1e40af;
+        }
+    }
+
+        .nav-circle .icon-only {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s;
+            font-size: 1.5rem;
+            color: #1e40af;
+        }
+
+    .nav-label {
+        opacity: 0;
+        margin-left: 0.75rem;
+        white-space: nowrap;
+        transition: opacity 0.3s ease;
+        font-size: 1rem;
+        display: none;
+    }
+
+    .nav-circle:hover {
+        width: 160px;
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 0 20px;
+        background: linear-gradient(to right, #2a2a2a, #0f0f0f);
+        box-shadow: 0 0 20px #1e40af;
+    }
+
+        .nav-circle:hover .icon-only {
+            position: static;
+            transform: none;
+            margin: 0;
+            font-size: 1.5rem;
+            opacity: 1;
+            margin-right: 0.5rem;
+        }
+
+        .nav-circle:hover .nav-label {
+            display: inline;
+            opacity: 1;
+        }
+
 
 </style>
+

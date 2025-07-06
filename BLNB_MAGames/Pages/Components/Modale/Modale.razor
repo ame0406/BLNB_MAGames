@@ -26,7 +26,7 @@
 
 
 <!-- Modale -->
-<div class="modal show @(this._isShown ? "FadeInModale": (this._wasShown ? "FadeOutModale":"Hide"))" id="myModal" style="display:block; background-color: rgba(10,10,10,.8); z-index:101;" aria-modal="true" role="dialog">
+<div class="modal bg-dark show @(this._isShown ? "FadeInModale": (this._wasShown ? "FadeOutModale":"Hide"))" id="myModal" style="display:block; background-color: rgba(10,10,10,.8); z-index:101;" aria-modal="true" role="dialog">
 
     <div class="modal-dialog modal-dialog-centered @this._class @(this._isShown ? "FadeInContainer": (this._wasShown ? "FadeOutContainer":""))" @onclick="() => CancelOutside(true)" style="@this._style;">
         <div class="modal-content pb-5" style="background-color: #F6F5F4;">

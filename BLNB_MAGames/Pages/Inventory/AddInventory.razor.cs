@@ -32,6 +32,9 @@ namespace BLNB_MAGames.Pages.Inventory
 		private List<Status> allStatutLst { get; set; } = new List<Status>();
 
 		private bool isAddToALot { get; set; } = false;
+		private bool ErrorNoGame { get; set; } = false;
+		private bool ErrorNoSaleType { get; set; } = false;
+		private bool ErrorNoMarque { get; set; } = false;
 		private bool ErrorNoPrixAchat { get; set; } = false;
 		private bool ErrorNoCondition { get; set; } = false;
 		private bool ErrorNoStatut { get; set; } = false;
@@ -87,13 +90,33 @@ namespace BLNB_MAGames.Pages.Inventory
 				CurrentStep = 2;
 			}
 		}
-		private async Task Step3()
+		private async Task Step3(bool existingGame)
 		{
-			AddNewStocks.BaseObj = SelectedObjToAdd;
+			ErrorNoSaleType = false;
+			ErrorNoGame = false;
+			ErrorNoMarque = false;
 
-			allConditionLst = await _apiService.GetAllConditionsAsync();
-			allStatutLst = await _apiService.GetAllStatusAsync();
-			CurrentStep = 3;
+			if (!existingGame && SelectedObjToAdd.SaleType.Id == 0)
+			{
+				ErrorNoSaleType = true;
+			}
+			if (!existingGame && SelectedObjToAdd.Marque.Id == 0)
+			{
+				ErrorNoMarque = true;
+			}
+			if (!existingGame && SelectedObjToAdd != null && SelectedObjToAdd.Id != 0)
+			{
+				ErrorNoGame = true;
+			}
+
+			if(!ErrorNoMarque && !ErrorNoSaleType && !ErrorNoGame)
+			{
+				AddNewStocks.BaseObj = SelectedObjToAdd;
+
+				allConditionLst = await _apiService.GetAllConditionsAsync();
+				allStatutLst = await _apiService.GetAllStatusAsync();
+				CurrentStep = 3;
+			}
 		}
 		private async Task Step4()
 		{
@@ -168,7 +191,16 @@ namespace BLNB_MAGames.Pages.Inventory
 				//Ajout a la BD
 				bool isAdded = await _apiService.AddStockAsync(AddNewStocks);
 				//Si sa a fonctionner 
-				CurrentStep = 5;
+				if(isAdded)
+				{
+					CurrentStep = 5;
+					await _showToast.InvokeAsync((ToastType.SUCCESS, "L'objet à été ajouter a l'inventaire"));
+				}
+				else
+				{
+					await _showToast.InvokeAsync((ToastType.FAIL, "Une erreur est survenue lors de l'ajout a l'inventaire!"));
+
+				}
 				//sinon toast
 			}
 		}
@@ -180,7 +212,7 @@ namespace BLNB_MAGames.Pages.Inventory
 			{
 				AddNewStocks.BaseObj = SelectedObjToAdd;
 				AddNewStocks.BaseObjId = AddNewStocks.BaseObj.Id;
-				await Step3();
+				await Step3(true);
 			}
 			else
 			{
@@ -190,7 +222,8 @@ namespace BLNB_MAGames.Pages.Inventory
 		}
         private void GetNewObjName(string name)
         {
-			SelectedObjToAdd.Name = name;
+			ErrorNoGame = false;
+			SelectedObjToAdd.Name = name.Trim();
 			AddNewStocks.BaseObj = new Base_Obj();
 			AddNewStocks.BaseObjId = 0;
 		}
@@ -201,6 +234,7 @@ namespace BLNB_MAGames.Pages.Inventory
 			if (SelectedObj != null && SelectedObj.Id != 0)
 			{
 				SelectedObjToAdd.SaleType = SelectedObj;
+				ErrorNoSaleType = false;
 			}
 		}
         private void GetNewObjMarque(GenericObjDTO select)
@@ -210,6 +244,7 @@ namespace BLNB_MAGames.Pages.Inventory
 			if (SelectedObj != null && SelectedObj.Id != 0)
 			{
 				SelectedObjToAdd.Marque = SelectedObj;
+				ErrorNoMarque = false;
 			}
 		}
 		private void GetCondition(GenericObjDTO select)
