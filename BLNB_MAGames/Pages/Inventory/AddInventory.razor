@@ -39,6 +39,22 @@
 				}
 			</div>
 
+			<div class="form-check form-switch mb-4 d-flex justify-content-center">
+				<input class="form-check-input"
+					   type="checkbox"
+					   role="switch"
+					   id="ToBothSwitch"
+					   @bind="applyToBoth"
+					   disabled="@(AllLot.Count > 0)">
+				<label class="toggle" for="ToBothSwitch">
+					<div class="glow-comp"></div>
+					<div class="toggle-button"></div>
+				</label>
+				<label class="form-check-label" for="ToBothSwitch">
+					Ajouter ce stock dans les deux inventaires (ToBoth)
+				</label>
+			</div>
+
 			<h4 class="text-center mb-4">Que veux tu ajouter?</h4>
 			<div class="d-flex flex-row w-100 justify-content-center gap-4">
 				<button class="btn btn-lg btn-outline-primary" @onclick='() => Step2((short)TypeObj.Games)'>Jeux</button>

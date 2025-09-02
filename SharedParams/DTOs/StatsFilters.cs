@@ -10,6 +10,7 @@ namespace SharedParams.DTOs
     public class Filters
     {
         public bool ToMaya { get; set; } = false;
+        public bool IncludeToBoth { get; set; } = false;
         public DateTime? dateDebut { get; set; } = null;
         public DateTime? dateFin { get; set; } = null;
         public int status { get; set; } = (int)SharedParameters.Status.Vente;

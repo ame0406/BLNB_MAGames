@@ -22,6 +22,7 @@ namespace SharedParams.DTOs
         public int Id { get; set; }
         public bool IsActive { get; set; }
         public bool ToMaya { get; set; }
+        public bool ToBoth { get; set; }
         public decimal? EstimatedSalePrice { get; set; }
         public decimal? SoldPrice { get; set; }
         public DateTime? SoldDate { get; set; }

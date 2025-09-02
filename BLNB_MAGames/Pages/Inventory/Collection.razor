@@ -1,0 +1,34 @@
+﻿@using SharedParams.Parameters
+@using SharedParams.Tables
+@using static SharedParams.Parameters.SharedParameters
+
+@page "/Collection"
+
+
+<h1 class="mb-4">Ma Collection</h1>
+
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+    @foreach (var stock in AllInCollectionToShow)
+    {
+        <div class="col">
+            <div class="card h-100 bg-dark">
+                <div class="card-body">
+                    @if (stock.ToBoth)
+                    {
+                        <span class="position-absolute top-0 start-0 m-2" title="Visible dans les 2 inventaires">
+                            🔗
+                        </span>
+                    }
+
+                    <h5 class="card-title">@stock.Name</h5>
+                    <p class="card-text text-muted fs-6">Edition: @stock.Edition</p>
+                    <p class="card-text text-muted">Marque: @stock.Marque</p>
+                    <p class="card-text text-muted">Type: @stock.SaleType</p>
+                    <p class="card-text text-success">Valeur gardée: @stock.KeepPrice.ToString("C")</p>
+
+                    <img src="@stock.Image" class="img-fluid rounded border mt-2" />
+                </div>
+            </div>
+        </div>
+    }
+</div>

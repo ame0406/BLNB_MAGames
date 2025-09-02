@@ -70,6 +70,7 @@ namespace BLNB_MAGames.Pages.Inventory
                         PrixVenteMax = (prixMin != prixMax) ? prixMax : 0, // Si égal, on met 0 pour éviter l'affichage de 2 prix identiques
                         BaseObjId = firstStock.BaseObj.Id,
                         stockQte = group.Count(),
+                        ToBoth = firstStock.ToBoth,
                     };
                 })
                 .ToList();
@@ -81,19 +82,28 @@ namespace BLNB_MAGames.Pages.Inventory
             {
                 List<LotsAndContent> lots = await GetAllLots();
 
-                AllLotsToShow = lots
-                    .Where(l => l.IsActive && l.Stocks.Count > 0)
-                    .OrderByDescending(l => l.CreationDate)
-                    .Select(l => new LotToShow
-                    {
-                        Id = l.Id,
-                        CreationDate = l.CreationDate,
-                        TotalItems = l.Stocks.Count,
-                        SoldItems = l.Stocks.Count(s => s.StatusId == (int)SharedParameters.Status.Vente),
-                        EstimatedTotalSale = l.Stocks.Sum(s => (decimal)s.EstimatedSalePrice),
-                        TotalBuyPrice = l.PrixDachat,
-                    }).ToList();
-            }
+				AllLotsToShow = lots
+					.Where(l => l.IsActive && l.Stocks.Count > 0)
+					.OrderByDescending(l => l.CreationDate)
+					.Select(l =>
+					{
+						var soldCount = l.Stocks.Count(s =>
+							s.SoldPrice != null
+							|| (s.StatusId == (int)SharedParameters.Status.Garder)
+						);
+						var totalCount = l.Stocks.Count;
+
+						return new LotToShow
+						{
+							Id = l.Id,
+							CreationDate = l.CreationDate,
+							TotalItems = totalCount,
+							SoldItems = soldCount,
+							EstimatedTotalSale = l.Stocks.Sum(s => (decimal)s.EstimatedSalePrice),
+							TotalBuyPrice = l.PrixDachat,
+						};
+					}).ToList();
+			}
 		}
 
 		private async Task GetAllInStocks()
@@ -101,7 +111,8 @@ namespace BLNB_MAGames.Pages.Inventory
             Filters statsFilters = new Filters
             {
                 ToMaya = (profilChoosen == "Maya" ? true : false),
-            };
+				IncludeToBoth = true
+			};
 
             AllInStocks = await _apiService.GetAllInStocksAsync(statsFilters);
 		}
@@ -111,6 +122,7 @@ namespace BLNB_MAGames.Pages.Inventory
             Filters statsFilters = new Filters
             {
                 ToMaya = (profilChoosen == "Maya" ? true : false),
+                IncludeToBoth = true
             };
 
             return await _apiService.GetAllActiveLotAndContent(statsFilters);
@@ -206,8 +218,10 @@ public class StocksToShow
 	public string SaleType { get; set; } = string.Empty;
 	public decimal PrixVenteMin { get; set; } = 0;
 	public decimal PrixVenteMax { get; set; } = 0;
+	public decimal KeepPrice { get; set; } = 0;
     public int BaseObjId { get; set; }
     public int stockQte { get; set; } = 0;
+    public bool ToBoth { get; set; } = false;
 }
 
 public class LotToShow
@@ -219,5 +233,5 @@ public class LotToShow
     public decimal EstimatedTotalSale { get; set; }
     public decimal TotalBuyPrice { get; set; }
 
-    public int SaleProgress => TotalItems == 0 ? 0 : (int)((SoldItems / (decimal)TotalItems) * 100);
+	public int SaleProgress => TotalItems == 0 ? 0 : (int)((SoldItems / (decimal)TotalItems) * 100);
 }

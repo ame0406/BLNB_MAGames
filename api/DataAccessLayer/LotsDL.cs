@@ -41,7 +41,8 @@ namespace api.DataAccessLayer
                     EstimatedSalePrice = s.EstimatedSalePrice,
                     SoldPrice = s.SoldPrice,
                     SoldDate = s.SoldDate,
-                    StatusId = s.StatusId
+                    StatusId = s.StatusId,
+                    ToBoth = s.ToBoth
                 }).ToList()
             };
         }
@@ -60,7 +61,7 @@ namespace api.DataAccessLayer
         {
             var stocks = _context.Stocks
                 .Include(x => x.Lot)
-                .Where(s => s.ToMaya == filters.ToMaya && s.Lot.Id != null && s.Lot.IsActive)
+                .Where(s => (s.ToMaya == filters.ToMaya || s.ToBoth) && s.Lot.Id != null && s.Lot.IsActive)
                 .Select(s => new
                 {
                     Lot = s.Lot,

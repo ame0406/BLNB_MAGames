@@ -64,22 +64,31 @@ namespace BLNB_MAGames.Pages.Inventory
             Filters statsFilters = new Filters
             {
                 ToMaya = (profilChoosen == "Maya" ? true : false),
+                IncludeToBoth = true,
             };
 
             stocksByBaseObj = await _apiService.GetAllInStocksByBaseObjIdAsync(int.Parse(BaseObjId), statsFilters);
         }
-        private void GetMainImage(ObjImages img)
-        {
-            if(img.Id != 0)
-            {
-                MainImage = img.Image;
-            }
-            else
-            {
-                MainImage = stocksByBaseObj.First().BaseObj.lstImages != null && stocksByBaseObj.First().BaseObj.lstImages.Count() > 0 ? stocksByBaseObj.First().BaseObj.lstImages.FirstOrDefault()?.Image : "/images/placeholder.png";
-            }
-        }
-        private void OpenModaleSold(Stocks stock)
+		private void GetMainImage(ObjImages img)
+		{
+			if (img.Id != 0)
+			{
+				MainImage = img.Image;
+				return;
+			}
+
+			if (stocksByBaseObj != null && stocksByBaseObj.Any()
+				&& stocksByBaseObj.First().BaseObj.lstImages != null
+				&& stocksByBaseObj.First().BaseObj.lstImages.Any())
+			{
+				MainImage = stocksByBaseObj.First().BaseObj.lstImages.First().Image;
+			}
+			else
+			{
+				MainImage = "/images/placeholder.png";
+			}
+		}
+		private void OpenModaleSold(Stocks stock)
         {
             SoldStock = stock;
             isModaleSoldOpen = !isModaleSoldOpen;

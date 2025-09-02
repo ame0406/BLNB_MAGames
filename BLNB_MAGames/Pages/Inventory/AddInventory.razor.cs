@@ -44,6 +44,7 @@ namespace BLNB_MAGames.Pages.Inventory
 		private bool ErrorNoBuyPrice { get; set; } = false;
 		private bool ErrorKeepValue { get; set; } = false;
 		private bool isAnnonceMkp { get; set; } = true;
+		private bool applyToBoth { get; set; } = false;
 
 		protected override async Task OnInitializedAsync()
 		{
@@ -52,8 +53,11 @@ namespace BLNB_MAGames.Pages.Inventory
 		}
 		private void Step1()
 		{
-			AddNewStocks = new Stocks();
-			SelectedObjToAdd = new Base_Obj();
+            AddNewStocks = new Stocks
+            {
+                ToBoth = isAddToALot ? applyToBoth : false // <-- si lot on garde, sinon false
+            };
+            SelectedObjToAdd = new Base_Obj();
 			isAnnonceMkp = true;
 			CurrentStep = 1;
 		}
@@ -187,6 +191,7 @@ namespace BLNB_MAGames.Pages.Inventory
 
 			if(!ErrorKeepValue)
 			{
+				AddNewStocks.ToBoth = applyToBoth;
 				AddNewStocks.ToMaya = (profilChoosen == "Maya" ? true : false);
 				//Ajout a la BD
 				bool isAdded = await _apiService.AddStockAsync(AddNewStocks);

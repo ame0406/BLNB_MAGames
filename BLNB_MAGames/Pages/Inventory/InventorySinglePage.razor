@@ -42,11 +42,21 @@
                 <div class="col">
                     <div class="card h-100 bg-dark">
                         <div class="card-body">
-                            <divc class="d-flex flex-row justify-content-between">
-                                <h5 class="card-title">@stock.Condition?.Name</h5>
-                                <p class="card-text text-muted fs-6 my-0">@stock.AddedDate.ToString("yyyy-MM-dd")</p>
+                            @if (stock.ToBoth)
+                            {
+                                <span class="position-absolute top-0 start-0 m-2" title="Visible dans les 2 inventaires">
+                                    🔗
+                                </span>
+                            }
+                            <div class="d-flex flex-row justify-content-between align-items-center">
+                                <div class="mb-2 d-flex flex-row gap-4">
+                                    <h5 class="card-title">@stock.Condition?.Name</h5>
+                                </div>
 
-                            </divc>
+                                <div class="d-flex gap-2 align-items-center">
+                                    <p class="card-text text-muted fs-6 my-0">@stock.AddedDate.ToString("yyyy-MM-dd")</p>
+                                </div>
+                            </div>
                             <div class="d-flex flex-row gap-4">
                                 @if (stock.BoxRate != null)
                                 {
@@ -81,11 +91,15 @@
                         </div>
                         <div class="card-footer d-flex flex-row gap-4">
                             <button class="btn btn-outline-danger" @onclick="() => OpenModaleSold(stock)">Marquer comme vendu</button>
-                            <button class="btn btn-outline-dark"
+                            <button class="btn btn-outline-primary"
                                     @onclick="() => _cartService.AddItem(stock)"
                                     disabled="@_cartService.Items.Any(i => i.Id == stock.Id)">
                                 @(_cartService.Items.Any(i => i.Id == stock.Id) ? "Dans le lot de vente" : "Ajouter au lot de vente")
                             </button>
+                            <i class="bi bi-pencil-square text-warning cursor-pointer fs-1"
+                               title="Modifier"
+                               role="button"
+                               @onclick='() => _navigationManager.NavigateTo($"EditStock/{stock.Id}")'></i>
                         </div>
                     </div>
                 </div>

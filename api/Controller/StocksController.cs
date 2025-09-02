@@ -27,12 +27,19 @@ namespace api.Controller
 
         //Tu peux faire  Task<ActionResult<List<Games>>> Pour savoir ce que tu recoit dans swagger
         [HttpPost]
+        [Route("GetAllInCollection")]
+        public async Task<ActionResult<List<Stocks>>> GetAllInCollection(Filters filters)
+        {
+			return _dl.GetAllInCollection(filters);
+		}
+
+        [HttpPost]
         [Route("GetAllInStocks")]
         public async Task<ActionResult<List<Stocks>>> GetAllInStocks(Filters filters)
         {
-			return _dl.GetAllInStocks(filters);
-		}
-        
+            return _dl.GetAllInStocks(filters);
+        }
+
         [HttpPost]
         [Route("GetAllInStocksByBaseObjId")]
         public async Task<ActionResult<List<Stocks>>> GetAllInStocksByBaseObjId(int baseObjId, Filters filters)

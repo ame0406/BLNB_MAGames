@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Pages\Inventory\AddSupplies.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="Blazored.SessionStorage" Version="2.4.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.67" />
@@ -34,6 +38,18 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SharedParams\SharedParams.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\Inventory\AddSupplies.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\Inventory\AddSupplies.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pages\Inventory\AddSupplies.razor" />
   </ItemGroup>
 
 </Project>

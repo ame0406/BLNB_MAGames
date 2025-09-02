@@ -107,6 +107,19 @@ public class ApiService
 			return new List<Stocks>();
 		}
 	}
+    public async Task<List<Stocks>> GetAllInCollectionAsync(Filters statsFilters)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync("stocks/GetAllInCollection", statsFilters);
+            response.EnsureSuccessStatusCode(); // Vérifie si la réponse est un succès
+            return await response.Content.ReadFromJsonAsync<List<Stocks>>(); // Retourne l'objet ajouté
+        }
+        catch (Exception ex)
+        {
+            return new List<Stocks>();
+        }
+    }
     public async Task<List<Stocks>> GetAllInStocksByBaseObjIdAsync(int baseObjId, Filters statsFilters)
     {
         try

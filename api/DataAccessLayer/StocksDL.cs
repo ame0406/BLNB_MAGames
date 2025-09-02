@@ -21,27 +21,54 @@ namespace api.DataAccessLayer
 
 		public List<Stocks> GetAllInStocks(Filters filters)
 		{
-            try
-            {
-                var response = _context.Stocks
-				.Include(x => x.BaseObj)
-				.Include(x => x.BaseObj.Marque)
-				.Include(x => x.BaseObj.SaleType)
-				.Include(x => x.Status)
-				.Include(x => x.Lot)
-				.Include(x => x.Condition)
-				.Where(x => x.IsActive && x.StatusId == filters.status && x.ToMaya == filters.ToMaya)
-                .OrderByDescending(s => s.AddedDate)
-				.ToList();
+			try
+			{
+				var response = _context.Stocks
+					.Include(x => x.BaseObj)
+					.Include(x => x.BaseObj.Marque)
+					.Include(x => x.BaseObj.SaleType)
+					.Include(x => x.Status)
+					.Include(x => x.Lot)
+					.Include(x => x.Condition)
+					.Where(x => x.IsActive
+								&& x.StatusId == filters.status
+								&& (x.ToMaya == filters.ToMaya || x.ToBoth == true))
+					.OrderByDescending(s => s.AddedDate)
+					.ToList();
 
-                return response;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("⚠️ EF crash: " + ex.Message);
-                throw; 
-            }
-        }
+				return response;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("⚠️ EF crash: " + ex.Message);
+				throw;
+			}
+		}
+		public List<Stocks> GetAllInCollection(Filters filters)
+		{
+			try
+			{
+				var response = _context.Stocks
+					.Include(x => x.BaseObj)
+					.Include(x => x.BaseObj.Marque)
+					.Include(x => x.BaseObj.SaleType)
+					.Include(x => x.Status)
+					.Include(x => x.Lot)
+					.Include(x => x.Condition)
+					.Where(x => x.IsActive
+								&& x.StatusId == filters.status
+								&& (x.ToMaya == filters.ToMaya || x.ToBoth == true))
+					.OrderByDescending(s => s.AddedDate)
+					.ToList();
+
+				return response;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("⚠️ EF crash: " + ex.Message);
+				throw;
+			}
+		}
 		public List<Stocks> GetAllInStocksByBaseObjId(int baseObjId, Filters filters)
 		{
             try
@@ -53,7 +80,7 @@ namespace api.DataAccessLayer
 				.Include(x => x.Status)
 				.Include(x => x.Lot)
 				.Include(x => x.Condition)
-				.Where(x => x.IsActive && x.BaseObjId == baseObjId && x.StatusId == filters.status && x.ToMaya == filters.ToMaya)
+				.Where(x => x.IsActive && x.BaseObjId == baseObjId && x.StatusId == filters.status && (x.ToMaya == filters.ToMaya || x.ToBoth))
 				.ToList();
 
                 return response;

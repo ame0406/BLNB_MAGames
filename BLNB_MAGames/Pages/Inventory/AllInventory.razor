@@ -8,6 +8,14 @@
 
     @if (modeint == (int)InventoryMode.All)
     {
+
+        <div class="d-flex justify-content-end align-items-center">
+            <button class="btn btn-outline-info"
+                    @onclick='() => _navigationManager.NavigateTo($"/AllInventory/2", true)'>
+                Voir en lots
+            </button>
+        </div>
+
         <h1 class="text-center">@("Inventaire (" + AllInStocks.Count() + ")")</h1>
 
 
@@ -35,12 +43,20 @@
                         <img src="@stock.Image" class="card-img-top" alt="Jeu image" style="height: 120px; object-fit: contain; padding: 10px;" />
 
                         <!-- Corps de la carte -->
-                        <div class="card-body">
+                        <div class="card-body position-relative">
                             <h5 class="card-title">
                                 @($"{stock.Name} " +
                                     $"{(string.IsNullOrEmpty(stock.Edition) ? "" : $"( {stock.Edition} ) ")}")
                             </h5>
                             <p class="card-text text-muted">@stock.Marque - @stock.SaleType</p>
+
+                            @* Icon pour ToBoth *@
+                            @if (stock.ToBoth)
+                            {
+                                <span class="position-absolute top-0 start-0 m-2" title="Visible dans les 2 inventaires">
+                                    🔗
+                                </span>
+                            }
                         </div>
 
                         <!-- Footer -->
@@ -72,6 +88,13 @@
     }
     else if (modeint == (int)InventoryMode.ByLots)
     {
+        <div class="d-flex justify-content-end align-items-center">
+            <button class="btn btn-outline-info"
+                    @onclick='() => _navigationManager.NavigateTo($"/AllInventory/1", true)'>
+                Voir en articles
+            </button>
+        </div>
+
         <h1 class="text-center">@("Inventaire en lots")</h1>
 
 
