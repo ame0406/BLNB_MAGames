@@ -61,6 +61,7 @@ namespace BLNB_MAGames.Pages.Inventory
 
                     return new StocksToShow
                     {
+                        id = firstStock.Id,
                         Image = (firstStock.BaseObj.lstImages.Count() > 0 ? firstStock.BaseObj.lstImages.FirstOrDefault().Image : "/images/placeholder.png"),
                         Name = firstStock.BaseObj.Name,
                         Edition = firstStock.BaseObj.Edition ?? "",
@@ -211,6 +212,7 @@ public enum InventoryMode
 
 public class StocksToShow
 {
+    public int id;
 	public string Image { get; set; } = string.Empty;
 	public string Name { get; set; } = string.Empty;
 	public string Edition { get; set; } = string.Empty;

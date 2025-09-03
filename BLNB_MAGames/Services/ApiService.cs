@@ -1,4 +1,5 @@
-﻿using SharedParams.DTOs;
+﻿using Microsoft.AspNetCore.Mvc;
+using SharedParams.DTOs;
 using SharedParams.Tables;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -52,10 +53,12 @@ public class ApiService
         response.EnsureSuccessStatusCode(); // Vérifie si la réponse est un succès
         return await response.Content.ReadFromJsonAsync<Status>(); // Retourne l'objet ajouté
     }
-	#endregion
 
-	#region Marques
-	public async Task<List<Marques>> GetAllMarquesAsync()
+
+    #endregion
+
+    #region Marques
+    public async Task<List<Marques>> GetAllMarquesAsync()
 	{
 		return await _httpClient.GetFromJsonAsync<List<Marques>>("marque");
 	}
@@ -91,10 +94,23 @@ public class ApiService
             return null;
         }
     }
-	#endregion
+    #endregion
 
-	#region Stocks
-	public async Task<List<Stocks>> GetAllInStocksAsync(Filters statsFilters)
+    #region Stocks
+    public async Task<Stocks> GetStock(int id)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"stocks/{id}");
+            response.EnsureSuccessStatusCode(); // si 404 -> exception
+            return await response.Content.ReadFromJsonAsync<Stocks>();
+        }
+        catch (Exception ex)
+        {
+            return new Stocks(); // ⚠️ tu masques l’erreur et tu renvoies un objet vide
+        }
+    }
+    public async Task<List<Stocks>> GetAllInStocksAsync(Filters statsFilters)
 	{
 		try
 		{
@@ -171,7 +187,11 @@ public class ApiService
         }
     }
 
-
+    public async Task<bool> UpdateStockAsync(Stocks stock)
+    {
+        var response = await _httpClient.PutAsJsonAsync($"stocks/{stock.Id}", stock);
+        return response.IsSuccessStatusCode;
+    }
     #endregion
 
     #region Lots

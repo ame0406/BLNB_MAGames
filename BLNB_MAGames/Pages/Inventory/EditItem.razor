@@ -1,0 +1,130 @@
+﻿@page "/EditItem/{StockId}"
+@using SharedParams.DTOs
+@using SharedParams.Parameters
+
+<h3 class="mb-4">✏️ Modifier l'objet</h3>
+
+@if (stk == null)
+{
+    <p>Chargement...</p>
+}
+else
+{
+    <div class="edit-container">
+
+        <!-- Nom -->
+        <div class="mb-3">
+            <label class="form-label">Nom</label>
+            <input class="form-control custom-input" @bind="stk.BaseObj.Name" />
+        </div>
+
+        <!-- Edition -->
+        <div class="mb-3">
+            <label class="form-label">Édition</label>
+            <input class="form-control custom-input" @bind="stk.BaseObj.Edition" />
+        </div>
+
+        <!-- Marque -->
+        <div class="mb-3">
+            <label>Marque</label>
+            <BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Marque"
+                                                                         OnChosenObject="SelectMarque"
+                                                                         _lstObjects="Marques.Select(m => new GenericObjDTO { Id = m.Id, DisplayName = m.Name }).ToList()"
+                                                                         _SelectedObjectsDisplayed="@(new GenericObjDTO { Id = (int)stk.BaseObj.MarqueId, DisplayName = Marques.FirstOrDefault(x => x.Id == stk.BaseObj.MarqueId)?.Name })">
+            </BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
+        </div>
+
+        <!-- Type de vente -->
+        <div class="mb-3">
+            <label>Type de vente</label>
+            <BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Type de vente"
+                                                                         OnChosenObject="SelectSaleType"
+                                                                         _lstObjects="SaleTypes.Select(st => new GenericObjDTO { Id = st.Id, DisplayName = st.Name }).ToList()"
+                                                                         _SelectedObjectsDisplayed="@(new GenericObjDTO { Id = stk.BaseObj.SaleTypeId, DisplayName = SaleTypes.FirstOrDefault(x => x.Id == stk.BaseObj.SaleTypeId)?.Name })">
+            </BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
+        </div>
+
+        <!-- Condition -->
+        <div class="mb-3">
+            <label>Condition</label>
+            <BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Condition"
+                                                                         OnChosenObject="SelectCondition"
+                                                                         _lstObjects="Conditions.Select(c => new GenericObjDTO { Id = c.Id, DisplayName = c.Name }).ToList()"
+                                                                         _SelectedObjectsDisplayed="@(new GenericObjDTO { Id = stk.ConditionId, DisplayName = Conditions.FirstOrDefault(x => x.Id == stk.ConditionId)?.Name })">
+            </BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
+        </div>
+
+        <!-- Statut -->
+        <div class="mb-3">
+            <label>Statut</label>
+            <BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch _title="Statut"
+                                                                         OnChosenObject="SelectStatus"
+                                                                         _lstObjects="Status.Select(s => new GenericObjDTO { Id = s.Id, DisplayName = s.Name }).ToList()"
+                                                                         _SelectedObjectsDisplayed="@(new GenericObjDTO { Id = stk.StatusId, DisplayName = Status.FirstOrDefault(x => x.Id == stk.StatusId)?.Name })">
+            </BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
+        </div>
+
+        <!-- BuyPrice si pas dans un lot -->
+        @if (stk.Lot == null)
+        {
+            <div class="mb-3">
+                <label class="form-label">BuyPrice</label>
+                <input type="number" class="form-control custom-input" @bind="stk.BuyPrice" />
+            </div>
+        }
+
+        <!-- KeepValue si status = Garder -->
+        @if (stk.StatusId == (int)SharedParameters.Status.Garder)
+        {
+            <div class="mb-3">
+                <label class="form-label">Valeur gardée</label>
+                <input type="number" class="form-control custom-input" @bind="stk.KeepValue" />
+            </div>
+        }
+
+        <!-- SoldPrice si status = Vente -->
+        @if (stk.SoldPrice != null)
+        {
+            <div class="mb-3">
+                <label class="form-label">Prix vendu</label>
+                <input type="number" class="form-control custom-input" @bind="stk.SoldPrice" />
+            </div>
+        }
+
+        <!-- ToMaya et ToBoth si pas dans un lot -->
+        @if (stk.Lot == null)
+        {
+            <div class="mb-3 d-flex gap-3 align-items-center">
+                <label><input type="checkbox" @bind="stk.ToMaya" /> ToMaya</label>
+                <label><input type="checkbox" @bind="stk.ToBoth" /> ToBoth</label>
+            </div>
+        }
+
+        <!-- BoxRate / ManualRate / CDRate toujours affichés -->
+        <div class="mb-3">
+            <label class="form-label">Box Rate</label>
+            <input type="number" class="form-control custom-input" @bind="stk.BoxRate" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Manual Rate</label>
+            <input type="number" class="form-control custom-input" @bind="stk.ManualRate" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">CD Rate /10</label>
+            <input type="number" class="form-control custom-input" @bind="stk.CDRate" />
+        </div>
+
+        <!-- Comments toujours modifiable -->
+        <div class="mb-3">
+            <label class="form-label">Commentaires</label>
+            <textarea class="form-control custom-input" @bind="stk.Comments"></textarea>
+        </div>
+
+        <!-- Boutons -->
+        <div class="mt-4 d-flex gap-2 mb-5">
+            <button class="btn btn-success flex-fill" @onclick="SaveChanges">💾 Sauvegarder</button>
+            <button class="btn btn-secondary flex-fill" @onclick="Cancel">Annuler</button>
+        </div>
+
+    </div>
+}

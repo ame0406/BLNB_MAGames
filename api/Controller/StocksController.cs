@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using api.BLogics;
 using api.DataAccessLayer;
 using SharedParams.DTOs;
+using api.Migrations;
 
 namespace api.Controller
 {
@@ -47,19 +48,19 @@ namespace api.Controller
 			return _dl.GetAllInStocksByBaseObjId(baseObjId, filters);
 		}
 
-		[HttpGet]
-        [Route("{id}")]
-        public async Task<ActionResult<Stocks>> GetStock(int id)
+        [HttpGet("{id}")]
+        public ActionResult<Stocks> GetStock(int id)
         {
-            Stocks stock = await _context.Stocks.FindAsync(id);
+            var stock = _dl.GetStock(id);
 
-            if (stock is null)
-                return BadRequest("Objet de l'inventaire non trouver.");
+            if (stock == null)
+                return NotFound($"Stock {id} introuvable");
 
             return Ok(stock);
         }
 
-		[HttpPost]
+
+        [HttpPost]
 		[Route("AddStock")]
 		public bool AddStock([FromBody] Stocks stock)
 		{
@@ -175,6 +176,19 @@ namespace api.Controller
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateStock(int id, [FromBody] Stocks stock)
+        {
+            if (id != stock.Id)
+                return BadRequest("Stock ID mismatch");
+
+            var result = await _dl.UpdateStockAsync(stock);
+            if (!result)
+                return NotFound();
+
+            return NoContent();
         }
     }
 }

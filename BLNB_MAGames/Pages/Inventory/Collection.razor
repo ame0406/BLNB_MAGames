@@ -27,6 +27,13 @@
                     <p class="card-text text-success">Valeur gardée: @stock.KeepPrice.ToString("C")</p>
 
                     <img src="@stock.Image" class="img-fluid rounded border mt-2" />
+
+                    <div class="mt-3">
+                        <button class="btn btn-warning btn-sm"
+                                @onclick='() => _navigationManager.NavigateTo($"/EditItem/{stock.id}")'>
+                            ✏️ Edit
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

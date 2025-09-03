@@ -1,8 +1,10 @@
 ﻿using api.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SharedParams.DTOs;
 using SharedParams.Parameters;
 using SharedParams.Tables;
+using System;
 using static SharedParams.Parameters.SharedParameters;
 
 namespace api.DataAccessLayer
@@ -91,7 +93,30 @@ namespace api.DataAccessLayer
                 throw; 
             }
         }
-		public bool AddStock(Stocks stock)
+
+        public Stocks GetStock(int stkId)
+        {
+            try
+            {
+                return _context.Stocks
+					.Include(x => x.BaseObj)
+					.ThenInclude(x => x.Marque)
+					.Include(x => x.BaseObj.SaleType)
+					.Include(x => x.Status)
+					.Include(x => x.Lot)
+					.Include(x => x.Condition)
+					.FirstOrDefault(x => x.Id == stkId) ?? new Stocks();
+
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("⚠️ EF crash: " + ex.Message);
+                throw;
+            }
+        }
+
+        public bool AddStock(Stocks stock)
 		{
 			if (stock.BaseObj != null)
 				_context.Attach(stock.BaseObj);
@@ -147,5 +172,44 @@ namespace api.DataAccessLayer
 
             _context.SaveChanges();
         }
+
+        public async Task<bool> UpdateStockAsync(Stocks updatedStock)
+        {
+            var stk = GetStock(updatedStock.Id);
+
+            if (stk == null)
+                return false;
+
+            // --- BaseObj ---
+            stk.BaseObj.Name = updatedStock.BaseObj.Name;
+            stk.BaseObj.Edition = updatedStock.BaseObj.Edition;
+            stk.BaseObj.MarqueId = updatedStock.BaseObj.MarqueId;
+            stk.BaseObj.SaleTypeId = updatedStock.BaseObj.SaleTypeId;
+
+            // --- Stock ---
+            stk.ConditionId = updatedStock.ConditionId;
+            stk.StatusId = updatedStock.StatusId;
+            stk.Comments = updatedStock.Comments;
+            stk.BoxRate = updatedStock.BoxRate;
+            stk.ManualRate = updatedStock.ManualRate;
+            stk.CDRate = updatedStock.CDRate;
+
+            if (stk.Lot == null)
+            {
+                stk.BuyPrice = updatedStock.BuyPrice;
+                stk.ToMaya = updatedStock.ToMaya;
+                stk.ToBoth = updatedStock.ToBoth;
+            }
+
+            if (stk.StatusId == (int)SharedParameters.Status.Garder)
+                stk.KeepValue = updatedStock.KeepValue;
+
+            if (stk.StatusId == (int)SharedParameters.Status.Vente)
+                stk.SoldPrice = updatedStock.SoldPrice;
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
     }
 }

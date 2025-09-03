@@ -62,6 +62,7 @@ namespace BLNB_MAGames.Pages.Inventory
 					var firstStock = group.First();
 					return new StocksToShow
 					{
+                        id = firstStock.Id,
 						Image = (firstStock.BaseObj.lstImages.Count() > 0 ? firstStock.BaseObj.lstImages.First().Image : "/images/placeholder.png"),
 						Name = firstStock.BaseObj.Name,
 						Edition = firstStock.BaseObj.Edition ?? "",
