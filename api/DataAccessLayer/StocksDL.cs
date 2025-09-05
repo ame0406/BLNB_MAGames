@@ -98,15 +98,18 @@ namespace api.DataAccessLayer
         {
             try
             {
-                return _context.Stocks
+                Stocks stk = _context.Stocks
 					.Include(x => x.BaseObj)
 					.ThenInclude(x => x.Marque)
 					.Include(x => x.BaseObj.SaleType)
 					.Include(x => x.Status)
 					.Include(x => x.Lot)
 					.Include(x => x.Condition)
+					.Include(x => x.VentesMKP)
+					.Include(x => x.VentesEbay)
 					.FirstOrDefault(x => x.Id == stkId) ?? new Stocks();
 
+				return stk;
 
             }
             catch (Exception ex)
@@ -193,12 +196,27 @@ namespace api.DataAccessLayer
             stk.BoxRate = updatedStock.BoxRate;
             stk.ManualRate = updatedStock.ManualRate;
             stk.CDRate = updatedStock.CDRate;
+            stk.EstimatedSalePrice = updatedStock.EstimatedSalePrice;
+			if(updatedStock.VentesMKP != null)
+				stk.VentesMKP = updatedStock.VentesMKP;
+			if(updatedStock.VentesEbay != null)
+                stk.VentesEbay = updatedStock.VentesEbay;
 
-            if (stk.Lot == null)
+            if (updatedStock.Lot == null)
             {
                 stk.BuyPrice = updatedStock.BuyPrice;
                 stk.ToMaya = updatedStock.ToMaya;
                 stk.ToBoth = updatedStock.ToBoth;
+
+				if(stk.ToBoth)
+					stk.BuyPriceForWhoToWhoIsTrue = updatedStock.BuyPriceForWhoToWhoIsTrue;
+            }
+			else
+			{
+                stk.Lot!.PrixDachat = updatedStock.Lot.PrixDachat;
+
+                if (stk.ToBoth)
+                    stk.Lot.PrixDachatForWhoToWhoIsTrue = updatedStock.Lot.PrixDachatForWhoToWhoIsTrue;
             }
 
             if (stk.StatusId == (int)SharedParameters.Status.Garder)

@@ -3,6 +3,7 @@ using SharedParams.DTOs;
 using SharedParams.Tables;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 public class ApiService
@@ -101,15 +102,25 @@ public class ApiService
     {
         try
         {
-            var response = await _httpClient.GetAsync($"stocks/{id}");
-            response.EnsureSuccessStatusCode(); // si 404 -> exception
-            return await response.Content.ReadFromJsonAsync<Stocks>();
+            Stocks stock = await _httpClient.GetFromJsonAsync<Stocks>($"stocks/GetStock/{id}");
+
+            if (stock == null)
+                throw new Exception($"Le stock {id} est null après désérialisation");
+
+            return stock;
+        }
+        catch (HttpRequestException httpEx)
+        {
+            Console.WriteLine("Erreur HTTP : " + httpEx.Message);
+            throw;
         }
         catch (Exception ex)
         {
-            return new Stocks(); // ⚠️ tu masques l’erreur et tu renvoies un objet vide
+            Console.WriteLine("Erreur GetStock : " + ex.Message);
+            throw;
         }
     }
+
     public async Task<List<Stocks>> GetAllInStocksAsync(Filters statsFilters)
 	{
 		try

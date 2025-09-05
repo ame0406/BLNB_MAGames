@@ -11,8 +11,8 @@ using api.Migrations;
 
 namespace api.Controller
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class StocksController : ControllerBase
     {
         private readonly DataContext _context;
@@ -48,15 +48,13 @@ namespace api.Controller
 			return _dl.GetAllInStocksByBaseObjId(baseObjId, filters);
 		}
 
-        [HttpGet("{id}")]
-        public ActionResult<Stocks> GetStock(int id)
+        [HttpGet]
+        [Route("GetStock/{id}")]
+
+        public Stocks GetStock(int id)
         {
-            var stock = _dl.GetStock(id);
-
-            if (stock == null)
-                return NotFound($"Stock {id} introuvable");
-
-            return Ok(stock);
+            Stocks stock = _dl.GetStock(id);
+            return stock;
         }
 
 

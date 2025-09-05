@@ -23,6 +23,7 @@ namespace BLNB_MAGames.Pages
             Filters statsFilters = new Filters
             {
                 ToMaya = (profilChoosen == "Maya" ? true : false),
+                IncludeToBoth = true,
             };
 
             _stats = await _apiService.GetTotalDepenseStats(statsFilters);

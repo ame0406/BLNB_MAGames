@@ -79,11 +79,24 @@ namespace BLNB_MAGames.Pages.Inventory
                 await _showToast.InvokeAsync((ToastType.FAIL, "Tu doit etrer un keep price vu que tu le garde!"));
                 return;
             }
+            if (stk.StatusId == (int)SharedParameters.Status.Vente && (stk.VentesMKP == null || stk.VentesMKP.First().SalePrice <= 0))
+            {
+                await _showToast.InvokeAsync((ToastType.FAIL, "Tu doit etrer un prix de vente!"));
+                return;
+            }
 
             if (stk.StatusId == (int)SharedParameters.Status.Vente)
             {
                 // Si on passe à Vente, on force KeepValue à null
                 stk.KeepValue = null;
+                //ici le calcul de lestimer     //verifier si null!!!!!!!!!!!
+
+                if(stk.VentesMKP == null && stk.VentesEbay != null)
+                    stk.EstimatedSalePrice = stk.VentesEbay.First().SalePrice;
+                else if(stk.VentesMKP != null && stk.VentesEbay == null)
+                    stk.EstimatedSalePrice = stk.VentesMKP.First().SalePrice;
+                else
+                    stk.EstimatedSalePrice = (stk.VentesMKP!.First().SalePrice + stk.VentesEbay!.First().SalePrice) * 0.95m;
             }
 
             // Appel à l'API
@@ -91,6 +104,8 @@ namespace BLNB_MAGames.Pages.Inventory
 
             if (success)
             {
+                await _showToast.InvokeAsync((ToastType.SUCCESS, "Sauvegarde réussi."));
+
                 // Feedback utilisateur ou navigation selon le statut
                 if (stk.StatusId == (int)SharedParameters.Status.Garder)
                     _navigationManager.NavigateTo("/Collection");
@@ -99,15 +114,16 @@ namespace BLNB_MAGames.Pages.Inventory
             }
             else
             {
-                // Message d'erreur
-                Console.WriteLine("Erreur lors de la mise à jour du stock.");
-                await JS.InvokeVoidAsync("alert", "Erreur lors de la sauvegarde.");
+                await _showToast.InvokeAsync((ToastType.FAIL, "Erreur lors de la sauvegarde."));
             }
         }
 
         private void Cancel()
         {
-            _navigationManager.NavigateTo("/Collection");
+            if (stk.StatusId == (int)SharedParameters.Status.Garder)
+                _navigationManager.NavigateTo("/Collection");
+            else
+                _navigationManager.NavigateTo("/AllInventory/1");
         }
 
 

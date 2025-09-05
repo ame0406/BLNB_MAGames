@@ -28,7 +28,7 @@
 				@if(isAddToALot)
 				{
 					<div class="mb-3 w-25 d-flex flex-column">
-						<label for="prixAchat">Prix d'achat</label>
+						<label for="prixAchat">Prix d'achat total</label>
 						<input type="number" class="form-control" id="prixAchat" @bind="AddedLot.PrixDachat" disabled="@(AllLot.Count > 0)">
 						@if(ErrorNoPrixAchat)
 						{
@@ -51,8 +51,21 @@
 					<div class="toggle-button"></div>
 				</label>
 				<label class="form-check-label" for="ToBothSwitch">
-					Ajouter ce stock dans les deux inventaires (ToBoth)
+					Ajouter ce stock dans les deux inventaires
 				</label>
+
+				@if (applyToBoth)
+				{
+					<div class="mb-3 w-25 d-flex flex-column">
+						<label for="prixAchat">Prix d'achat pour toi</label>
+						<input type="number" class="form-control" id="prixAchatSingle" @bind="AddedLot.PrixDachatForWhoToWhoIsTrue" disabled="@(AllLot.Count > 0)">
+						@if (ErrorNoPrixAchatIndividuel)
+						{
+							<p class="text-error">Vous devez entrer un prix d'achat individuel plus petit que le prix d'achat total</p>
+						}
+					</div>
+
+				}
 			</div>
 
 			<h4 class="text-center mb-4">Que veux tu ajouter?</h4>
@@ -291,7 +304,20 @@
 									{
 										<p class="text-error">Vous devez indiquer le prix d'achat</p>
 									}
+
+									@if (!applyToBoth)
+									{
+										<div class="d-flex flex-column">
+											<label for="boite4" class="form-label">Prix d'achat pour toi<span class="text-danger">*</span></label>
+											<input id="buyValueIndiv" class="form-control" placeholder="Entrez le prix d'achat Individuel" @oninput="e => GetBuyValueIndividuel(e)" value="@(AddNewStocks.BuyPriceForWhoToWhoIsTrue == null ? 0 : AddNewStocks.BuyPriceForWhoToWhoIsTrue)" />
+										</div>
+										@if (ErrorNoBuyPriceIndividuel)
+										{
+											<p class="text-error">Vous devez indiquer le prix d'achat Individuel plus petit que le prix d'achat</p>
+										}
+									}
 								}
+	
 
 								@if (AddNewStocks.Status != null && AddNewStocks.Status.Id == (int)SharedParameters.Status.Garder)
 								{

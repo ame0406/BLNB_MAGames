@@ -20,6 +20,8 @@ namespace SharedParams.Tables
         public bool IsActive { get; set; } = true;
         public bool ToMaya { get; set; } = false;
         public bool ToBoth { get; set; } = false;
+        public decimal? BuyPriceForWhoToWhoIsTrue { get; set; }
+
 
         public int BaseObjId { get; set; }
         [ForeignKey("BaseObjId")]

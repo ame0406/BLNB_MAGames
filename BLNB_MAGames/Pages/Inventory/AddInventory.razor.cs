@@ -36,12 +36,14 @@ namespace BLNB_MAGames.Pages.Inventory
 		private bool ErrorNoSaleType { get; set; } = false;
 		private bool ErrorNoMarque { get; set; } = false;
 		private bool ErrorNoPrixAchat { get; set; } = false;
+		private bool ErrorNoPrixAchatIndividuel { get; set; } = false;
 		private bool ErrorNoCondition { get; set; } = false;
 		private bool ErrorNoStatut { get; set; } = false;
 		private bool ErrorRateBox { get; set; } = false;
 		private bool ErrorRateManual { get; set; } = false;
 		private bool ErrorRateCD { get; set; } = false;
 		private bool ErrorNoBuyPrice { get; set; } = false;
+		private bool ErrorNoBuyPriceIndividuel { get; set; } = false;
 		private bool ErrorKeepValue { get; set; } = false;
 		private bool isAnnonceMkp { get; set; } = true;
 		private bool applyToBoth { get; set; } = false;
@@ -75,14 +77,19 @@ namespace BLNB_MAGames.Pages.Inventory
         {
 			SelectedObjToAdd = new Base_Obj();
 			ErrorNoPrixAchat = false;
+			ErrorNoPrixAchatIndividuel = false;
 
 
 			if (isAddToALot && AddedLot.PrixDachat < 0)
             {
 				ErrorNoPrixAchat = true;
 			}
+			if (isAddToALot && applyToBoth && AddedLot.PrixDachatForWhoToWhoIsTrue < 0 && AddedLot.PrixDachatForWhoToWhoIsTrue > AddedLot.PrixDachat)
+            {
+				ErrorNoPrixAchat = true;
+			}
             
-			if(!ErrorNoPrixAchat)
+			if(!ErrorNoPrixAchat && !ErrorNoPrixAchatIndividuel)
 			{
 				allTypeVenteLst = await _apiService.GetAllTypesVenteAsync();
 				allMarquesLst = await _apiService.GetAllMarquesAsync();
@@ -181,18 +188,27 @@ namespace BLNB_MAGames.Pages.Inventory
 			{
 				AddNewStocks.Lot = AddedLot;
 				AllLot.Add(AddNewStocks);
-			}
+            }
 
 			ErrorKeepValue = false;
-			if (AddNewStocks.Status.Id == (int)SharedParameters.Status.Garder && AddNewStocks.KeepValue == null)
+			if (AddNewStocks.Status!.Id == (int)SharedParameters.Status.Garder && AddNewStocks.KeepValue == null)
 			{
 				ErrorKeepValue = true;
 			}
 
 			if(!ErrorKeepValue)
 			{
+				if(!applyToBoth)
+				{
+					if (isAddToALot)
+						AddNewStocks.Lot!.PrixDachatForWhoToWhoIsTrue = null;
+					else
+						AddNewStocks.BuyPriceForWhoToWhoIsTrue = null;
+                }
+
 				AddNewStocks.ToBoth = applyToBoth;
-				AddNewStocks.ToMaya = (profilChoosen == "Maya" ? true : false);
+                AddNewStocks.BuyPriceForWhoToWhoIsTrue = AddedLot.PrixDachatForWhoToWhoIsTrue;
+                AddNewStocks.ToMaya = (profilChoosen == "Maya" ? true : false);
 				//Ajout a la BD
 				bool isAdded = await _apiService.AddStockAsync(AddNewStocks);
 				//Si sa a fonctionner 
@@ -352,6 +368,26 @@ namespace BLNB_MAGames.Pages.Inventory
 			else
 			{
 				ErrorNoBuyPrice = true;
+			}
+		}
+		private void GetBuyValueIndividuel(ChangeEventArgs e)
+		{
+			ErrorNoBuyPriceIndividuel = false;
+
+			if (decimal.TryParse(e.Value?.ToString(), out decimal value))
+			{
+				if (value < 0 || value > AddNewStocks.BuyPrice)
+				{
+					ErrorNoBuyPriceIndividuel = true;
+				}
+				else
+				{
+					AddNewStocks.BuyPriceForWhoToWhoIsTrue = value;
+				}
+			}
+			else
+			{
+				ErrorNoBuyPriceIndividuel = true;
 			}
 		}
 		private void GetComment(ChangeEventArgs e)

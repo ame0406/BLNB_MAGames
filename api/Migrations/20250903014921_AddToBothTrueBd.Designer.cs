@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.Data;
 
@@ -11,9 +12,11 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250903014921_AddToBothTrueBd")]
+    partial class AddToBothTrueBd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -96,9 +99,6 @@ namespace api.Migrations
                         .HasColumnType("bit");
 
                     b.Property<decimal>("PrixDachat")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("PrixDachatForWhoToWhoIsTrue")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
@@ -206,9 +206,6 @@ namespace api.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal?>("BuyPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("BuyPriceForWhoToWhoIsTrue")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("CDRate")

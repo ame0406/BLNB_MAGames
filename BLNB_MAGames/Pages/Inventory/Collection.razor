@@ -4,15 +4,22 @@
 
 @page "/Collection"
 
-
 <h1 class="mb-4">Ma Collection</h1>
 
+<div class="d-flex flex-row justify-content-center my-4">
+    <input type="text"
+           class="form-control w-75"
+           placeholder="Rechercher..."
+           @bind="@strSearch"
+           @oninput="Filter" />
+</div>
+
 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
-    @foreach (var stock in AllInCollectionToShow)
+    @foreach (var stock in PagedStocks)
     {
         <div class="col">
             <div class="card h-100 bg-dark">
-                <div class="card-body">
+                <div class="card-body position-relative">
                     @if (stock.ToBoth)
                     {
                         <span class="position-absolute top-0 start-0 m-2" title="Visible dans les 2 inventaires">
@@ -39,3 +46,48 @@
         </div>
     }
 </div>
+
+@if (TotalPages > 1)
+{
+    <div class="d-flex justify-content-center mt-4 neon-pagination">
+        <button class="neon-btn" @onclick="PreviousPage" disabled="@(currentPage == 1)">⟨</button>
+
+        @for (int i = 1; i <= TotalPages; i++)
+        {
+            var p = i;
+            <button class="neon-btn @(p == currentPage ? "active" : "")" @onclick="() => GoToPage(p)">
+                @p
+            </button>
+        }
+
+        <button class="neon-btn" @onclick="NextPage" disabled="@(currentPage == TotalPages)">⟩</button>
+    </div>
+}
+
+<style>
+    .neon-pagination .neon-btn {
+        background-color: transparent;
+        border: 2px solid #00f0ff;
+        color: #00f0ff;
+        margin: 0 0.25rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 0.5rem;
+        font-weight: bold;
+        transition: 0.2s;
+        text-shadow: 0 0 5px #00f0ff;
+        box-shadow: 0 0 5px #00f0ff;
+        cursor: pointer;
+    }
+
+        .neon-pagination .neon-btn:hover:not(:disabled),
+        .neon-pagination .neon-btn.active {
+            background-color: #00f0ff;
+            color: black;
+        }
+
+        .neon-pagination .neon-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+</style>

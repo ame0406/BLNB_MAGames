@@ -9,7 +9,11 @@
     @if (modeint == (int)InventoryMode.All)
     {
 
-        <div class="d-flex justify-content-end align-items-center">
+        <div class="d-flex justify-content-end align-items-center gap-4">
+            <button class="btn btn-outline-info"
+                    @onclick='() => _navigationManager.NavigateTo($"/Collection", true)'>
+                Voir la collection
+            </button>
             <button class="btn btn-outline-info"
                     @onclick='() => _navigationManager.NavigateTo($"/AllInventory/2", true)'>
                 Voir en lots

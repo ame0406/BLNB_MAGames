@@ -15,7 +15,7 @@ else
         <!-- Nom -->
         <div class="mb-3">
             <label class="form-label">Nom</label>
-            <input class="form-control custom-input" @bind="stk.BaseObj.Name" />
+            <input class="form-control custom-input" @bind="stk.BaseObj!.Name" />
         </div>
 
         <!-- Edition -->
@@ -64,13 +64,41 @@ else
             </BLNB_MAGames.Pages.Components.DropDeepSearch.DropDeepSearch>
         </div>
 
-        <!-- BuyPrice si pas dans un lot -->
-        @if (stk.Lot == null)
+        @if(stk.Lot != null)
         {
+            <!-- BuyPrice total (si dans lot ou non) -->
             <div class="mb-3">
-                <label class="form-label">BuyPrice</label>
+                <label class="form-label">Prix d'achat (total lot)</label>
+                <input type="number" class="form-control custom-input" @bind="stk.Lot.PrixDachat" />
+            </div>
+
+            if(stk.ToBoth)
+            {
+                <!-- BuyPrice individuel -->
+                <div class="mb-3">
+                    <label class="form-label">Prix d'achat (individuel)</label>
+                    <input type="number" class="form-control custom-input" @bind="stk.Lot.PrixDachatForWhoToWhoIsTrue" />
+                </div>
+            }
+
+        }
+        else
+        {
+            <!-- BuyPrice total-->
+            <div class="mb-3">
+                <label class="form-label">Prix d'achat (total)</label>
                 <input type="number" class="form-control custom-input" @bind="stk.BuyPrice" />
             </div>
+
+            if(stk.ToBoth)
+            {
+               <!-- BuyPrice individuel -->
+                <div class="mb-3">
+                    <label class="form-label">Prix d'achat (individuel)</label>
+                    <input type="number" class="form-control custom-input" @bind="stk.BuyPriceForWhoToWhoIsTrue" />
+                </div> 
+            }
+            
         }
 
         <!-- KeepValue si status = Garder -->
@@ -97,6 +125,15 @@ else
             <div class="mb-3 d-flex gap-3 align-items-center">
                 <label><input type="checkbox" @bind="stk.ToMaya" /> ToMaya</label>
                 <label><input type="checkbox" @bind="stk.ToBoth" /> ToBoth</label>
+            </div>
+        }
+
+        @if (stk.StatusId == (int)SharedParameters.Status.Vente)
+        {
+            <div class="mb-3">
+                <label class="form-label">Prix vente MKP</label>
+                <input type="number" class="form-control custom-input" value="@stk.VentesMKP.FirstOrDefault()?.SalePrice ?? 0"
+                       @oninput='e => stk.VentesMKP.First().SalePrice = decimal.Parse(e.Value?.ToString() ?? "0")' />
             </div>
         }
 
