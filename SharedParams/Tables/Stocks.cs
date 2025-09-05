@@ -35,6 +35,7 @@ namespace SharedParams.Tables
         [ForeignKey("StatusId")]
         public Status? Status { get; set; } = new Status();
 		public Lots? Lot { get; set; } = null;
+		public Lots? LotEchange { get; set; } = null;
 
 
         //Many to many

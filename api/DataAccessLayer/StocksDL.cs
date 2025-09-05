@@ -155,6 +155,7 @@ namespace api.DataAccessLayer
 
                 stock.SoldPrice = s.SoldPrice;
                 stock.SoldDate = s.SoldDate;
+				stock.LotEchange = s.LotEchange;
                 stock.IsActive = false;
 
                 // Vérifie si tous les stocks du lot sont vendus

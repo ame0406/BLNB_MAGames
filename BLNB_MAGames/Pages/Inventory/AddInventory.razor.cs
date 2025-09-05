@@ -18,6 +18,10 @@ namespace BLNB_MAGames.Pages.Inventory
 		private NavigationManager _navigationManager { get; set; }
 		[CascadingParameter]
 		private EventCallback<(ToastType, string)> _showToast { get; set; }
+		[Parameter]
+		public bool isExchange { get; set; } = false;
+		[Parameter]
+		public EventCallback<Lots> OnExchangeLotCreated { get; set; }
 		private int CurrentStep { get; set; } = 1;
 		private string profilChoosen { get; set; } = "";
 		private Base_Obj SelectedObjToAdd { get; set; } = new Base_Obj();
@@ -52,6 +56,14 @@ namespace BLNB_MAGames.Pages.Inventory
 		{
 			await _profileStateService.InitializeAsync();
             profilChoosen = _profileStateService.Profile;
+
+			if (isExchange)
+			{
+				isAddToALot = true;
+				AddedLot.PrixDachat = 0;
+			}
+
+			StateHasChanged();
 		}
 		private void Step1()
 		{
@@ -73,6 +85,14 @@ namespace BLNB_MAGames.Pages.Inventory
 			isAnnonceMkp = true;
 			CurrentStep = 1;
 		}
+		private async Task ReturnIdForExchange()
+		{
+			if (AddedLot != null && AddedLot.Id > 0)
+			{
+				await OnExchangeLotCreated.InvokeAsync(AddedLot);
+			}
+		}
+
 		private async Task Step2(short typeAjout)
         {
 			SelectedObjToAdd = new Base_Obj();
@@ -80,11 +100,11 @@ namespace BLNB_MAGames.Pages.Inventory
 			ErrorNoPrixAchatIndividuel = false;
 
 
-			if (isAddToALot && AddedLot.PrixDachat < 0)
+			if (isAddToALot && (AddedLot.PrixDachat < 0))
             {
 				ErrorNoPrixAchat = true;
 			}
-			if (isAddToALot && applyToBoth && AddedLot.PrixDachatForWhoToWhoIsTrue < 0 && AddedLot.PrixDachatForWhoToWhoIsTrue > AddedLot.PrixDachat)
+			if (isAddToALot && applyToBoth && (AddedLot.PrixDachatForWhoToWhoIsTrue < 0 || AddedLot.PrixDachatForWhoToWhoIsTrue > AddedLot.PrixDachat || AddedLot.PrixDachatForWhoToWhoIsTrue == null))
             {
 				ErrorNoPrixAchat = true;
 			}

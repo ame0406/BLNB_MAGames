@@ -23,11 +23,30 @@
 			<label class="text-start">Date de vente</label>
 			<input class="form-control" type="date" @bind="gameSold.SoldDate"/>
 		</div>
+
+		<div class="form-check form-switch mb-4 d-flex justify-content-center">
+			<input class="form-check-input" type="checkbox" role="switch" id="exchangeSwitch" @bind="IsExchange">
+			<label class="toggle" for="exchangeSwitch">
+				<div class="glow-comp"></div>
+				<div class="toggle-button"></div>
+			</label>
+			<label class="form-check-label" for="exchangeSwitch">Ceci est un échange</label>
+		</div>
 	</div>
 
 
 	<div class="d-flex flex-row justify-content-center gap-4 mt-4">
 		<button class="btn btn-outline-dark" @onclick="() => ReturnSold(false)">Annuler</button>
-		<button class="btn btn-success" @onclick="() => ReturnSold(true)">Vendu!</button>
+		<button class="btn btn-success" @onclick="@(IsExchange ? OpenAddInventoryModalAsync : () => ReturnSold(true))">
+			@(IsExchange ? "Échanger!" : "Vendu!")
+		</button>
 	</div>
 </div>
+
+
+<BLNB_MAGames.Pages.Components.Modale.Modale _isShown="isModaleAddStockEchange" _class="col-8" _noButton=true _onClose="OpenAddInventoryModalAsync">
+	<_body>
+		<BLNB_MAGames.Pages.Inventory.AddInventory isExchange="true" OnExchangeLotCreated="HandleExchangeLotSelected">
+		</BLNB_MAGames.Pages.Inventory.AddInventory>
+	</_body>
+</BLNB_MAGames.Pages.Components.Modale.Modale>

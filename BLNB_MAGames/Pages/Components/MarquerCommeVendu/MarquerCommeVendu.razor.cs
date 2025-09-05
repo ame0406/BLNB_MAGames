@@ -23,6 +23,9 @@ namespace BLNB_MAGames.Pages.Components.MarquerCommeVendu
 
         public Stocks gameSold { get; set; } = new Stocks();
         public bool ErrorPriceSold { get; set; } = false;
+        public bool IsExchange { get; set; } = false;
+        public bool isModaleAddStockEchange { get; set; } = false;
+
 
 		protected override async Task OnInitializedAsync()
         {
@@ -47,5 +50,21 @@ namespace BLNB_MAGames.Pages.Components.MarquerCommeVendu
 				}
             }
         }
+
+		private void OpenAddInventoryModalAsync()
+		{
+			isModaleAddStockEchange = !isModaleAddStockEchange;
+		}
+
+		private async Task HandleExchangeLotSelected(Lots lotExcahnge)
+		{
+			gameSold.SoldPrice = 0;
+			gameSold.LotEchange = lotExcahnge;
+			OpenAddInventoryModalAsync();
+
+
+			await OnPriceSoldChanged.InvokeAsync(gameSold);
+
+		}
 	}
 }
