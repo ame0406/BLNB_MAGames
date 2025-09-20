@@ -12,7 +12,8 @@ namespace SharedParams.Tables
 		public int? GoSpace { get; set; }	//Hardware
 		public short TypeObj { get; set; }	//All
 		public bool IsActive { get; set; } = true;
-		public List<ObjImages>? lstImages { get; set; } = new List<ObjImages>();
+		public string? Barcode { get; set; } 
+        public List<ObjImages>? lstImages { get; set; } = new List<ObjImages>();
 
 		public int SaleTypeId { get; set; }
 		[ForeignKey("SaleTypeId")]

@@ -104,12 +104,12 @@ namespace BLNB_MAGames.Pages.Inventory
         private async Task SaveChanges()
         {
             // Validation côté UI
-            if (stk.StatusId == (int)SharedParameters.Status.Garder && (stk.KeepValue == null || stk.KeepValue <= 0))
+            if (stk.StatusId == (int)SharedParameters.Status.Garder && (stk.KeepValue == null && stk.KeepValue <= 0))
             {
                 await _showToast.InvokeAsync((ToastType.FAIL, "Tu doit etrer un keep price vu que tu le garde!"));
                 return;
             }
-            if (stk.StatusId == (int)SharedParameters.Status.Vente && (stk.VentesMKP == null || stk.VentesMKP.FirstOrDefault().SalePrice <= 0))
+            if (stk.StatusId == (int)SharedParameters.Status.Vente && (stk.VentesMKP == null && stk.VentesMKP.FirstOrDefault().SalePrice <= 0))
             {
                 await _showToast.InvokeAsync((ToastType.FAIL, "Tu doit etrer un prix de vente!"));
                 return;
@@ -121,10 +121,12 @@ namespace BLNB_MAGames.Pages.Inventory
                 stk.KeepValue = null;
                 //ici le calcul de lestimer     //verifier si null!!!!!!!!!!!
 
-                if(stk.VentesMKP.Count() == 0 && stk.VentesEbay.Count() != 0)
+                if (stk.VentesMKP.Count() == 0 && stk.VentesEbay.Count() != 0)
                     stk.EstimatedSalePrice = stk.VentesEbay.First().SalePrice;
-                else if(stk.VentesMKP.Count() != 0 && stk.VentesEbay.Count() == 0)
+                else if (stk.VentesMKP.Count() != 0 && stk.VentesEbay.Count() == 0)
                     stk.EstimatedSalePrice = stk.VentesMKP.First().SalePrice;
+                else if (stk.VentesMKP.Count() == 0 && stk.VentesEbay.Count() == 0)
+                    stk.EstimatedSalePrice = 0;
                 else
                     stk.EstimatedSalePrice = (stk.VentesMKP!.First().SalePrice + stk.VentesEbay!.First().SalePrice) * 0.95m;
             }

@@ -177,7 +177,7 @@ namespace api.DataAccessLayer
             _context.SaveChanges();
         }
 
-        public async Task<bool> UpdateStockAsync(Stocks updatedStock)
+        public bool UpdateStock(Stocks updatedStock)
         {
             var stk = GetStock(updatedStock.Id);
 
@@ -189,6 +189,7 @@ namespace api.DataAccessLayer
             stk.BaseObj.Edition = updatedStock.BaseObj.Edition;
             stk.BaseObj.MarqueId = updatedStock.BaseObj.MarqueId;
             stk.BaseObj.SaleTypeId = updatedStock.BaseObj.SaleTypeId;
+            stk.BaseObj.Barcode = updatedStock.BaseObj.Barcode; 
 
             // --- Stock ---
             stk.ConditionId = updatedStock.ConditionId;
@@ -198,10 +199,67 @@ namespace api.DataAccessLayer
             stk.ManualRate = updatedStock.ManualRate;
             stk.CDRate = updatedStock.CDRate;
             stk.EstimatedSalePrice = updatedStock.EstimatedSalePrice;
-			if(updatedStock.VentesMKP != null)
-				stk.VentesMKP = updatedStock.VentesMKP;
-			if(updatedStock.VentesEbay != null)
-                stk.VentesEbay = updatedStock.VentesEbay;
+
+            if (updatedStock.VentesMKP != null)
+            {
+                stk.VentesMKP ??= new List<VenteMKP>(); // initialise si null
+
+                foreach (var vente in updatedStock.VentesMKP)
+                {
+                    var existing = stk.VentesMKP.FirstOrDefault(v => v.Id == vente.Id);
+                    if (existing != null)
+                    {
+                        // update
+                        existing.SalePrice = vente.SalePrice;
+                        existing.Link = vente.Link;
+                        existing.IsActive = vente.IsActive;
+                        existing.CreationDate = vente.CreationDate;
+                        existing.EndDate = vente.EndDate;
+                    }
+                    else
+                    {
+                        // insert
+                        stk.VentesMKP.Add(new VenteMKP
+                        {
+                            SalePrice = vente.SalePrice,
+                            Link = vente.Link,
+                            IsActive = vente.IsActive,
+                            CreationDate = vente.CreationDate,
+                            EndDate = vente.EndDate
+                        });
+                    }
+                }
+            }
+            if (updatedStock.VentesEbay != null)
+            {
+                stk.VentesEbay ??= new List<VenteEbay>(); // initialise si null
+
+                foreach (var vente in updatedStock.VentesEbay)
+                {
+                    var existing = stk.VentesEbay.FirstOrDefault(v => v.Id == vente.Id);
+                    if (existing != null)
+                    {
+                        // update
+                        existing.SalePrice = vente.SalePrice;
+                        existing.Link = vente.Link;
+                        existing.IsActive = vente.IsActive;
+                        existing.CreationDate = vente.CreationDate;
+                        existing.EndDate = vente.EndDate;
+                    }
+                    else
+                    {
+                        // insert
+                        stk.VentesEbay.Add(new VenteEbay
+                        {
+                            SalePrice = vente.SalePrice,
+                            Link = vente.Link,
+                            IsActive = vente.IsActive,
+                            CreationDate = vente.CreationDate,
+                            EndDate = vente.EndDate
+                        });
+                    }
+                }
+            }
 
             if (updatedStock.Lot == null)
             {
@@ -209,11 +267,11 @@ namespace api.DataAccessLayer
                 stk.ToMaya = updatedStock.ToMaya;
                 stk.ToBoth = updatedStock.ToBoth;
 
-				if(stk.ToBoth)
-					stk.BuyPriceForWhoToWhoIsTrue = updatedStock.BuyPriceForWhoToWhoIsTrue;
+                if (stk.ToBoth)
+                    stk.BuyPriceForWhoToWhoIsTrue = updatedStock.BuyPriceForWhoToWhoIsTrue;
             }
-			else
-			{
+            else
+            {
                 stk.Lot!.PrixDachat = updatedStock.Lot.PrixDachat;
 
                 if (stk.ToBoth)
@@ -221,21 +279,22 @@ namespace api.DataAccessLayer
             }
 
             if (stk.StatusId == (int)SharedParameters.Status.Garder)
-			{
+            {
                 stk.KeepValue = updatedStock.KeepValue;
                 if (updatedStock.VentesMKP != null)
                     stk.VentesMKP = new List<VenteMKP>();
                 if (updatedStock.VentesEbay != null)
                     stk.VentesEbay = new List<VenteEbay>();
-				stk.EstimatedSalePrice = 0;
+                stk.EstimatedSalePrice = 0;
             }
 
             if (stk.StatusId == (int)SharedParameters.Status.Vente)
                 stk.SoldPrice = updatedStock.SoldPrice;
 
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             return true;
         }
+
 
     }
 }

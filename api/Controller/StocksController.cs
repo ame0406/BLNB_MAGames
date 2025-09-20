@@ -177,12 +177,12 @@ namespace api.Controller
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateStock(int id, [FromBody] Stocks stock)
+        public IActionResult UpdateStock(int id, [FromBody] Stocks stock)
         {
             if (id != stock.Id)
                 return BadRequest("Stock ID mismatch");
 
-            var result = await _dl.UpdateStockAsync(stock);
+            bool result = _dl.UpdateStock(stock);
             if (!result)
                 return NotFound();
 
