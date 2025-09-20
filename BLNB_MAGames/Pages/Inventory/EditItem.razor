@@ -1,6 +1,7 @@
 ﻿@page "/EditItem/{StockId}"
 @using SharedParams.DTOs
 @using SharedParams.Parameters
+@using SharedParams.Tables
 
 <h3 class="mb-4">✏️ Modifier l'objet</h3>
 
@@ -132,8 +133,9 @@ else
         {
             <div class="mb-3">
                 <label class="form-label">Prix vente MKP</label>
-                <input type="number" class="form-control custom-input" value="@stk.VentesMKP.FirstOrDefault()?.SalePrice ?? 0"
-                       @oninput='e => stk.VentesMKP.First().SalePrice = decimal.Parse(e.Value?.ToString() ?? "0")' />
+                <input type="number" class="form-control custom-input"
+                       @bind="SalePrice"
+                       @bind:event="oninput" />
             </div>
         }
 

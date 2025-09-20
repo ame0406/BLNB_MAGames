@@ -69,8 +69,38 @@ namespace BLNB_MAGames.Pages.Inventory
         private void SelectStatus(GenericObjDTO obj)
         {
             stk.StatusId = obj.Id;
-        }
 
+            if(stk.StatusId == (int)SharedParameters.Status.Vente)
+            {
+                if(stk.VentesMKP == null)
+                {
+                    stk.VentesMKP = new List<VenteMKP>();
+                    stk.VentesEbay = new List<VenteEbay>();
+                }
+            }
+        }
+        private decimal SalePrice
+        {
+            get => stk.VentesMKP.FirstOrDefault()?.SalePrice ?? 0;
+            set
+            {
+                if (stk.VentesMKP == null)
+                    stk.VentesMKP = new List<VenteMKP>();
+
+                var vente = stk.VentesMKP.FirstOrDefault();
+                if (vente == null)
+                {
+                    vente = new VenteMKP
+                    {
+                        CreationDate = DateTime.Now,
+                        EndDate = null
+                    };
+                    stk.VentesMKP.Add(vente);
+                }
+
+                vente.SalePrice = value;
+            }
+        }
         private async Task SaveChanges()
         {
             // Validation côté UI
@@ -79,7 +109,7 @@ namespace BLNB_MAGames.Pages.Inventory
                 await _showToast.InvokeAsync((ToastType.FAIL, "Tu doit etrer un keep price vu que tu le garde!"));
                 return;
             }
-            if (stk.StatusId == (int)SharedParameters.Status.Vente && (stk.VentesMKP == null || stk.VentesMKP.First().SalePrice <= 0))
+            if (stk.StatusId == (int)SharedParameters.Status.Vente && (stk.VentesMKP == null || stk.VentesMKP.FirstOrDefault().SalePrice <= 0))
             {
                 await _showToast.InvokeAsync((ToastType.FAIL, "Tu doit etrer un prix de vente!"));
                 return;
@@ -91,9 +121,9 @@ namespace BLNB_MAGames.Pages.Inventory
                 stk.KeepValue = null;
                 //ici le calcul de lestimer     //verifier si null!!!!!!!!!!!
 
-                if(stk.VentesMKP == null && stk.VentesEbay != null)
+                if(stk.VentesMKP.Count() == 0 && stk.VentesEbay.Count() != 0)
                     stk.EstimatedSalePrice = stk.VentesEbay.First().SalePrice;
-                else if(stk.VentesMKP != null && stk.VentesEbay == null)
+                else if(stk.VentesMKP.Count() != 0 && stk.VentesEbay.Count() == 0)
                     stk.EstimatedSalePrice = stk.VentesMKP.First().SalePrice;
                 else
                     stk.EstimatedSalePrice = (stk.VentesMKP!.First().SalePrice + stk.VentesEbay!.First().SalePrice) * 0.95m;

@@ -221,7 +221,14 @@ namespace api.DataAccessLayer
             }
 
             if (stk.StatusId == (int)SharedParameters.Status.Garder)
+			{
                 stk.KeepValue = updatedStock.KeepValue;
+                if (updatedStock.VentesMKP != null)
+                    stk.VentesMKP = new List<VenteMKP>();
+                if (updatedStock.VentesEbay != null)
+                    stk.VentesEbay = new List<VenteEbay>();
+				stk.EstimatedSalePrice = 0;
+            }
 
             if (stk.StatusId == (int)SharedParameters.Status.Vente)
                 stk.SoldPrice = updatedStock.SoldPrice;

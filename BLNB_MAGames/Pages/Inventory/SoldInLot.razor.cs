@@ -53,16 +53,17 @@ namespace BLNB_MAGames.Pages.Inventory
 
             var totalEstimated = _cartService.Items.Sum(s => s.EstimatedSalePrice);
 
-            if (EnteredSoldPrice == totalEstimated || stockSold.LotEchange != null || stockSold.LotEchange!.Id != 0)
+            if (EnteredSoldPrice == totalEstimated || (stockSold.LotEchange != null && stockSold.LotEchange.Id != 0))
             {
                 foreach (var s in _cartService.Items)
                 {
-                    if(stockSold.LotEchange != null || stockSold.LotEchange!.Id != 0)
-						s.SoldPrice = 0;
-					else
+                    if(stockSold.LotEchange == null)
                         s.SoldPrice = s.EstimatedSalePrice;
+                    else
+                        s.SoldPrice = 0;
 
-					s.SoldDate = SoldDate;
+
+                    s.SoldDate = SoldDate;
                     s.LotEchange = stockSold.LotEchange;
 				}
 
